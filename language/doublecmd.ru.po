@@ -10410,7 +10410,9 @@ msgstr "Файл %s помечен как доступный только для
 
 #: ulng.rsmsgfilereloadwarning
 msgid "Are you sure you want to reload the current file and lose the changes?"
-msgstr "Все внесенные изменения будут потеряны!\nПродолжить?"
+msgstr ""
+"Все внесенные изменения будут потеряны!\n"
+"Продолжить?\n"
 
 #: ulng.rsmsgfilesizetoobig
 msgid "The file size of \"%s\" is too big for destination file system!"
@@ -12388,3 +12390,4 @@ msgstr "Число замен: %d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Замена не состоялась."
+

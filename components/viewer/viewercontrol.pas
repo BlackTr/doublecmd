@@ -2426,14 +2426,14 @@ function TViewerControl.DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): 
 begin
   Result := inherited;
   if not Result then
-    Result := Scroll(Mouse.WheelScrollLines);
+    Result := Scroll(1);    //Mouse.WheelScrollLines
 end;
 
 function TViewerControl.DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := inherited;
   if not Result then
-    Result := Scroll(-Mouse.WheelScrollLines);
+    Result := Scroll(-1);
 end;
 
 {$if lcl_fullversion >= 1070000}
@@ -2453,7 +2453,7 @@ var
   function XYPos2AdrBin: PtrInt;
   var
     i:  Integer;
-    px: Integer = 0;
+    px: Double = 0;
     charWidth: Integer;
     sText: String;
     tmpPosition: PtrInt;
@@ -2472,7 +2472,7 @@ var
 
         Exit(StartLine + i - 1);  // -1 because we count from 1
       end;
-      px  := px + charWidth;
+      px  := px + charWidth + 0.2;
     end;
     CharSide := csBefore;
     Result := EndLine;
@@ -2485,7 +2485,7 @@ var
 
   var
     i:  Integer;
-    px: Integer = 0;
+    px: Double = 0;
     charWidth: Integer;
     sText, sPartialText: String;
     tmpPosition: PtrInt;
@@ -2536,7 +2536,7 @@ var
         Exit(StartLine + i);
       end;
 
-      px := px + charWidth;
+      px := px + charWidth + 0.2;
     end;
 
     // Clicked between hex and ascii.
@@ -2546,7 +2546,7 @@ var
     begin
       Exit(-1); // No position.
     end;
-    px := px + charWidth;
+    px := px + charWidth + 0.2;
 
     // Clicked on ascii part.
     for i := 0 to FCustom.ValuesPerLine - 1 do
@@ -2568,7 +2568,7 @@ var
 
         Exit(StartLine + i);
       end;
-      px := px + charWidth;
+      px := px + charWidth + 0.2;
     end;
 
     CharSide := csBefore;
@@ -2578,7 +2578,7 @@ var
   function XYPos2AdrText: PtrInt;
   var
     i: Integer;
-    px: Integer = 0;
+    px: Double = 0;
     charWidth: Integer;
     len: Integer = 0;
     CharLenInBytes: Integer;
@@ -2621,7 +2621,7 @@ var
           Exit(i);
         end;
 
-        px := px + charWidth;
+        px := px + charWidth + 0.2;
       end;
 
       i := i + CharLenInBytes;

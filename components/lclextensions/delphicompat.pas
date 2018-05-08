@@ -38,7 +38,7 @@ unit DelphiCompat;
 interface
 
 uses
-  LMessages, Types, LCLType, Classes;
+  LMessages, Types, LCLType, Classes, LazUTF8;
 
 const
   //Messages

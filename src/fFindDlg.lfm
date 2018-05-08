@@ -1409,6 +1409,10 @@ object frmFindDlg: TfrmFindDlg
       Enabled = False
       OnClick = miShowAllFoundClick
     end
+    object miCopyPath: TMenuItem
+      Caption = 'Copy path(s)'
+      OnClick = miCopyPathClick
+    end
   end
   object actList: TActionList
     left = 168

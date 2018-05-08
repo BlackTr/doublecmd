@@ -132,6 +132,7 @@ type
     miShowInEditor: TMenuItem;
     miShowAllFound: TMenuItem;
     miRemoveFromLlist: TMenuItem;
+    miCopyPath: TMenuItem;
     pnlDirectoriesDepth: TPanel;
     pnlLoadSaveBottomButtons: TPanel;
     pnlLoadSaveBottom: TPanel;
@@ -243,6 +244,7 @@ type
     procedure lsFoundedFilesMouseWheelUp(Sender: TObject; Shift: TShiftState;
       {%H-}MousePos: TPoint; var Handled: boolean);
     procedure miOpenInNewTabClick(Sender: TObject);
+    procedure miCopyPathClick(Sender: TObject);
     procedure miRemoveFromLlistClick(Sender: TObject);
     procedure miShowAllFoundClick(Sender: TObject);
     procedure miShowInEditorClick(Sender: TObject);
@@ -376,7 +378,7 @@ uses
   uLng, uGlobs, uShowForm, uDCUtils, uFileSource, uFileSourceUtil,
   uSearchResultFileSource, uFile,
   uFileViewNotebook, uKeyboard, uOSUtils, uArchiveFileSourceUtil,
-  DCOSUtils, RegExpr, uDebug, uShowMsg, uConvEncoding;
+  DCOSUtils, RegExpr, uDebug, uShowMsg, uConvEncoding, uClipboard;
 
 const
   TimeUnitToComboIndex: array[TTimeUnit] of integer = (0, 1, 2, 3, 4, 5, 6);
@@ -2168,6 +2170,24 @@ begin
     lsFoundedFiles.Font.Size := lsFoundedFiles.Font.Size + 1;
     Handled := True;
   end;
+end;
+
+{ TfrmFindDlg.miCopyPathClick }
+procedure TfrmFindDlg.miCopyPathClick(Sender: TObject);
+var
+  i: integer;
+  Str: String;
+begin
+  Str := '';
+  if lsFoundedFiles.ItemIndex = -1 then Exit;
+  if lsFoundedFiles.SelCount = 0 then Exit;
+  for i := 0 to lsFoundedFiles.Items.Count - 1 do
+    if lsFoundedFiles.Selected[i] then
+    begin
+      Str := Str + lsFoundedFiles.Items[i];
+      if lsFoundedFiles.SelCount > 1 then Str := Str + #$0A;
+    end;
+  ClipboardSetText(Str);
 end;
 
 { TfrmFindDlg.miOpenInNewTabClick }
