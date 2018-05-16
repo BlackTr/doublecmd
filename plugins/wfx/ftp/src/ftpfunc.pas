@@ -42,7 +42,9 @@ type
     UserName: AnsiString;
     Password: AnsiString;
     MasterPassword: Boolean;
+    Proxy: String;
     PassiveMode: Boolean;
+    OnlySCP: Boolean;
     AutoTLS: Boolean;
     FullSSL: Boolean;
     OpenSSH: Boolean;
@@ -52,6 +54,7 @@ type
     ShowHiddenItems: Boolean;
     PasswordChanged: Boolean;
     KeepAliveTransfer: Boolean;
+    PublicKey, PrivateKey: String;
   public
     procedure Assign(Connection: TConnection);
   end;
@@ -113,7 +116,7 @@ implementation
 
 uses
   IniFiles, StrUtils, FtpAdv, FtpUtils, FtpConfDlg, syncobjs, LazFileUtils,
-  LazUTF8, DCClassesUtf8, SftpSend, ScpSend;
+  LazUTF8, DCClassesUtf8, SftpSend, ScpSend, FtpProxy;
 
 var
   DefaultIniName: String;
@@ -162,18 +165,23 @@ begin
       Connection.Password := EmptyStr
     else
       Connection.Password := DecodeBase64(IniFile.ReadString('FTP', 'Connection' + sIndex + 'Password', EmptyStr));
+    Connection.Proxy := IniFile.ReadString('FTP', 'Connection' + sIndex + 'Proxy', EmptyStr);
     Connection.Encoding := IniFile.ReadString('FTP', 'Connection' + sIndex + 'Encoding', EmptyStr);
     Connection.PassiveMode:= IniFile.ReadBool('FTP', 'Connection' + sIndex + 'PassiveMode', True);
     Connection.AutoTLS:= IniFile.ReadBool('FTP', 'Connection' + sIndex + 'AutoTLS', False);
     Connection.FullSSL:= IniFile.ReadBool('FTP', 'Connection' + sIndex + 'FullSSL', False);
     Connection.OpenSSH:= IniFile.ReadBool('FTP', 'Connection' + sIndex + 'OpenSSH', False);
+    Connection.OnlySCP:= IniFile.ReadBool('FTP', 'Connection' + sIndex + 'OnlySCP', False);
     Connection.UseAllocate:= IniFile.ReadBool('FTP', 'Connection' + sIndex + 'UseAllocate', False);
+    Connection.PublicKey := IniFile.ReadString('FTP', 'Connection' + sIndex + 'PublicKey', EmptyStr);
+    Connection.PrivateKey := IniFile.ReadString('FTP', 'Connection' + sIndex + 'PrivateKey', EmptyStr);
     Connection.InitCommands := IniFile.ReadString('FTP', 'Connection' + sIndex + 'InitCommands', EmptyStr);
     Connection.ShowHiddenItems := IniFile.ReadBool('FTP', 'Connection' + sIndex + 'ShowHiddenItems', True);
     Connection.KeepAliveTransfer := IniFile.ReadBool('FTP', 'Connection' + sIndex + 'KeepAliveTransfer', False);
     // add connection to connection list
     ConnectionList.AddObject(Connection.ConnectionName, Connection);
   end;
+  LoadProxyList(IniFile);
 end;
 
 procedure WriteConnectionList;
@@ -199,16 +207,21 @@ begin
       IniFile.DeleteKey('FTP', 'Connection' + sIndex + 'Password')
     else
       IniFile.WriteString('FTP', 'Connection' + sIndex + 'Password', EncodeBase64(Connection.Password));
+    IniFile.WriteString('FTP', 'Connection' + sIndex + 'Proxy', Connection.Proxy);
     IniFile.WriteString('FTP', 'Connection' + sIndex + 'Encoding', Connection.Encoding);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'PassiveMode', Connection.PassiveMode);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'AutoTLS', Connection.AutoTLS);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'FullSSL', Connection.FullSSL);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'OpenSSH', Connection.OpenSSH);
+    IniFile.WriteBool('FTP', 'Connection' + sIndex + 'OnlySCP', Connection.OnlySCP);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'UseAllocate', Connection.UseAllocate);
+    IniFile.WriteString('FTP', 'Connection' + sIndex + 'PublicKey', Connection.PublicKey);
+    IniFile.WriteString('FTP', 'Connection' + sIndex + 'PrivateKey', Connection.PrivateKey);
     IniFile.WriteString('FTP', 'Connection' + sIndex + 'InitCommands', Connection.InitCommands);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'ShowHiddenItems', Connection.ShowHiddenItems);
     IniFile.WriteBool('FTP', 'Connection' + sIndex + 'KeepAliveTransfer', Connection.KeepAliveTransfer);
   end;
+  SaveProxyList(IniFile);
   IniFile.UpdateFile;
 end;
 
@@ -262,17 +275,15 @@ var
   sTemp: AnsiString;
 begin
   Result := False;
-  
   if FtpSend.Login then
-    begin
-      sTemp:= Connection.InitCommands;
-      while sTemp <> EmptyStr do
-        FtpSend.FTPCommand(Copy2SymbDel(sTemp, ';'));
-      if Length(Connection.Path) > 0 then
-        FtpSend.ChangeWorkingDir(FtpSend.ClientToServer(UTF8Decode(Connection.Path)));
-      Result := True;
-    end;
-   
+  begin
+    sTemp:= Connection.InitCommands;
+    while sTemp <> EmptyStr do
+      FtpSend.ExecuteCommand(Copy2SymbDel(sTemp, ';'));
+    if Length(Connection.Path) > 0 then
+      FtpSend.ChangeWorkingDir(FtpSend.ClientToServer(UTF8Decode(Connection.Path)));
+    Result := True;
+  end;
 end;
 
 function FtpConnect(const ConnectionName: AnsiString; out FtpSend: TFTPSendEx): Boolean;
@@ -314,7 +325,15 @@ begin
       begin
         Connection := TConnection(ConnectionList.Objects[I]);
         if Connection.OpenSSH then
-          FtpSend := TSftpSend.Create(Connection.Encoding)
+        begin
+          if Connection.OnlySCP then
+            FtpSend := TScpSend.Create(Connection.Encoding)
+          else begin
+            FtpSend := TSftpSend.Create(Connection.Encoding)
+          end;
+          FtpSend.PublicKey:= Connection.PublicKey;
+          FtpSend.PrivateKey:= Connection.PrivateKey;
+        end
         else begin
           FtpSend := TFTPSendEx.Create(Connection.Encoding);
           FtpSend.ShowHidden := Connection.ShowHiddenItems;
@@ -346,6 +365,7 @@ begin
           end;
         end;
         FtpSend.Password := Connection.Password;
+        SetProxy(FtpSend, Connection.Proxy);
         // try to connect
         if FtpLogin(Connection, FtpSend) then
           begin
@@ -483,13 +503,13 @@ begin
           begin
             if Connection.MasterPassword then
             begin
-              if CryptFunc(FS_CRYPT_MOVE_PASSWORD, Connection.ConnectionName, ConnectionName) = FS_FILE_OK then
-                ConnectionList[I]:= ConnectionName
-              else begin
+              if CryptFunc(FS_CRYPT_MOVE_PASSWORD, Connection.ConnectionName, ConnectionName) <> FS_FILE_OK then
+              begin
                 gStartupInfo.MessageBox('Cannot save connection!', 'FTP', MB_OK or MB_ICONERROR);
                 Exit(False);
               end;
             end;
+            ConnectionList[I]:= ConnectionName
           end;
           if PasswordChanged then
           begin
@@ -1107,12 +1127,16 @@ begin
   Path:= Connection.Path;
   Host:= Connection.Host;
   Port:= Connection.Port;
+  Proxy:= Connection.Proxy;
   AutoTLS:= Connection.AutoTLS;
   FullSSL:= Connection.FullSSL;
   OpenSSH:= Connection.OpenSSH;
+  OnlySCP:= Connection.OnlySCP;
   UserName:= Connection.UserName;
   Password:= Connection.Password;
   Encoding:= Connection.Encoding;
+  PublicKey:= Connection.PublicKey;
+  PrivateKey:= Connection.PrivateKey;
   PassiveMode:= Connection.PassiveMode;
   UseAllocate:= Connection.UseAllocate;
   InitCommands:= Connection.InitCommands;

@@ -43,13 +43,13 @@ type
     function Connect: Boolean; override;
   public
     constructor Create(const Encoding: String); override;
+    function Login: Boolean; override;
     function Logout: Boolean; override;
     function GetCurrentDir: String; override;
     function FileSize(const FileName: String): Int64; override;
     function CreateDir(const Directory: string): Boolean; override;
     function DeleteDir(const Directory: string): Boolean; override;
     function DeleteFile(const FileName: string): Boolean; override;
-    function ExecuteCommand(const Command: String): Boolean; override;
     function ChangeWorkingDir(const Directory: string): Boolean; override;
     function RenameFile(const OldName, NewName: string): Boolean; override;
     function ChangeMode(const FileName, Mode: String): Boolean; override;
@@ -115,6 +115,12 @@ begin
   FCanResume := True;
 end;
 
+function TSftpSend.Login: Boolean;
+begin
+  Result:= Connect;
+  if Result and FAuto then DetectEncoding;
+end;
+
 function TSftpSend.Logout: Boolean;
 begin
   Result:= libssh2_sftp_shutdown(FSFTPSession) = 0;
@@ -163,11 +169,6 @@ end;
 function TSftpSend.DeleteFile(const FileName: string): Boolean;
 begin
   Result:= libssh2_sftp_unlink(FSFTPSession, PAnsiChar(FileName)) = 0;
-end;
-
-function TSftpSend.ExecuteCommand(const Command: String): Boolean;
-begin
-  Result:= False;
 end;
 
 function TSftpSend.ChangeWorkingDir(const Directory: string): Boolean;
@@ -362,7 +363,7 @@ begin
     FindRec.Handle:= Result;
     FsFindNextW(FindRec, FindData);
     Result:= FindRec;
-  end;
+end;
 end;
 
 function TSftpSend.FsFindNextW(Handle: Pointer; var FindData: TWin32FindDataW): BOOL;

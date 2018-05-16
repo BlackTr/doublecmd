@@ -11143,6 +11143,58 @@ msgstr "Извините, нет окон \"Поиск файлов\"..."
 msgid "Sorry, no other \"Find files\" window to close and free from memory..."
 msgstr "Извините, нет других окон \"Поиск файлов\"..."
 
+#: ulng.rsopenwithdevelopment
+msgid "Development"
+msgstr "Разработка"
+
+#: ulng.rsopenwitheducation
+msgid "Education"
+msgstr "Образование"
+
+#: ulng.rsopenwithgames
+msgid "Games"
+msgstr "Игры"
+
+#: ulng.rsopenwithgraphics
+msgctxt "ulng.rsopenwithgraphics"
+msgid "Graphics"
+msgstr "Графика"
+
+#: ulng.rsopenwithmultimedia
+msgid "Multimedia"
+msgstr "Мультимедиа"
+
+#: ulng.rsopenwithnetwork
+msgctxt "ulng.rsopenwithnetwork"
+msgid "Network"
+msgstr "Сеть"
+
+#: ulng.rsopenwithoffice
+msgid "Office"
+msgstr "Офис"
+
+#: ulng.rsopenwithother
+msgctxt "ulng.rsopenwithother"
+msgid "Other"
+msgstr "Другое"
+
+#: ulng.rsopenwithscience
+msgid "Science"
+msgstr "Наука"
+
+#: ulng.rsopenwithsettings
+msgid "Settings"
+msgstr "Настройки"
+
+#: ulng.rsopenwithsystem
+msgctxt "ulng.rsopenwithsystem"
+msgid "System"
+msgstr "Система"
+
+#: ulng.rsopenwithutility
+msgid "Accessories"
+msgstr "Инструменты"
+
 #: ulng.rsoperaborted
 msgid "Aborted"
 msgstr "Прервано"

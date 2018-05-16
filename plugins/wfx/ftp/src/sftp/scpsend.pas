@@ -36,6 +36,8 @@ type
 
   TScpSend = class(TFTPSendEx)
   private
+    FAutoDetect: Boolean;
+    FListCommand: String;
     FChannel: PLIBSSH2_CHANNEL;
   private
     function OpenChannel: Boolean;
@@ -52,6 +54,8 @@ type
     SourceName, TargetName: PWideChar;
     procedure DoProgress(Percent: Int64);
   protected
+    procedure DetectEncoding;
+    function AuthKey: Boolean;
     function Connect: Boolean; override;
   public
     constructor Create(const Encoding: String); override;
@@ -80,10 +84,12 @@ implementation
 
 uses
   CTypes, LazUTF8, FtpFunc, DCStrUtils, DCClassesUtf8, DCOSUtils, DCDateTimeUtils,
-  DCBasicTypes;
+  DCBasicTypes, DCConvertEncoding, FileUtil, Base64, LConvEncoding;
 
 const
   SMB_BUFFER_SIZE = 131072;
+  LIST_TIME_STYLE = ' --time-style=+%Y.%m.%d-%H:%M:%S';
+  LIST_LOCALE_C   = 'export LC_TIME=C' + #10 + 'export LC_MESSAGES=C' + #10;
 
 procedure userauth_kbdint(const name: PAnsiChar; name_len: cint;
                           const instruction: PAnsiChar; instruction_len: cint;
@@ -124,7 +130,7 @@ begin
         Title:= Sender.ServerToClient(S) + #32;
       end;
       SetLength(Password, MAX_PATH + 1);
-      Title+= 'sftp://' + UTF8ToUTF16(Sender.UserName + '@' + Sender.TargetHost);
+      Title+= 'ssh://' + UTF8ToUTF16(Sender.UserName + '@' + Sender.TargetHost);
       if not RequestProc(PluginNumber, RT_Password, PWideChar(Title), PWideChar(Message), PWideChar(Password), MAX_PATH) then
       begin
         responses[I].text:= nil;
@@ -146,9 +152,8 @@ function TScpSend.OpenChannel: Boolean;
 begin
   repeat
     FChannel := libssh2_channel_open_session(FSession);
-    if Assigned(FChannel) then
-      libssh2_channel_set_blocking(FChannel, 0)
-    else begin
+    if not Assigned(FChannel) then
+    begin
       FLastError:= libssh2_session_last_errno(FSession);
       if (FLastError <> LIBSSH2_ERROR_EAGAIN) then Exit(False);
     end;
@@ -213,6 +218,74 @@ begin
     raise EUserAbort.Create(EmptyStr);
 end;
 
+procedure TScpSend.DetectEncoding;
+begin
+  if SendCommand('echo $LANG $LC_CTYPE $LC_ALL', FAnswer) then
+  begin
+    FAuto:= False;
+    if Pos('UTF-8', FAnswer) > 0 then
+    begin
+      Encoding:= EncodingUTF8;
+    end;
+  end;
+end;
+
+function TScpSend.AuthKey: Boolean;
+const
+  Alphabet = ['a'..'z','A'..'Z','0'..'9','+','/','=', #10, #13];
+var
+  Index: Integer;
+  Memory: PAnsiChar;
+  PrivateStream: String;
+  Encrypted: Boolean = False;
+  Passphrase: AnsiString = '';
+  Title, Message, Password: UnicodeString;
+begin
+  PrivateStream:= ReadFileToString(FPrivateKey);
+  // Check private key format
+  Index:= Pos(#10, PrivateStream);
+  if Index = 0 then Index:= Pos(#13, PrivateStream);
+  if Index > 0 then begin
+    // Skip first line and empty lines
+    Memory:= Pointer(@PrivateStream[Index]) + 1;
+    while Memory^ in [#10, #13] do Inc(Memory);
+    // Check old private key format
+    for Index:= 0 to 31 do
+    begin
+      if (not (Memory[Index] in Alphabet)) then
+      begin
+        Encrypted:= True;
+        Break;
+      end;
+    end;
+    // Check new OpenSSH private key format
+    if not Encrypted then
+    begin
+      if Pos('-----BEGIN OPENSSH PRIVATE KEY-----', PrivateStream) > 0 then
+      begin
+        Passphrase:= DecodeStringBase64(Memory);
+        Index:= Pos('bcrypt', Passphrase);
+        Encrypted:= (Index > 0) and (Index <= 64);
+      end;
+    end;
+  end;
+  // Private key encrypted, request pass phrase
+  if Encrypted then
+  begin
+    SetLength(Password, MAX_PATH + 1);
+    Message:= 'Private key pass phrase:';
+    Title+= 'ssh://' + UTF8ToUTF16(FUserName + '@' + FTargetHost);
+    if RequestProc(PluginNumber, RT_Password, PWideChar(Title), PWideChar(Message), PWideChar(Password), MAX_PATH) then
+    begin
+      Passphrase:= ClientToServer(Password);
+    end;
+  end;
+  Result:= libssh2_userauth_publickey_fromfile(FSession, PAnsiChar(FUserName),
+                                               PAnsiChar(CeUtf8ToSys(FPublicKey)),
+                                               PAnsiChar(CeUtf8ToSys(FPrivateKey)),
+                                               PAnsiChar(Passphrase)) = 0;
+end;
+
 function TScpSend.Connect: Boolean;
 const
   HOSTKEY_SIZE = 20;
@@ -241,6 +314,8 @@ begin
         DoStatus(False, 'Cannot establishing SSH session');
         Exit(False);
       end;
+      LogProc(PluginNumber, MSGTYPE_CONNECT, nil);
+
       DoStatus(False, 'Connection established');
       FingerPrint := libssh2_hostkey_hash(FSession, LIBSSH2_HOSTKEY_HASH_SHA1);
       S:= 'Server fingerprint:';
@@ -253,11 +328,19 @@ begin
       //* check what authentication methods are available */
       userauthlist := libssh2_userauth_list(FSession, PAnsiChar(FUserName), Length(FUserName));
 
-      if (strpos(userauthlist, 'password') <> nil) then
+      if (strpos(userauthlist, 'publickey') <> nil) and (FPublicKey <> '') and (FPrivateKey <> '') then
+      begin
+        DoStatus(False, 'Auth via public key for user: ' + FUserName);
+        if not AuthKey then begin
+          LogProc(PluginNumber, msgtype_importanterror, 'Authentication by publickey failed');
+          Exit(False);
+        end;
+      end
+      else if (strpos(userauthlist, 'password') <> nil) then
       begin
         I:= libssh2_userauth_password(FSession, PAnsiChar(FUserName), PAnsiChar(FPassword));
         if I <> 0 then begin
-          DoStatus(False, 'Authentication by password failed');
+          LogProc(PluginNumber, msgtype_importanterror, 'Authentication by password failed');
           Exit(False);
         end;
       end
@@ -267,15 +350,10 @@ begin
         libssh2_session_set_timeout(FSession, 0);
         I:= libssh2_userauth_keyboard_interactive(FSession, PAnsiChar(FUserName), @userauth_kbdint);
         if I <> 0 then begin
-          DoStatus(False, 'Authentication by keyboard-interactive failed');
+          LogProc(PluginNumber, msgtype_importanterror, 'Authentication by keyboard-interactive failed');
           Exit(False);
         end;
         libssh2_session_set_timeout(FSession, FTimeout);
-      end
-      else if (strpos(userauthlist, 'publickey') <> nil) then
-      begin
-        DoStatus(False, 'Authentication by publickey is not supported!');
-        Exit(False);
       end;
 
       DoStatus(False, 'Authentication succeeded');
@@ -293,11 +371,37 @@ begin
   FCurrentDir:= '/';
   inherited Create(Encoding);
   FTargetPort:= '22';
+  FListCommand:= 'ls -la';
 end;
 
 function TScpSend.Login: Boolean;
+var
+  ACommand: String;
 begin
   Result:= Connect;
+  if Result then
+  begin
+    if not FAutoDetect then
+    begin
+      FAutoDetect:= True;
+      // Try to use custom time style
+      ACommand:= LIST_LOCALE_C + FListCommand + LIST_TIME_STYLE;
+      if SendCommand(ACommand + ' > /dev/null', FAnswer) then
+      begin
+        FListCommand:= ACommand;
+        FFtpList.Masks.Insert(0, 'pppppppppp $!!!S* YYYY MM DD hh mm ss $n*');
+      end
+      else begin
+        // Try to use 'C' locale
+        ACommand:= LIST_LOCALE_C + FListCommand;
+        if SendCommand(ACommand + ' > /dev/null', FAnswer) then
+        begin
+          FListCommand:= ACommand
+        end;
+      end;
+    end;
+    if FAuto then DetectEncoding;
+  end;
 end;
 
 function TScpSend.Logout: Boolean;
@@ -338,8 +442,35 @@ begin
 end;
 
 function TScpSend.ExecuteCommand(const Command: String): Boolean;
+var
+  Index: Integer;
+  Answer: TStringList;
 begin
-  Result:= SendCommand(Command, FAnswer);
+  FDataStream.Clear;
+  Result:= OpenChannel;
+  if Result then
+  begin
+    DoStatus(False, Command);
+    Result:= SendCommand('cd ' + EscapeNoQuotes(FCurrentDir) + ' && ' + Command);
+    if Result then
+    begin
+      Result:= DataRead(FDataStream);
+      if Result then
+      begin
+        FDataStream.Position:= 0;
+        Answer:= TStringList.Create;
+        try
+          Answer.LoadFromStream(FDataStream);
+          for Index:= 0 to Answer.Count - 1 do
+            DoStatus(True, Answer.Strings[Index]);
+        finally
+          Answer.Free;
+        end;
+      end;
+      FDataStream.Clear;
+    end;
+    CloseChannel(FChannel);
+  end;
 end;
 
 function TScpSend.ChangeWorkingDir(const Directory: string): Boolean;
@@ -423,7 +554,13 @@ begin
       end;
       DoProgress((FileSize - TotalBytesToWrite) * 100 div FileSize);
     end;
-    Result:= True;
+    // Close remote file
+    repeat
+      FLastError:= libssh2_channel_send_eof(TargetHandle);
+      DoProgress(100);
+      FSock.CanRead(10);
+    until FLastError <> LIBSSH2_ERROR_EAGAIN;
+    Result:= (FLastError = 0);
   finally
     SendStream.Free;
     FreeMem(FBuffer);
@@ -504,7 +641,7 @@ begin
     Ret:= libssh2_channel_read(FChannel, ABuffer, 256);
     ERet:= libssh2_channel_read_stderr(FChannel, AEBuffer, 256);
     if (ERet > 0) then begin
-      DoStatus(True, AEBuffer);
+      LogProc(PluginNumber, msgtype_importanterror, PWideChar(ServerToClient(AEBuffer)));
     end;
     if Ret > 0 then DestStream.Write(ABuffer, Ret);
   until not ((Ret > 0) or (Ret = LIBSSH2_ERROR_EAGAIN));
@@ -521,7 +658,7 @@ begin
     if Directory <> '' then begin
       Directory := ' ' + EscapeNoQuotes(Directory);
     end;
-    Result:= SendCommand('ls -la' + Directory);
+    Result:= SendCommand(FListCommand + Directory);
     if Result then
     begin
       Result:= DataRead(FDataStream);
