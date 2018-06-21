@@ -100,6 +100,7 @@ type
     cbTextRegExp: TCheckBox;
     cbFindInArchive: TCheckBox;
     cbOpenedTabs: TCheckBox;
+    chkHex: TCheckBox;
     cmbExcludeDirectories: TComboBoxWithDelItems;
     cmbNotOlderThanUnit: TComboBox;
     cmbFileSizeUnit: TComboBox;
@@ -211,6 +212,7 @@ type
     procedure cbRegExpChange(Sender: TObject);
     procedure cbTextRegExpChange(Sender: TObject);
     procedure cbSelectedFilesChange(Sender: TObject);
+    procedure chkHexChange(Sender: TObject);
     procedure cmbEncodingSelect(Sender: TObject);
     procedure cbFindTextChange(Sender: TObject);
     procedure cbUsePluginChange(Sender: TObject);
@@ -766,6 +768,7 @@ end;
 { TfrmFindDlg.cbFindTextChange }
 procedure TfrmFindDlg.cbFindTextChange(Sender: TObject);
 begin
+  EnableControl(chkHex, cbFindText.Checked);
   EnableControl(cmbFindText, cbFindText.Checked);
   EnableControl(cmbEncoding, cbFindText.Checked);
   EnableControl(cbCaseSens, cbFindText.Checked);
@@ -843,6 +846,7 @@ begin
 
   // find/replace text
   // do not clear search/replace text just clear checkbox
+  chkHex.Checked := False;
   cbFindText.Checked := False;
   cbReplaceText.Checked := False;
   cbCaseSens.Checked := False;
@@ -1005,6 +1009,21 @@ begin
   cmbFindPathStart.Enabled := not cbSelectedFiles.Checked;
 end;
 
+procedure TfrmFindDlg.chkHexChange(Sender: TObject);
+begin
+  if chkHex.Checked then
+  begin
+    cbCaseSens.Checked:= True;
+    cmbEncoding.ItemIndex:= 0;
+    cbTextRegExp.Checked:= False;
+    cbReplaceText.Checked:= False;
+  end;
+  cbCaseSens.Enabled:= not chkHex.Checked;
+  cmbEncoding.Enabled:= not chkHex.Checked;
+  cbTextRegExp.Enabled:= not chkHex.Checked;
+  cbReplaceText.Enabled:= not chkHex.Checked;
+end;
+
 { TfrmFindDlg.btnSelDirClick }
 procedure TfrmFindDlg.btnSelDirClick(Sender: TObject);
 var
@@ -1090,6 +1109,7 @@ begin
     FindText := cmbFindText.Text;
     IsReplaceText := cbReplaceText.Checked;
     ReplaceText := cmbReplaceText.Text;
+    HexValue := chkHex.Checked;
     CaseSensitive := cbCaseSens.Checked;
     NotContainingText := cbNotContainingText.Checked;
     TextRegExp := cbTextRegExp.Checked;
@@ -1387,6 +1407,17 @@ begin
     if not mbDirectoryExists(sPath) then
     begin
       ShowMessage(Format(rsFindDirNoEx, [sPath]));
+      Exit;
+    end;
+  end;
+
+  if (cbFindText.Checked and chkHex.Checked) then
+  try
+    HexToBin(cmbFindText.Text);
+  except
+    on E: EConvertError do
+    begin
+      MessageDlg(E.Message, mtError, [mbOK], 0, mbOK);
       Exit;
     end;
   end;
@@ -2013,6 +2044,7 @@ begin
     cmbFindText.Text := FindText;
     cbReplaceText.Checked := IsReplaceText;
     cmbReplaceText.Text := ReplaceText;
+    chkHex.Checked := HexValue;
     cbCaseSens.Checked := CaseSensitive;
     cbNotContainingText.Checked := NotContainingText;
     cbTextRegExp.Checked := TextRegExp;

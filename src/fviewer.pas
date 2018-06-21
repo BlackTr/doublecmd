@@ -310,6 +310,7 @@ type
     procedure CutToImage;
     procedure Res(W, H: integer);
     procedure RedEyes;
+    procedure DeleteCurrentFile;
     procedure EnableActions(AEnabled: Boolean);
     procedure SaveImageAs (Var sExt: String; senderSave: boolean; Quality: integer);
     procedure CreatePreview(FullPathToFile:string; index:integer; delete: boolean = false);
@@ -435,6 +436,8 @@ begin
   Viewer := TfrmViewer.Create(Application, aFileSource);
   Viewer.FileList.Assign(FilesToView);// Make a copy of the list
   Viewer.DrawPreview.RowCount:= Viewer.FileList.Count;
+  Viewer.actMoveFile.Enabled := FilesToView.Count > 1;
+  Viewer.actDeleteFile.Enabled := FilesToView.Count > 1;
   with Viewer.ViewerControl do
   case gViewerMode of
     1: Mode:= vcmText;
@@ -536,26 +539,29 @@ var
   aName: String;
   dwFileAttributes: TFileAttrs;
 begin
+  FLastSearchPos := -1;
+  Caption := aFileName;
+  ViewerControl.FileName := EmptyStr;
+
+  // Clear text on status bar.
+  for i := 0 to Status.Panels.Count - 1 do
+    Status.Panels[i].Text := '';
+
   dwFileAttributes := mbFileGetAttr(aFileName);
 
   if dwFileAttributes = faInvalidAttributes then
   begin
-    ShowMessage(rsMsgErrNoFiles);
+    ActivatePanel(pnlFolder);
+    memFolder.Font.Color:= clRed;
+    memFolder.Lines.Text:= rsMsgErrNoFiles;
     Exit;
   end;
-
-  FLastSearchPos := -1;
-  Caption := aFileName;
 
   if bQuickView then
   begin
     iActiveFile := 0;
     FileList.Text := aFileName;
   end;
-
-  // Clear text on status bar.
-  for i := 0 to Status.Panels.Count - 1 do
-    Status.Panels[i].Text := '';
 
   Screen.Cursor:= crHourGlass;
   try
@@ -1016,12 +1022,28 @@ begin
   tmp.Free;
 end;
 
+procedure TfrmViewer.DeleteCurrentFile;
+begin
+  CreatePreview(FileList.Strings[iActiveFile], iActiveFile, true);
+  mbDeleteFile(FileList.Strings[iActiveFile]);
+  FileList.Delete(iActiveFile);
+
+  actMoveFile.Enabled := FileList.Count > 1;
+  actDeleteFile.Enabled := FileList.Count > 1;
+  if iActiveFile >= FileList.Count then
+    iActiveFile:= FileList.Count;
+
+  LoadFile(iActiveFile);
+  DrawPreview.Repaint;
+  SplitterChangeBounds;
+end;
+
 procedure TfrmViewer.EnableActions(AEnabled: Boolean);
 begin
   actSave.Enabled:= AEnabled;
   actCopyFile.Enabled:= AEnabled;
-  actMoveFile.Enabled:= AEnabled;
-  actDeleteFile.Enabled:= AEnabled;
+  actMoveFile.Enabled:= AEnabled and (FileList.Count > 1);
+  actDeleteFile.Enabled:= AEnabled and (FileList.Count > 1);
 end;
 
 procedure TfrmViewer.CutToImage;
@@ -1195,12 +1217,7 @@ begin
           CopyFile(FileList.Strings[iActiveFile],FModSizeDialog.Path+PathDelim+ExtractFileName(FileList.Strings[iActiveFile]));
           if AViewerAction = vcmaMove then
           begin
-            CreatePreview(FileList.Strings[iActiveFile], iActiveFile, true);
-            mbDeleteFile(FileList.Strings[iActiveFile]);
-            FileList.Delete(iActiveFile);
-            LoadFile(iActiveFile);
-            DrawPreview.Repaint;
-            SplitterChangeBounds;
+            DeleteCurrentFile;
           end;
         end;
     end;
@@ -2056,16 +2073,18 @@ var
 begin
   // in first use create dialog
   if not Assigned(FFindDialog) then
-     FFindDialog:= TfrmFindView.Create(Application);
+     FFindDialog:= TfrmFindView.Create(Self);
 
-  if (bQuickSearch and gFirstTextSearch) or not bQuickSearch then
+  if (bQuickSearch and gFirstTextSearch) or (not bQuickSearch) or (bPlugin and FFindDialog.chkHex.Checked) then
     begin
       if bPlugin then
-        begin
-          // if plugin has specific search dialog
-          if WlxPlugins.GetWLxModule(ActivePlugin).CallListSearchDialog(0) = LISTPLUGIN_OK then
-            Exit;
-        end;
+      begin
+        FFindDialog.chkHex.Checked:= False;
+        // if plugin has specific search dialog
+        if WlxPlugins.GetWLxModule(ActivePlugin).CallListSearchDialog(0) = LISTPLUGIN_OK then
+          Exit;
+      end;
+      FFindDialog.chkHex.Visible:= not bPlugin;
       // Load search history
       FFindDialog.cbDataToFind.Items.Assign(glsSearchHistory);
       sSearchTextU:= ViewerControl.Selection;
@@ -2080,12 +2099,12 @@ begin
     end
   else
     begin
-      if bPlugin then
-        begin
-          // if plugin has specific search dialog
-          if WlxPlugins.GetWLxModule(ActivePlugin).CallListSearchDialog(1) = LISTPLUGIN_OK then
-            Exit;
-        end;
+        if bPlugin then
+          begin
+            // if plugin has specific search dialog
+            if WlxPlugins.GetWLxModule(ActivePlugin).CallListSearchDialog(1) = LISTPLUGIN_OK then
+              Exit;
+          end;
       if glsSearchHistory.Count > 0 then
         sSearchTextU:= glsSearchHistory[0];
     end;
@@ -2100,7 +2119,17 @@ begin
   else
     begin
       T:= GetTickCount64;
-      sSearchTextA:= ViewerControl.ConvertFromUTF8(sSearchTextU);
+      if not FFindDialog.chkHex.Checked then
+        sSearchTextA:= ViewerControl.ConvertFromUTF8(sSearchTextU)
+      else try
+        sSearchTextA:= HexToBin(sSearchTextU);
+      except
+        on E: EConvertError do
+        begin
+          msgError(E.Message);
+          Exit;
+        end;
+      end;
 
       // Choose search start position.
       if not bSearchBackwards then
@@ -2120,8 +2149,8 @@ begin
           FLastSearchPos := FLastSearchPos - iSearchParameter;
       end;
 
-      // Using standard search algorithm if case sensitive and multibyte
-      if FFindDialog.cbCaseSens.Checked and (ViewerControl.Encoding in ViewerEncodingMultiByte) then
+      // Using standard search algorithm if hex or case sensitive and multibyte
+      if FFindDialog.chkHex.Checked or (FFindDialog.cbCaseSens.Checked and (ViewerControl.Encoding in ViewerEncodingMultiByte)) then
       begin
         PAnsiAddr := PosMem(ViewerControl.GetDataAdr, ViewerControl.FileSize,
                             FLastSearchPos, sSearchTextA,
@@ -2358,12 +2387,7 @@ procedure TfrmViewer.cm_DeleteFile(const Params: array of string);
 begin
   if actDeleteFile.Enabled and msgYesNo(Format(rsMsgDelSel, [FileList.Strings[iActiveFile]])) then
   begin
-    CreatePreview(FileList.Strings[iActiveFile], iActiveFile, true);
-    mbDeleteFile(FileList.Strings[iActiveFile]);
-    FileList.Delete(iActiveFile);
-    LoadFile(iActiveFile);
-    DrawPreview.Repaint;
-    SplitterChangeBounds;
+    DeleteCurrentFile;
   end;
 end;
 
@@ -2648,12 +2672,12 @@ end;
 
 procedure TfrmViewer.cm_FindNext(const Params: array of string);
 begin
-  DoSearch(True, False);
+  if not miGraphics.Checked then DoSearch(True, False);
 end;
 
 procedure TfrmViewer.cm_FindPrev(const Params: array of string);
 begin
-  DoSearch(True, True);
+  if not miGraphics.Checked then DoSearch(True, True);
 end;
 
 procedure TfrmViewer.cm_Preview(const Params: array of string);
