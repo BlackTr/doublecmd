@@ -10,6 +10,7 @@ uses
   uFileSourceCopyOperation,
   uFileSource,
   uFileSourceOperation,
+  uFileSourceOperationUI,
   uFileSourceOperationOptions,
   uFileSourceOperationOptionsUI,
   uFile,
@@ -65,6 +66,10 @@ type
     procedure LogMessage(const sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
 
   protected
+    FCurrentFilePath: String;
+    FCurrentTargetFilePath: String;
+    procedure QuestionActionHandler(Action: TFileSourceOperationUIAction);
+
     procedure SetProcessDataProc(hArcData: TArcHandle);
 
   public
@@ -91,7 +96,7 @@ implementation
 
 uses
   Forms, LazUTF8, uMasks, FileUtil, contnrs, DCOSUtils, DCStrUtils, uDCUtils,
-  uFileSourceOperationUI, fWcxArchiveCopyOperationOptions, uFileSystemUtil,
+  fWcxArchiveCopyOperationOptions, uFileSystemUtil,
   uFileProcs, uLng, DCDateTimeUtils, DCBasicTypes, uShowMsg, DCConvertEncoding;
 
 // ----------------------------------------------------------------------------
@@ -108,7 +113,7 @@ threadvar
   WcxCopyOutOperationT: TWcxArchiveCopyOutOperation;
 
 function ProcessDataProc(WcxCopyOutOperation: TWcxArchiveCopyOutOperation;
-                         FileName: String; Size: LongInt): LongInt;
+                         FileName: String; Size: LongInt; UpdateName: Pointer): LongInt;
 begin
   //DCDebug('Working (' + IntToStr(GetCurrentThreadId) + ') ' + FileName + ' Size = ' + IntToStr(Size));
 
@@ -121,6 +126,10 @@ begin
 
     with WcxCopyOutOperation.FStatistics do
     begin
+      // Update file name
+      if Assigned(UpdateName) then begin
+        CurrentFileFrom:= FileName;
+      end;
       // Get the number of bytes processed since the previous call
       if Size > 0 then
       begin
@@ -132,7 +141,6 @@ begin
       // Get progress percent value to directly set progress bar
       else if Size < 0 then
       begin
-        CurrentFileFrom:= FileName;
         // Total operation percent
         if (Size >= -100) and (Size <= -1) then
           begin
@@ -156,22 +164,22 @@ end;
 
 function ProcessDataProcAG(FileName: PAnsiChar; Size: LongInt): LongInt; dcpcall;
 begin
-  Result:= ProcessDataProc(WcxCopyOutOperationG, CeSysToUtf8(StrPas(FileName)), Size);
+  Result:= ProcessDataProc(WcxCopyOutOperationG, CeSysToUtf8(StrPas(FileName)), Size, FileName);
 end;
 
 function ProcessDataProcWG(FileName: PWideChar; Size: LongInt): LongInt; dcpcall;
 begin
-  Result:= ProcessDataProc(WcxCopyOutOperationG, UTF16ToUTF8(UnicodeString(FileName)), Size);
+  Result:= ProcessDataProc(WcxCopyOutOperationG, UTF16ToUTF8(UnicodeString(FileName)), Size, FileName);
 end;
 
 function ProcessDataProcAT(FileName: PAnsiChar; Size: LongInt): LongInt; dcpcall;
 begin
-  Result:= ProcessDataProc(WcxCopyOutOperationT, CeSysToUtf8(StrPas(FileName)), Size);
+  Result:= ProcessDataProc(WcxCopyOutOperationT, CeSysToUtf8(StrPas(FileName)), Size, FileName);
 end;
 
 function ProcessDataProcWT(FileName: PWideChar; Size: LongInt): LongInt; dcpcall;
 begin
-  Result:= ProcessDataProc(WcxCopyOutOperationT, UTF16ToUTF8(UnicodeString(FileName)), Size);
+  Result:= ProcessDataProc(WcxCopyOutOperationT, UTF16ToUTF8(UnicodeString(FileName)), Size, FileName);
 end;
 
 // ----------------------------------------------------------------------------
@@ -537,14 +545,36 @@ begin
   end;
 end;
 
+procedure TWcxArchiveCopyOutOperation.QuestionActionHandler(
+  Action: TFileSourceOperationUIAction);
+var
+  aFile: TFile;
+begin
+  if Action = fsouaCompare then
+  begin
+    aFile := TFile.Create('');
+    try
+      aFile.FullPath := IncludeFrontPathDelimiter(FCurrentFilePath);
+      ShowCompareFilesUI(aFile, FCurrentTargetFilePath);
+    finally
+      aFile.Free;
+    end;
+  end;
+end;
+
 function TWcxArchiveCopyOutOperation.DoFileExists(Header: TWcxHeader;
   var AbsoluteTargetFileName: String): TFileSourceOperationOptionFileExists;
 const
-  PossibleResponses: array[0..9] of TFileSourceOperationUIResponse
+  Responses: array[0..10] of TFileSourceOperationUIResponse
+    = (fsourOverwrite, fsourSkip, fsourOverwriteLarger, fsourOverwriteAll,
+       fsourSkipAll, fsourOverwriteSmaller, fsourOverwriteOlder, fsourCancel,
+       fsouaCompare, fsourRenameSource, fsourAutoRenameSource);
+  ResponsesNoCompare: array[0..9] of TFileSourceOperationUIResponse
     = (fsourOverwrite, fsourSkip, fsourOverwriteLarger, fsourOverwriteAll,
        fsourSkipAll, fsourOverwriteSmaller, fsourOverwriteOlder, fsourCancel,
        fsourRenameSource, fsourAutoRenameSource);
 var
+  PossibleResponses: array of TFileSourceOperationUIResponse;
   Answer: Boolean;
   Message: String;
 
@@ -579,10 +609,19 @@ begin
     fsoofeNone:
       repeat
         Answer := True;
+        // Can't asynchoronously extract file for comparison when multiple operations are not supported
+        // TODO: implement synchronous CopyOut to temp directory or close the connection until the question is answered
+        case FNeedsConnection of
+          True :  PossibleResponses := ResponsesNoCompare;
+          False:  PossibleResponses := Responses;
+        end;
         Message:= FileExistsMessage(AbsoluteTargetFileName, Header.FileName,
                                     Header.UnpSize, WcxFileTimeToDateTime(Header.FileTime));
+        FCurrentFilePath := Header.FileName;
+        FCurrentTargetFilePath := AbsoluteTargetFileName;
         case AskQuestion(Message, '',
-                         PossibleResponses, fsourOverwrite, fsourSkip) of
+                         PossibleResponses, fsourOverwrite, fsourSkip,
+                         @QuestionActionHandler) of
           fsourOverwrite:
             Result := fsoofeOverwrite;
           fsourSkip:

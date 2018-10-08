@@ -206,6 +206,7 @@ type
    procedure cm_CloseDuplicateTabs(const Params: array of string);
    procedure cm_NextTab(const Params: array of string);
    procedure cm_PrevTab(const Params: array of string);
+   procedure cm_ActivateTabByIndex(const Params: array of string);
    procedure cm_SaveTabs(const Params: array of string);
    procedure cm_LoadTabs(const Params: array of string);
    procedure cm_SetTabOptionNormal(const Params: array of string);
@@ -355,6 +356,8 @@ type
    procedure cm_FocusSwap(const {%H-}Params: array of string);
    procedure cm_Benchmark(const {%H-}Params: array of string);
    procedure cm_ConfigArchivers(const {%H-}Params: array of string);
+   procedure cm_ConfigTooltips(const {%H-}Params: array of string);
+   procedure cm_OpenDriveByIndex(const Params: array of string);
 
    // Internal commands
    procedure cm_ExecuteToolbarItem(const Params: array of string);
@@ -379,9 +382,8 @@ uses uFindFiles, Forms, Controls, Dialogs, Clipbrd, strutils, LCLProc, HelpIntfs
      fViewOperations, uVfsModule, uMultiListFileSource, uExceptions, uFileProcs,
      DCOSUtils, DCStrUtils, DCBasicTypes, uFileSourceCopyOperation, fSyncDirsDlg,
      uHotDir, DCXmlConfig, dmCommonData, fOptionsFrame, foptionsDirectoryHotlist,
-     fOptionsToolbar, fMainCommandsDlg, uConnectionManager, fOptionsTabs, fOptionsFavoriteTabs,
-     fTreeViewMenu, fOptionsTreeViewMenu, fOptionsTreeViewMenuColor, uArchiveFileSource,
-     fOptionsFileSearch, fOptionsHotKeys, fBenchmark, fOptionsArchivers
+     fMainCommandsDlg, uConnectionManager, fOptionsFavoriteTabs, fTreeViewMenu,
+     uArchiveFileSource, fOptionsHotKeys, fBenchmark
      {$IFDEF COLUMNSFILEVIEW_VTV}
      , uColumnsFileViewVtv
      {$ELSE}
@@ -574,12 +576,8 @@ begin
   begin
     if edtCommand.Visible then
     begin
-      if not (gCmdLine and frmMain.IsCommandLineVisible) then
-      begin
-        pnlCommand.Show;
-        pnlCmdLine.Show;
-      end;
-      edtCommand.SetFocus;
+      ShowCommandLine(True);
+
       if bNextCmdLine then
       begin
         if edtCommand.ItemIndex > 0 then
@@ -953,6 +951,8 @@ begin
   OldPosition := frmMain.edtCommand.SelStart;
   frmMain.edtCommand.Text := frmMain.edtCommand.Text + sAddedString;
   frmMain.edtCommand.SelStart := OldPosition + Length(sAddedString);
+
+  frmMain.ShowCommandLine(False);
 end;
 
 { TMainCommands.cm_AddPathToCmdLine }
@@ -1016,22 +1016,34 @@ end;
 //------------------------------------------------------
 procedure TMainCommands.cm_Exchange(const Params: array of string);
 var
-  ActiveView, NotActiveView: TFileView;
+  AFileView: TFileView;
+  NFileView: TFileView;
+  AFree, NFree: Boolean;
 begin
-  ActiveView:= frmMain.ActiveFrame;
-  NotActiveView:= frmMain.NotActiveFrame;
   with frmMain do
   begin
-    ActiveNotebook.ActivePage.RemoveComponent(ActiveView);
-    NotActiveNotebook.ActivePage.RemoveComponent(NotActiveView);
+    if (ActiveNotebook.ActivePage.LockState = tlsPathLocked) or
+       (NotActiveNotebook.ActivePage.LockState = tlsPathLocked) then
+      Exit;
 
-    ActiveNotebook.ActivePage.FileView:= NotActiveView;
-    NotActiveNotebook.ActivePage.FileView:= ActiveView;
+    AFileView:= ActiveFrame;
+    NFileView:= NotActiveFrame;
 
-    ActiveNotebook.ActivePage.InsertComponent(NotActiveView);
-    NotActiveNotebook.ActivePage.InsertComponent(ActiveView);
+    AFree:= ActiveNotebook.ActivePage.LockState <> tlsDirsInNewTab;
+    if AFree then ActiveNotebook.ActivePage.RemoveComponent(AFileView);
+
+    DoTransferPath(NFileView, ActiveNotebook);
+
+    NFree:= NotActiveNotebook.ActivePage.LockState <> tlsDirsInNewTab;
+    if NFree then NotActiveNotebook.ActivePage.RemoveComponent(NFileView);
+
+    DoTransferPath(AFileView, NotActiveNotebook);
+
+    if AFree then AFileView.Free;
+    if NFree then NFileView.Free;
+
+    ActiveFrame.SetFocus;
   end;
-  NotActiveView.SetFocus;
 end;
 
 procedure TMainCommands.cm_ExecuteToolbarItem(const Params: array of string);
@@ -1533,8 +1545,6 @@ begin
   DoActionOnMultipleTabs(Params,@DoCloseDuplicateTabs);
 end;
 
-
-
 procedure TMainCommands.cm_NextTab(const Params: array of string);
 begin
   frmMain.ActiveNotebook.ActivateNextTab;
@@ -1543,6 +1553,36 @@ end;
 procedure TMainCommands.cm_PrevTab(const Params: array of string);
 begin
   frmMain.ActiveNotebook.ActivatePrevTab;
+end;
+
+procedure TMainCommands.cm_ActivateTabByIndex(const Params: array of string);
+var
+  Param: String;
+  Index: Integer;
+  AValue: String;
+  ANotebook: TFileViewNotebook;
+begin
+  if Length(Params) <> 0 then
+  begin
+    ANotebook:= frmMain.ActiveNotebook;
+    for Param in Params do
+    begin
+      if GetParamValue(Param, 'index', AValue) then
+      begin
+        Index:= StrToIntDef(AValue, 1);
+      end
+      else if GetParamValue(Param, 'side', AValue) then
+      begin
+        if AValue = 'left' then ANotebook:= frmMain.LeftTabs
+        else if AValue = 'right' then ANotebook:= frmMain.RightTabs
+        else if AValue = 'inactive' then ANotebook:= frmMain.NotActiveNotebook;
+      end
+    end;
+    if Index = -1 then
+      ANotebook.ActivateTabByIndex(Index)
+    else
+      ANotebook.ActivateTabByIndex(Index - 1);
+  end;
 end;
 
 { TMainCommands.cm_SaveTabs }
@@ -2189,10 +2229,10 @@ var
   MsgDelSel, MsgDelFlDr : string;
   Operation: TFileSourceOperation;
   bRecycle: Boolean;
-  QueueId: TOperationsManagerQueueIdentifier;
   bConfirmation, HasConfirmationParam: Boolean;
   Param, ParamTrashCan: String;
   BoolValue: Boolean;
+  QueueId: TOperationsManagerQueueIdentifier = FreeOperationsQueueId;
 begin
   with frmMain.ActiveFrame do
   begin
@@ -2414,9 +2454,13 @@ procedure TMainCommands.cm_CheckSumVerify(const Params: array of string);
 var
   I: Integer;
   Hash: String;
+  Param: String;
+  BoolValue: Boolean;
   SelectedFiles: TFiles;
   Algorithm: THashAlgorithm;
   Operation: TFileSourceCalcChecksumOperation;
+  bConfirmation, HasConfirmationParam: Boolean;
+  QueueId: TOperationsManagerQueueIdentifier = FreeOperationsQueueId;
 begin
   // This will work only for filesystem.
   // For other file sources use temp file system when it's done.
@@ -2430,6 +2474,20 @@ begin
       // Create temp file source.
       // CopyOut ActiveFrame.FileSource to TempFileSource.
       // Do command on TempFileSource and later delete it (or leave cached on disk?)
+    end;
+
+    HasConfirmationParam := False;
+
+    for Param in Params do
+    begin
+      if GetParamBoolValue(Param, 'confirmation', BoolValue) then
+      begin
+        HasConfirmationParam := True;
+        bConfirmation := BoolValue;
+      end;
+    end;
+    if not HasConfirmationParam then begin
+      bConfirmation := focVerifyChecksum in gFileOperationsConfirmations;
     end;
 
     SelectedFiles := ActiveFrame.CloneSelectedOrActiveFiles;
@@ -2450,28 +2508,31 @@ begin
             Exit;
           end
           else begin
-            if not ShowCalcVerifyCheckSum(Hash, Algorithm) then
+            if not ShowCalcVerifyCheckSum(Hash, Algorithm, QueueId) then
               Exit;
+            bConfirmation:= False;
           end;
         end;
 
-      Operation := ActiveFrame.FileSource.CreateCalcChecksumOperation(
-                     SelectedFiles, Hash, '') as TFileSourceCalcChecksumOperation;
-
-      if Assigned(Operation) then
+      if (bConfirmation = False) or (ShowDeleteDialog(rsMsgVerifyChecksum, ActiveFrame.FileSource, QueueId)) then
       begin
-        Operation.Algorithm := Algorithm;
-        Operation.AddStateChangedListener([fsosStopped], @OnCalcChecksumStateChanged);
-        Operation.Mode := checksum_verify;
+        Operation := ActiveFrame.FileSource.CreateCalcChecksumOperation(
+                       SelectedFiles, Hash, '') as TFileSourceCalcChecksumOperation;
 
-        // Start operation.
-        OperationsManager.AddOperation(Operation);
-      end
-      else
-      begin
-        msgWarning(rsMsgNotImplemented);
+        if Assigned(Operation) then
+        begin
+          Operation.Algorithm := Algorithm;
+          Operation.AddStateChangedListener([fsosStopped], @OnCalcChecksumStateChanged);
+          Operation.Mode := checksum_verify;
+
+          // Start operation.
+          OperationsManager.AddOperation(Operation, QueueId, False);
+        end
+        else
+        begin
+          msgWarning(rsMsgNotImplemented);
+        end;
       end;
-
     finally
       if Assigned(SelectedFiles) then
         FreeAndNil(SelectedFiles);
@@ -2481,19 +2542,10 @@ end;
 
 procedure TMainCommands.cm_FocusCmdLine(const Params: array of string);
 begin
-  if frmMain.edtCommand.Visible then
-  begin
-    // Show temporarily command line on user request.
-    if (not gCmdLine) and (frmMain.IsCommandLineVisible = False) then
-    begin
-      frmMain.pnlCommand.Show;
-      frmMain.pnlCmdLine.Show;
-    end;
-
-    frmMain.edtCommand.SetFocus;
-  end;
+  frmMain.ShowCommandLine(True);
 end;
 
+{ TMainCommands.cm_FileAssoc }
 procedure TMainCommands.cm_FileAssoc(const Params: array of string);
 var
   Editor: TOptionsEditor;
@@ -2520,7 +2572,7 @@ procedure TMainCommands.cm_VisitHomePage(const Params: array of string);
 var
   ErrMsg: String = '';
 begin
-  dmHelpMgr.HTMLHelpDatabase.ShowURL('http://doublecmd.sourceforge.net','Double Commander Web Site', ErrMsg);
+  dmHelpMgr.HTMLHelpDatabase.ShowURL('https://doublecmd.sourceforge.io','Double Commander Web Site', ErrMsg);
 end;
 
 procedure TMainCommands.cm_About(const Params: array of string);
@@ -4258,15 +4310,8 @@ end;
 
 { TMainCommands.cm_ConfigToolbars }
 procedure TMainCommands.cm_ConfigToolbars(const Params: array of string);
-var
-  Editor: TOptionsEditor;
-  Options: IOptionsDialog;
 begin
-  Options := ShowOptions(TfrmOptionsToolbar);
-  Application.ProcessMessages;
-  Editor := Options.GetEditor(TfrmOptionsToolbar);
-  Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  cm_Options(['TfrmOptionsToolbar']);
 end;
 
 { TMainCommands.cm_DebugShowCommandParameters }
@@ -4573,15 +4618,8 @@ end;
 
 { TMainCommands.cm_ConfigFolderTabs }
 procedure TMainCommands.cm_ConfigFolderTabs(const Params: array of string);
-var
-  Editor: TOptionsEditor;
-  Options: IOptionsDialog;
 begin
-  Options := ShowOptions(TfrmOptionsTabs);
-  Application.ProcessMessages;
-  Editor := Options.GetEditor(TfrmOptionsTabs);
-  Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  cm_Options(['TfrmOptionsTabs']);
 end;
 
 { TMainCommands.DoShowFavoriteTabsOptions }
@@ -4737,27 +4775,14 @@ end;
 
 { TMainCommands.cm_ConfigTreeViewMenus }
 procedure TMainCommands.cm_ConfigTreeViewMenus(const {%H-}Params: array of string);
-var
-  Options: IOptionsDialog;
-  Editor: TOptionsEditor;
 begin
-  Options := ShowOptions(TfrmOptionsTreeViewMenu);
-  Editor := Options.GetEditor(TfrmOptionsTreeViewMenu);
-  Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  cm_Options(['TfrmOptionsTreeViewMenu']);
 end;
-
 
 { TMainCommands.cm_ConfigTreeViewMenusColors }
 procedure TMainCommands.cm_ConfigTreeViewMenusColors(const {%H-}Params: array of string);
-var
-  Options: IOptionsDialog;
-  Editor: TOptionsEditor;
 begin
-  Options := ShowOptions(TfrmOptionsTreeViewMenuColor);
-  Editor := Options.GetEditor(TfrmOptionsTreeViewMenuColor);
-  Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  cm_Options(['TfrmOptionsTreeViewMenuColor']);
 end;
 
 { TMainCommands.cm_ConfigSaveSettings }
@@ -4828,14 +4853,52 @@ end;
 
 { TMainCommands.cm_ConfigArchivers }
 procedure TMainCommands.cm_ConfigArchivers(const {%H-}Params: array of string);
-var
-  Editor: TOptionsEditor;
-  Options: IOptionsDialog;
 begin
-  Options := ShowOptions(TfrmOptionsArchivers);
-  Editor := Options.GetEditor(TfrmOptionsArchivers);
-  Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  cm_Options(['TfrmOptionsArchivers']);
+end;
+
+{ TMainCommands.cm_ConfigTooltip }
+procedure TMainCommands.cm_ConfigTooltips(const {%H-}Params: array of string);
+begin
+  cm_Options(['TfrmOptionsToolTips']);
+end;
+
+procedure TMainCommands.cm_OpenDriveByIndex(const Params: array of string);
+var
+  Param: String;
+  Index: Integer;
+  AValue: String;
+  SelectedPanel: TFilePanelSelect;
+begin
+  if Length(Params) > 0 then
+  begin
+    SelectedPanel:= frmMain.SelectedPanel;
+
+    for Param in Params do
+    begin
+      if GetParamValue(Param, 'index', AValue) then
+      begin
+        Index:= StrToIntDef(AValue, 1) - 1;
+      end
+      else if GetParamValue(Param, 'side', AValue) then
+      begin
+        if AValue = 'left' then SelectedPanel:= fpLeft
+        else if AValue = 'right' then SelectedPanel:= fpRight
+        else if AValue = 'inactive' then
+        begin
+          if frmMain.SelectedPanel = fpLeft then
+            SelectedPanel:= fpRight
+          else if frmMain.SelectedPanel = fpRight then
+            SelectedPanel:= fpLeft;
+        end;
+      end
+    end;
+
+    if (Index >= 0) and (Index < frmMain.Drives.Count) then
+    begin
+      frmMain.SetPanelDrive(SelectedPanel, frmMain.Drives.Items[Index], True);
+    end;
+  end;
 end;
 
 { TMainCommands.cm_AddNewSearch }
@@ -4904,14 +4967,8 @@ end;
 
 { TMainCommands.cm_ConfigSearches }
 procedure TMainCommands.cm_ConfigSearches(const Params: array of string);
-var
-  Editor: TOptionsEditor;
-  Options: IOptionsDialog;
 begin
-  Options := ShowOptions(TfrmOptionsFileSearch);
-  Editor := Options.GetEditor(TfrmOptionsFileSearch);
-  Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  cm_Options(['TfrmOptionsFileSearch']);
 end;
 
 { TMainCommands.cm_ConfigHotKeys }

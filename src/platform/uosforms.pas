@@ -129,7 +129,8 @@ uses
   , ComObj, fMain, DCOSUtils, uOSUtils, uFileSystemFileSource
   , uTotalCommander, FileUtil, Windows, ShlObj, uShlObjAdditional
   , uWinNetFileSource, uVfsModule, uLng, uMyWindows, DCStrUtils
-  , uThumbnailProvider, uDCReadSVG, uFileSourceUtil, Dialogs, Clipbrd
+  , uListGetPreviewBitmap, uThumbnailProvider, uDCReadSVG, uFileSourceUtil
+  , Dialogs, Clipbrd
   {$ENDIF}
   {$IFDEF UNIX}
   , BaseUnix, fFileProperties, uJpegThumb
@@ -319,9 +320,9 @@ begin
   end;
 
   // If parent window is normal window then call inherited method
-  if GetWindowLong(ActiveWindow, GWL_HWNDPARENT) <> 0 then
-    Result:= inherited ShowModal
-  else
+//  if GetWindowLong(ActiveWindow, GWL_HWNDPARENT) <> 0 then
+//    Result:= inherited ShowModal
+//  else
     begin
       Include(FFormState, fsModal);
       FParentWindow := ActiveWindow;

@@ -467,29 +467,30 @@ begin
     begin
       MappedFile := nil;
       MappingHandle := 0;
-      FileHandle := feInvalidHandle;
-
-      FileSize := mbFileSize(sFileName);
-      if FileSize = 0 then Exit;   // Cannot map empty files
 
       FileHandle := mbFileOpen(sFileName, fmOpenRead);
       if FileHandle = feInvalidHandle then Exit;
 
-      MappingHandle := CreateFileMapping(FileHandle, nil, PAGE_READONLY, 0, 0, nil);
-      if MappingHandle <> 0 then
+      Int64Rec(FileSize).Lo := GetFileSize(FileHandle, @Int64Rec(FileSize).Hi);
+      if FileSize = 0 then // Cannot map empty files
       begin
-        MappedFile := MapViewOfFile(MappingHandle, FILE_MAP_READ, 0, 0, 0);
-        if not Assigned(MappedFile) then
-        begin
-          UnMapFile(FileMapRec);
-          Exit;
-        end;
-      end
-      else
-        begin
-          UnMapFile(FileMapRec);
-          Exit;
-        end;
+        UnMapFile(FileMapRec);
+        Exit;
+      end;
+
+      MappingHandle := CreateFileMapping(FileHandle, nil, PAGE_READONLY, 0, 0, nil);
+      if MappingHandle = 0 then
+      begin
+        UnMapFile(FileMapRec);
+        Exit;
+      end;
+
+      MappedFile := MapViewOfFile(MappingHandle, FILE_MAP_READ, 0, 0, 0);
+      if not Assigned(MappedFile) then
+      begin
+        UnMapFile(FileMapRec);
+        Exit;
+      end;
     end;
   Result := True;
 end;
@@ -505,10 +506,10 @@ begin
 
       if FileHandle = feInvalidHandle then Exit;
       if fpfstat(FileHandle, StatInfo) <> 0 then
-        begin
-          UnMapFile(FileMapRec);
-          Exit;
-        end;
+      begin
+        UnMapFile(FileMapRec);
+        Exit;
+      end;
 
       FileSize := StatInfo.st_size;
       if FileSize = 0 then // Cannot map empty files
@@ -519,11 +520,11 @@ begin
 
       MappedFile:= fpmmap(nil,FileSize,PROT_READ, MAP_PRIVATE{SHARED},FileHandle,0 );
       if MappedFile = MAP_FAILED then
-        begin
-          MappedFile := nil;
-          UnMapFile(FileMapRec);
-          Exit;
-        end;
+      begin
+        MappedFile := nil;
+        UnMapFile(FileMapRec);
+        Exit;
+      end;
     end;
   Result := True;
 end;
@@ -1143,22 +1144,15 @@ var
   Handle: THandle;
   wsNewDir: UnicodeString;
   FindData: TWin32FindDataW;
-  NetResource: TNetResourceW;
 begin
-  // Function WNetAddConnection2W works very slow
-  // when the final character is a backslash ('\')
-  wsNewDir:= UTF8Decode(ExcludeTrailingPathDelimiter(NewDir));
-  if Pos('\\', wsNewDir) = 1 then
-  begin
-    FillChar(NetResource, SizeOf(NetResource), #0);
-    NetResource.dwType:= RESOURCETYPE_ANY;
-    NetResource.lpRemoteName:= PWideChar(wsNewDir);
-    WNetAddConnection2W(NetResource, nil, nil, CONNECT_INTERACTIVE);
+  if (Pos('\\', NewDir) = 1) then
+    Result:= True
+  else begin
+    wsNewDir:= UTF16LongName(IncludeTrailingBackslash(NewDir)) + '*';
+    Handle:= FindFirstFileW(PWideChar(wsNewDir), FindData);
+    Result:= (Handle <> INVALID_HANDLE_VALUE) or (GetLastError = ERROR_FILE_NOT_FOUND);
+    if (Handle <> INVALID_HANDLE_VALUE) then FindClose(Handle);
   end;
-  wsNewDir:= UTF16LongName(IncludeTrailingBackslash(NewDir)) + '*';
-  Handle:= FindFirstFileW(PWideChar(wsNewDir), FindData);
-  Result:= (Handle <> INVALID_HANDLE_VALUE) or (GetLastError = ERROR_FILE_NOT_FOUND);
-  if (Handle <> INVALID_HANDLE_VALUE) then FindClose(Handle);
   if Result then CurrentDirectory:= NewDir;
 end;
 {$ELSE}
