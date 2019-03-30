@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains platform depended functions.
 
-    Copyright (C) 2006-2016 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit uOSUtils;
@@ -286,9 +285,9 @@ begin
     if (log_commandlineexecution in gLogOptions) then
     begin
       if Result then
-        logWrite(rsMsgLogExtCmdResult+': '+rsSimpleWordResult+'='+'Success!'+' / '+rsSimpleWordFilename+'='+sCmd+' / '+rsSimpleWordParameter+'='+sParams+' / '+rsSimpleWordWorkDir+'='+sStartPath)
+        logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + rsSimpleWordSuccessExcla + ' / ' + rsSimpleWordFilename + '=' + sCmd + ' / ' + rsSimpleWordParameter + '=' + sParams + ' / ' + rsSimpleWordWorkDir + '=' + sStartPath)
       else
-        logWrite(rsMsgLogExtCmdResult+': '+rsSimpleWordResult+'='+'Failed!'+' / '+rsSimpleWordFilename+'='+sCmd+' / '+rsSimpleWordParameter+'='+sParams+' / '+rsSimpleWordWorkDir+'='+sStartPath);
+        logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + rsSimpleWordFailedExcla + ' / ' + rsSimpleWordFilename + '=' + sCmd + ' / ' + rsSimpleWordParameter + '=' + sParams + ' / ' + rsSimpleWordWorkDir + '=' + sStartPath);
     end;
   end
   else
@@ -337,7 +336,7 @@ begin
 
     ExecutionResult:=ShellExecuteW(0, nil, PWChar(wFileName), PWChar(wParams), PWChar(wStartPath), SW_SHOW);
 
-    if (log_commandlineexecution in gLogOptions) then logWrite(rsMsgLogExtCmdResult+': '+rsSimpleWordResult+'='+ifThen((ExecutionResult > 32),'Success!',IntToStr(ExecutionResult)+':'+SysErrorMessage(ExecutionResult))+' / '+rsSimpleWordFilename+'='+sCmd+' / '+rsSimpleWordParameter+'='+sParams+' / '+rsSimpleWordWorkDir+'='+sStartPath);
+    if (log_commandlineexecution in gLogOptions) then logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + ifThen((ExecutionResult > 32), rsSimpleWordSuccessExcla, IntToStr(ExecutionResult) + ':' + SysErrorMessage(ExecutionResult)) + ' / ' + rsSimpleWordFilename + '=' + sCmd + ' / ' + rsSimpleWordParameter + '=' + sParams + ' / ' + rsSimpleWordWorkDir + '=' + sStartPath);
 
     Result := (ExecutionResult > 32);
   end
@@ -376,9 +375,9 @@ begin
   if (log_commandlineexecution in gLogOptions) then
   begin
     if Result then
-      logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + 'Success!' + ' / ' + rsSimpleWordCommand + '=' + sCmd)
+      logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + rsSimpleWordSuccessExcla + ' / ' + rsSimpleWordCommand + '=' + sCmd)
     else
-      logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + 'Failed!' + ' / ' + rsSimpleWordCommand + '=' + sCmd);
+      logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + rsSimpleWordFailedExcla + ' / ' + rsSimpleWordCommand + '=' + sCmd);
   end;
 end;
 {$ELSE}
@@ -399,9 +398,7 @@ begin
 
   if (log_commandlineexecution in gLogOptions) then
   begin
-    logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + IfThen((ExecutionResult > 32), 'Success!',
-             IntToStr(ExecutionResult) + ':' + SysErrorMessage(ExecutionResult)) +' / ' + rsSimpleWordFilename +
-             '=' + sCmd + ' / ' + rsSimpleWordParameter + '=' + sParams);
+    logWrite(rsMsgLogExtCmdResult + ': ' + rsSimpleWordResult + '=' + IfThen((ExecutionResult > 32), rsSimpleWordSuccessExcla, IntToStr(ExecutionResult) + ':' + SysErrorMessage(ExecutionResult)) + ' / ' + rsSimpleWordFilename + '=' + sCmd + ' / ' + rsSimpleWordParameter + '=' + sParams);
   end;
 
   Result := (ExecutionResult > 32);
@@ -516,6 +513,8 @@ end;
 var
   wPath: UnicodeString;
 begin
+  FreeSize := 0;
+  TotalSize := 0;
   wPath:= UTF16LongName(Path);
   Result:= GetDiskFreeSpaceExW(PWideChar(wPath), FreeSize, TotalSize, nil);
 end;
@@ -542,9 +541,9 @@ end;
 {$ELSE}
 var
  lpVolumeNameBuffer,
- lpFileSystemNameBuffer  : array [0..255] of WideChar;
- lpMaximumComponentLength,
- lpFileSystemFlags     : DWORD;
+ lpFileSystemNameBuffer: array [0..255] of WideChar;
+ lpMaximumComponentLength: DWORD = 0;
+ lpFileSystemFlags: DWORD = 0;
 begin
  Result := High(Int64);
  if GetVolumeInformationW(PWideChar(UTF8Decode(ExtractFileDrive(Path)) + PathDelim),
@@ -877,28 +876,31 @@ function IsAvailable(Drive: PDrive; TryMount: Boolean): Boolean;
 var
   Drv: String;
   DriveLabel: String;
-  NetResource: TNetResourceW;
   wsLocalName, wsRemoteName: WideString;
 begin
   Drv:= ExtractFileDrive(Drive^.Path) + PathDelim;
 
   // Try to close CD/DVD drive
-  if (GetDriveType(PChar(Drv)) = DRIVE_CDROM) and
+  if (Drive^.DriveType = dtOptical) and
      TryMount and (not mbDriveReady(Drv)) then
     begin
        DriveLabel:= mbGetVolumeLabel(Drv, False);
        mbCloseCD(Drv);
        if mbDriveReady(Drv) then
          mbWaitLabelChange(Drv, DriveLabel);
-    end;
+    end
   // Try to connect to mapped network drive
-  if (Drive^.DriveType = dtNetwork) and
+  else if (Drive^.DriveType = dtNetwork) and
      TryMount and (not mbDriveReady(Drv)) then
     begin
       wsLocalName  := UTF8Decode(ExtractFileDrive(Drive^.Path));
       wsRemoteName := UTF8Decode(Drive^.DriveLabel);
       TNetworkThread.Connect(PWideChar(wsLocalName), PWideChar(wsRemoteName), RESOURCETYPE_DISK);
-    end;
+    end
+  // Try to unlock BitLocker Drive
+  else if TryMount then begin
+    mbDriveUnlock(Drive^.Path);
+  end;
   Result:= mbDriveReady(Drv);
 end;
 {$ELSEIF DEFINED(DARWIN)}
@@ -999,7 +1001,7 @@ begin
 end;
 {$ELSE}
 begin
-  Result:= SysToUTF8(GetEnvironmentVariable(UTF8ToSys(sName)));
+  Result:= CeSysToUtf8(getenv(PAnsiChar(CeUtf8ToSys(sName))));
 end;
 {$ENDIF}
 

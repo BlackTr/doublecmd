@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Options frame page
 
-   Copyright (C) 2006-2016 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2019  Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,9 +15,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit fOptionsFrame;
@@ -151,6 +150,7 @@ uses
   fOptionsFilePanelsColors,
   fOptionsFileTypesColors,
   fOptionsFilesViews,
+  fOptionsFilesViewsComplement,
   fOptionsFonts,
   fOptionsGroups,
   fOptionsHotkeys,
@@ -162,13 +162,19 @@ uses
   fOptionsLog,
   fOptionsMisc,
   fOptionsMouse,
-  fOptionsPlugins,
+  fOptionsPluginsGroup,
+  fOptionsPluginsDSX,
+  fOptionsPluginsWCX,
+  fOptionsPluginsWDX,
+  fOptionsPluginsWFX,
+  fOptionsPluginsWLX,
   fOptionsQuickSearchFilter,
   fOptionsTabs,
   fOptionsFavoriteTabs,
   fOptionsTabsExtra,
   fOptionsTerminal,
   fOptionsToolbar,
+  fOptionsToolbarExtra,
   fOptionsTools,
   fOptionsToolsEditor,
   fOptionsToolsDiffer,
@@ -176,7 +182,8 @@ uses
   fOptionsToolTips,
   fOptionsFileAssoc,
   fOptionsFileAssocExtra,
-  fOptionsDirectoryHotlist;
+  fOptionsDirectoryHotlist,
+  fOptionsDirectoryHotlistExtra;
 
 { TOptionsEditorRec }
 
@@ -348,7 +355,8 @@ procedure MakeEditorsClassList;
 var
   Main: TOptionsEditorClassList absolute OptionsEditorClassList;
   Colors, ColumnsView, FilesViews, Keyboard, Layout, Mouse, Tools, Editor,
-  FileAssoc, FileOperation, FolderTabs: TOptionsEditorRec;
+  FileAssoc, ToolbarConfig, FileOperation, FolderTabs, Plugins,
+  DirectoryHotlistConfig: TOptionsEditorRec;
 begin
   Main.Add(TfrmOptionsLanguage);
   Main.Add(TfrmOptionsBehavior);
@@ -367,15 +375,22 @@ begin
   Mouse := Main.Add(TfrmOptionsMouse);
   Mouse.Add(TfrmOptionsDragDrop);
   FilesViews := Main.Add(TfrmOptionsFilesViews);
+  FilesViews.Add(TfrmOptionsFilesViewsComplement);
   FilesViews.Add(TfrmOptionsBriefView);
   ColumnsView := FilesViews.Add(TfrmOptionsColumnsView);
   ColumnsView.Add(TfrmOptionsCustomColumns);
-  Main.Add(TfrmOptionsPlugins);
+  Plugins := Main.Add(TfrmOptionsPluginsGroup);
+  Plugins.Add(TfrmOptionsPluginsDSX);
+  Plugins.Add(TfrmOptionsPluginsWCX);
+  Plugins.Add(TfrmOptionsPluginsWDX);
+  Plugins.Add(TfrmOptionsPluginsWFX);
+  Plugins.Add(TfrmOptionsPluginsWLX);
   Layout := Main.Add(TfrmOptionsLayout);
   Layout.Add(TfrmOptionsDrivesListButton);
   Layout.Add(TfrmOptionsTreeViewMenu);
   Layout.Add(TfrmOptionsTreeViewMenuColor);
-  Main.Add(TfrmOptionsToolbar);
+  ToolbarConfig := Main.Add(TfrmOptionsToolbar);
+  ToolbarConfig.Add(TfrmOptionsToolbarExtra);
   FileOperation := Main.Add(TfrmOptionsFileOperations);
   FileOperation.Add(TfrmOptionsFileSearch);
   FolderTabs := Main.Add(TfrmOptionsTabs);
@@ -392,7 +407,8 @@ begin
   Main.Add(TfrmOptionsToolTips);
   FileAssoc := Main.Add(TfrmOptionsFileAssoc);
   FileAssoc.Add(TfrmOptionsFileAssocExtra);
-  Main.Add(TfrmOptionsDirectoryHotlist);
+  DirectoryHotlistConfig := Main.Add(TfrmOptionsDirectoryHotlist);
+  DirectoryHotlistConfig.Add(TfrmOptionsDirectoryHotlistExtra);
 end;
 
 initialization

@@ -93,7 +93,7 @@ uses
   StrUtils, WcxPlugin, uGlobs, uDCUtils, uFileSourceOperation, uLng, uOSUtils,
   uOperationsManager, uArchiveFileSourceUtil, uMultiArchiveFileSource,
   uWcxArchiveCopyInOperation, uMultiArchiveCopyInOperation, uMasks,
-  DCStrUtils;
+  DCStrUtils, uMultiArc;
 
 function ShowPackDlg(TheOwner: TComponent;
                      const SourceFileSource: IFileSource;
@@ -137,7 +137,8 @@ var
                 begin
                   with Operation as TWcxArchiveCopyInOperation do
                   begin
-                    PackingFlags := aFlags;
+                    PackingFlags:= aFlags;
+                    CreateNew:= bNewArchive;
                     TarBefore:= cbPutInTarFirst.Checked;
                   end;
                 end
@@ -164,6 +165,7 @@ var
                     if cbMultivolume.Checked then
                       VolumeSize:= InputBox(Caption, rsMsgVolumeSizeEnter, EmptyStr);
                     PackingFlags := aFlags;
+                    CreateNew:= bNewArchive;
                     CustomParams:= FCustomParams;
                     TarBefore:= cbPutInTarFirst.Checked;
                   end;
@@ -529,8 +531,25 @@ begin
         // If addon supports packing with password
         EnableControl(cbEncrypt, (Pos('%W', sCmd) <> 0));
 
-        // Options that supported by addons
-        EnableControl(cbPutInTarFirst, True);
+        // If archive can not contain multiple files
+        if (mafFileNameList in FFlags) then
+        begin
+          // If file list contain directory then
+          // put to the tar archive first is needed
+          if not FHasFolder then
+            cbCreateSeparateArchives.Checked:= True
+          else
+            begin
+              cbPutInTarFirst.Checked:= True;
+              EnableControl(cbPutInTarFirst, False);
+            end;
+        end
+        else begin
+          cbPutInTarFirst.Checked:= False;
+          EnableControl(cbPutInTarFirst, True);
+          cbCreateSeparateArchives.Checked:= False;
+        end;
+
         // Options that don't supported by addons
         cbStoreDir.Checked:= True;
         EnableControl(cbStoreDir, False);

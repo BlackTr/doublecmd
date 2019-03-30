@@ -59,7 +59,11 @@ type
 implementation
 
 uses
-  DCOSUtils, uLng, uFileSystemUtil, uTrash, uAdministrator, uOSUtils;
+  DCOSUtils, uLng, uFileSystemUtil, uTrash, uAdministrator, uOSUtils
+{$IF DEFINED(MSWINDOWS)}
+  , Windows,  uFileUnlock, fFileUnlock
+{$ENDIF}
+  ;
 
 constructor TFileSystemDeleteOperation.Create(aTargetFileSource: IFileSource;
                                               var theFilesToDelete: TFiles);
@@ -164,11 +168,15 @@ const
 var
   FileName: String;
   bRetry: Boolean;
+  LastError: Integer;
   RemoveDirectly: TFileSourceOperationOptionGeneral = fsoogNone;
   sMessage, sQuestion: String;
   logOptions: TLogOptions;
   DeleteResult: Boolean;
   PossibleResponses: array of TFileSourceOperationUIResponse;
+{$IF DEFINED(MSWINDOWS)}
+  ProcessInfo: TProcessInfoArray;
+{$ENDIF}
 begin
   Result := True;
   FileName := aFile.FullPath;
@@ -316,13 +324,41 @@ begin
         LogMessage(sMessage, logOptions, lmtError)
       else
       begin
+        if (FRecycle = False) or (RemoveDirectly = fsoogYes) then
+        begin
+          LastError:= GetLastOSError;
+{$IF DEFINED(MSWINDOWS)}
+          if GetFileInUseProcessFast(FileName, ProcessInfo) then
+          begin
+            sQuestion+= LineEnding + LineEnding + rsMsgOpenInAnotherProgram + LineEnding;
+            sQuestion+= LineEnding + Format(rsMsgProcessId, [ProcessInfo[0].ProcessId]) + LineEnding;
+            if (Length(ProcessInfo[0].ApplicationName) > 0) then begin
+              sQuestion+= Format(rsMsgApplicationName, [ProcessInfo[0].ApplicationName]) + LineEnding;
+            end;
+            sQuestion+= Format(rsMsgExecutablePath, [ProcessInfo[0].ExecutablePath]) + LineEnding;
+          end
+          else
+{$ENDIF}
+          sQuestion+= LineEnding + mbSysErrorMessage(LastError);
+        end;
+
         if AdministratorPrivileges then
-          PossibleResponses:= ResponsesError
+        begin
+          SetLength(PossibleResponses, Length(ResponsesError));
+          Move(ResponsesError[0], PossibleResponses[0], SizeOf(ResponsesError));
+        end
         else begin
           SetLength(PossibleResponses, Length(ResponsesError) + 1);
           Move(ResponsesError[0], PossibleResponses[0], SizeOf(ResponsesError));
           PossibleResponses[High(PossibleResponses)]:= fsourRetryAdmin;
         end;
+{$IF DEFINED(MSWINDOWS)}
+        if (Length(ProcessInfo) > 0) or (LastError = ERROR_ACCESS_DENIED) or (LastError = ERROR_SHARING_VIOLATION) then
+        begin
+          SetLength(PossibleResponses, Length(PossibleResponses) + 1);
+          PossibleResponses[High(PossibleResponses)]:= fsourUnlock;
+        end;
+{$ENDIF}
         case AskQuestion(sQuestion, '',
                          PossibleResponses,
                          fsourRetry, fsourAbort) of
@@ -334,6 +370,14 @@ begin
             RaiseAbortOperation;
           fsourRetryAdmin:
             Exit(False);
+{$IF DEFINED(MSWINDOWS)}
+          fsourUnlock:
+            begin
+              bRetry:= True;
+              GetFileInUseProcessSlow(FileName, LastError, ProcessInfo);
+              ShowUnlockForm(ProcessInfo);
+            end;
+{$ENDIF}
         end;
       end;
     end;

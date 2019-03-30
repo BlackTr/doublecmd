@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     File associations configuration
 
-    Copyright (C) 2008-2016  Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2008-2019  Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,9 +15,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit fOptionsFileAssoc;
@@ -27,9 +26,13 @@ unit fOptionsFileAssoc;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, ExtCtrls, EditBtn, uExts, ExtDlgs,
-  Menus, fOptionsFrame;
+  //Lazarus, Free-Pascal, etc.
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
+  ExtCtrls, EditBtn, ExtDlgs, Menus, ActnList, Types,
+
+  //DC
+  uGlobs, uExts, fOptionsFrame;
+
 type
 
   { TfrmOptionsFileAssoc }
@@ -111,9 +114,11 @@ type
     procedure btnRelativePathIconClick(Sender: TObject);
     procedure btnStartPathPathHelperClick(Sender: TObject);
     procedure btnStartPathVarHelperClick(Sender: TObject);
+    procedure deStartPathAcceptDirectory(Sender: TObject; var Value: String);
     procedure deStartPathChange(Sender: TObject);
     procedure edtParamsChange(Sender: TObject);
     procedure edIconFileNameChange(Sender: TObject);
+    procedure fneCommandAcceptFileName(Sender: TObject; var Value: String);
     procedure FrameResize(Sender: TObject);
     function InsertAddSingleExtensionToLists(sExt: string; iInsertPosition: integer): boolean;
     procedure InsertAddExtensionToLists(sParamExt: string; iPositionToInsert: integer);
@@ -131,6 +136,7 @@ type
     procedure lbActionsDragDrop(Sender, {%H-}Source: TObject; {%H-}X, Y: integer);
     procedure lbActionsSelectionChange(Sender: TObject; {%H-}User: boolean);
     procedure lbExtsDragDrop(Sender, {%H-}Source: TObject; X, Y: integer);
+    procedure lbGenericListDrawItem(Control: TWinControl; Index: integer; ARect: TRect; State: TOwnerDrawState);
     procedure lbExtsSelectionChange(Sender: TObject; {%H-}User: boolean);
     procedure lbFileTypesDragDrop(Sender, {%H-}Source: TObject; {%H-}X, Y: integer);
     procedure lbGenericDragOver(Sender, Source: TObject; {%H-}X, Y: integer; {%H-}State: TDragState; var Accept: boolean);
@@ -144,10 +150,21 @@ type
     procedure pnlSettingsResize(Sender: TObject);
     procedure sbtnIconClick(Sender: TObject);
     procedure MakeUsInPositionToWorkWithActiveFile;
+    procedure actSelectFileTypeExecute(Sender: TObject);
+    procedure actSelectIconExecute(Sender: TObject);
+    procedure actSelectExtensionsExecute(Sender: TObject);
+    procedure actSelectActionsExecute(Sender: TObject);
+    procedure actSelectActionDescriptionExecute(Sender: TObject);
 
   private
     Exts: TExts;
     FUpdatingControls: boolean;
+    liveActionList: TActionList;
+    actSelectFileType: TAction;
+    actSelectIcon: TAction;
+    actSelectExtensions: TAction;
+    actSelectActions: TAction;
+    actSelectActionDescription: TAction;
     procedure UpdateEnabledButtons;
     {en
        Frees icon cached in lbFileTypes.Items.Objects[Index].
@@ -164,8 +181,10 @@ type
   public
     class function GetIconIndex: integer; override;
     class function GetTitle: string; override;
-    function IsSignatureComputedFromAllWindowComponents: Boolean; override;
-    function ExtraOptionsSignature(CurrentSignature:dword):dword; override;
+    function IsSignatureComputedFromAllWindowComponents: boolean; override;
+    function ExtraOptionsSignature(CurrentSignature: dword): dword; override;
+    procedure ScanFileAssocForFilenameAndPath;
+    function GetFileAssocFilenameToSave(AFileAssocPathModifierElement: tFileAssocPathModifierElement; sParamFilename: string): string;
   end;
 
 implementation
@@ -177,7 +196,7 @@ uses
   LCLProc, Math, LCLType, LazUTF8,
 
   //DC
-  uOSForms, fMain, uFile, uGlobs, uPixMapManager, uLng, uDCUtils, DCOSUtils,
+  DCStrUtils, uOSForms, fMain, uFile, uPixMapManager, uLng, uDCUtils, DCOSUtils,
   uShowMsg, uSpecialDir;
 
 const
@@ -193,6 +212,39 @@ begin
   Exts := TExts.Create;
   FUpdatingControls := False;
   btnIconSelectFilename.Hint := sbtnIcon.Hint;
+  OpenDialog.Filter := ParseLineToFileFilter([rsFilterExecutableFiles, '*.exe;*.com;*.bat', rsFilterAnyFiles, '*.*']);
+
+  // The following section is to help to speed up the the user with keyboard to pass to a section to another.
+  // Each TGroupBox has their caption with 1, 2, 3... with underscore under each digit.
+  // This suggest to user keyboard accelerator shortcut so he will type Alt+1, Alt+2, etc to pass to a section to another.
+  // Unfortunately, at this moment in Windows at least, even if we have underscore, it does not work as keyboard accelerator...
+  // It does not switch focus to the proper TGroupbox...
+  // So what we will do is to mimic that.
+  // We will display the caption of the TGroupBox with underscore to suggest the Alt+1, Alt+2, etc.
+  // And we will add in our TActionList function to set the focus on proper TGroupBox and set the keyboard shortcut to Alt+1, Alt+2, etc.
+  // So at the end it does the job.
+  // If we defined that run-time here instead of having it in the form itself it's to avoid to have annoying empty caption yo appear in the languages files.
+  liveActionList := TActionList.Create(Self);
+  actSelectFileType := TAction.Create(nil);
+  actSelectFileType.OnExecute := @actSelectFileTypeExecute;
+  actSelectFileType.ShortCut := 32817; //Alt+1
+  actSelectFileType.ActionList := liveActionList;
+  actSelectIcon := TAction.Create(nil);
+  actSelectIcon.OnExecute := @actSelectIconExecute;
+  actSelectIcon.ShortCut := 32818; //Alt+2
+  actSelectIcon.ActionList := liveActionList;
+  actSelectExtensions := TAction.Create(nil);
+  actSelectExtensions.OnExecute := @actSelectExtensionsExecute;
+  actSelectExtensions.ShortCut := 32819; //Alt+3
+  actSelectExtensions.ActionList := liveActionList;
+  actSelectActions := TAction.Create(nil);
+  actSelectActions.OnExecute := @actSelectActionsExecute;
+  actSelectActions.ShortCut := 32820; //Alt-4
+  actSelectActions.ActionList := liveActionList;
+  actSelectActionDescription := TAction.Create(nil);
+  actSelectActionDescription.OnExecute := @actSelectActionDescriptionExecute;
+  actSelectActionDescription.ShortCut := 32821; //Alt-5
+  actSelectActionDescription.ActionList := liveActionList;
 end;
 
 { TfrmOptionsFileAssoc.Done }
@@ -203,6 +255,12 @@ begin
   for I := 0 to lbFileTypes.Items.Count - 1 do
     FreeIcon(I);
   FreeAndNil(Exts);
+  FreeAndNil(actSelectActionDescription);
+  FreeAndNil(actSelectActions);
+  FreeAndNil(actSelectExtensions);
+  FreeAndNil(actSelectIcon);
+  FreeAndNil(actSelectFileType);
+  FreeAndNil(liveActionList);
   inherited Done;
 end;
 
@@ -221,11 +279,11 @@ begin
   gbActionDescription.hint := gbActionDescription.Caption;
 
   // Give some numerical step number to help user without losing legacy .po translated groubox name
-  gbFileTypes.Caption := '1 - ' + gbFileTypes.Caption;
-  gbIcon.Caption := '2 - ' + gbIcon.Caption;
-  gbExts.Caption := '3 - ' + gbExts.Caption;
-  gbActions.Caption := '4 - ' + gbActions.Caption;
-  gbActionDescription.Caption := '5 - ' + gbActionDescription.Caption;
+  gbFileTypes.Caption := '&1 - ' + gbFileTypes.Caption;
+  gbIcon.Caption := '&2 - ' + gbIcon.Caption;
+  gbExts.Caption := '&3 - ' + gbExts.Caption;
+  gbActions.Caption := '&4 - ' + gbActions.Caption;
+  gbActionDescription.Caption := '&5 - ' + gbActionDescription.Caption;
 
   // load extension file
   Exts.Load;
@@ -287,15 +345,15 @@ begin
 end;
 
 { TfrmOptionsFileAssoc.IsSignatureComputedFromAllWindowComponents }
-function TfrmOptionsFileAssoc.IsSignatureComputedFromAllWindowComponents: Boolean;
+function TfrmOptionsFileAssoc.IsSignatureComputedFromAllWindowComponents: boolean;
 begin
   Result := False;
 end;
 
 { TfrmOptionsFileAssoc.ExtraOptionsSignature }
-function TfrmOptionsFileAssoc.ExtraOptionsSignature(CurrentSignature:dword):dword;
+function TfrmOptionsFileAssoc.ExtraOptionsSignature(CurrentSignature: dword): dword;
 begin
-  result := Exts.ComputeSignature(CurrentSignature);
+  Result := Exts.ComputeSignature(CurrentSignature);
 end;
 
 { TfrmOptionsFileAssoc.UpdateEnabledButtons }
@@ -444,12 +502,12 @@ var
 begin
   iIndex := lbActions.ItemIndex;
   if (iIndex < 0) or (lbActions.Tag = 1) then Exit;
-  edbActionName.Tag:=1;
+  edbActionName.Tag := 1;
   edbActionName.Text := TExtActionCommand(lbActions.Items.Objects[iIndex]).ActionName;
   fneCommand.FileName := TExtActionCommand(lbActions.Items.Objects[iIndex]).CommandName;
   edtParams.Text := TExtActionCommand(lbActions.Items.Objects[iIndex]).Params;
   deStartPath.Text := TExtActionCommand(lbActions.Items.Objects[iIndex]).StartPath;
-  edbActionName.Tag:=0;
+  edbActionName.Tag := 0;
   UpdateEnabledButtons;
 end;
 
@@ -471,6 +529,33 @@ begin
 
   // change extension in TExts object
   Exts.Items[lbFileTypes.ItemIndex].Extensions.Move(SrcIndex, DestIndex);
+end;
+
+procedure TfrmOptionsFileAssoc.lbGenericListDrawItem(Control: TWinControl; Index: integer; ARect: TRect; State: TOwnerDrawState);
+begin
+  with (Control as TListBox) do
+  begin
+    if (odSelected in State) then
+    begin
+      if focused then
+      begin
+        Canvas.Font.Color := clHighlightText;
+        Canvas.Brush.Color := clHighlight;
+      end
+      else
+      begin
+        Canvas.Font.Color := clWindowText;
+        Canvas.Brush.Color := clGradientActiveCaption;
+      end;
+    end
+    else
+    begin
+      Canvas.Font.Color := Font.Color;
+      Canvas.Brush.Color := Color;
+    end;
+    Canvas.FillRect(ARect);
+    Canvas.TextOut(ARect.Left, ARect.Top, Items[Index]);
+  end;
 end;
 
 { TfrmOptionsFileAssoc.lbExtsSelectionChange }
@@ -534,8 +619,16 @@ begin
   begin
     if odSelected in State then
     begin
-      Canvas.Font.Color := clHighlightText;
-      Canvas.Brush.Color := clHighlight;
+      if focused then
+      begin
+        Canvas.Font.Color := clHighlightText;
+        Canvas.Brush.Color := clHighlight;
+      end
+      else
+      begin
+        Canvas.Font.Color := clWindowText;
+        Canvas.Brush.Color := clGradientActiveCaption;
+      end;
       Canvas.FillRect(ARect);
     end
     else
@@ -606,7 +699,7 @@ procedure TfrmOptionsFileAssoc.edbActionNameChange(Sender: TObject);
 var
   iIndex: integer;
 begin
-  if edbActionName.Tag=1 then exit;
+  if edbActionName.Tag = 1 then exit;
   iIndex := lbActions.ItemIndex;
   if (iIndex < 0) or (edbActionName.Text = '') then Exit;
   TExtActionCommand(lbActions.Items.Objects[iIndex]).ActionName := edbActionName.Text;
@@ -619,7 +712,7 @@ var
   iIndex: integer;
 begin
   iIndex := lbActions.ItemIndex;
-  if (edbActionName.Tag=1) or (iIndex < 0) then Exit;
+  if (edbActionName.Tag = 1) or (iIndex < 0) then Exit;
   TExtActionCommand(lbActions.Items.Objects[iIndex]).CommandName := fneCommand.Text;
   if fneCommand.InitialDir <> ExtractFilePath(fneCommand.Text) then
     fneCommand.InitialDir := ExtractFilePath(fneCommand.Text);
@@ -631,7 +724,7 @@ var
   iIndex: integer;
 begin
   iIndex := lbActions.ItemIndex;
-  if (edbActionName.Tag=1) or (iIndex < 0) then Exit;
+  if (edbActionName.Tag = 1) or (iIndex < 0) then Exit;
   TExtActionCommand(lbActions.Items.Objects[iIndex]).Params := edtParams.Text;
 end;
 
@@ -641,7 +734,7 @@ var
   iIndex: integer;
 begin
   iIndex := lbActions.ItemIndex;
-  if (edbActionName.Tag=1) or (iIndex < 0) then Exit;
+  if (edbActionName.Tag = 1) or (iIndex < 0) then Exit;
   TExtActionCommand(lbActions.Items.Objects[iIndex]).StartPath := deStartPath.Text;
   if deStartPath.Directory <> deStartPath.Text then
     deStartPath.Directory := deStartPath.Text;
@@ -686,7 +779,7 @@ begin
     begin
       if OpenDialog.Execute then
       begin
-        sCommandFilename := OpenDialog.Filename;
+        sCommandFilename := GetFileAssocFilenameToSave(fameCommand, OpenDialog.Filename);
 
         case (iDispatcher and $03) of
           $00: sActionWords := 'Open ' + rsMsgWithActionWith + ' ' + ExtractFilename(OpenDialog.Filename);
@@ -734,7 +827,7 @@ begin
 
       // Update icon if possible, if necessary
       case (iDispatcher and $10) of
-        $10: if Exts.Items[lbFileTypes.ItemIndex].Icon = '' then edIconFileName.Text := OpenDialog.FileName; //No quote required here! So "sCommandFilename" is not used.
+        $10: if Exts.Items[lbFileTypes.ItemIndex].Icon = '' then edIconFileName.Text := GetFileAssocFilenameToSave(fameIcon, OpenDialog.FileName); //No quote required here! So "sCommandFilename" is not used.
       end;
 
       UpdateEnabledButtons;
@@ -783,7 +876,8 @@ begin
       4: fneCommand.SelText := '{!EDITOR}';
       5: fneCommand.SelText := '{!DC-EDITOR}';
       6: fneCommand.SelText := '{!SHELL}';
-      7: begin
+      7:
+      begin
         fneCommand.SelText := fneCommand.Text + '<??>';
         fneCommand.SetFocus;
         fneCommand.SelStart := Pos('?>', fneCommand.Text) - 1;
@@ -811,7 +905,7 @@ var
 begin
   sFileName := mbExpandFileName(edIconFileName.Text);
   if ShowOpenIconDialog(Self, sFileName) then
-    edIconFileName.Text := sFileName;
+    edIconFileName.Text := GetFileAssocFilenameToSave(fameIcon, sFileName);
 end;
 
 { TfrmOptionsFileAssoc.InsertAddSingleExtensionToLists }
@@ -871,6 +965,7 @@ begin
   if (lbExts.Items.Count = 0) or (lbExts.ItemIndex = -1) then Dispatcher := 0;
   sExt := InputBox(GetTitle + ' - ' + gbExts.Hint, rsMsgEnterFileExt, '');
   InsertAddExtensionToLists(sExt, ifthen((Dispatcher = 0), -1, lbExts.ItemIndex));
+  if lbExts.CanFocus then lbExts.SetFocus;
 end;
 
 { TfrmOptionsFileAssoc.btnParametersHelperClick }
@@ -909,11 +1004,21 @@ begin
   pmVariableStartPathHelper.PopUp;
 end;
 
+procedure TfrmOptionsFileAssoc.deStartPathAcceptDirectory(Sender: TObject; var Value: String);
+begin
+  Value := GetFileAssocFilenameToSave(fameStartingPath, Value);
+end;
+
 { TfrmOptionsFileAssoc.edIconFileNameChange }
 procedure TfrmOptionsFileAssoc.edIconFileNameChange(Sender: TObject);
 begin
   if not FUpdatingControls then
     SetIconFileName(edIconFileName.Text);
+end;
+
+procedure TfrmOptionsFileAssoc.fneCommandAcceptFileName(Sender: TObject; var Value: String);
+begin
+  Value := GetFileAssocFilenameToSave(fameCommand, Value);
 end;
 
 { TfrmOptionsFileAssoc.FrameResize }
@@ -942,6 +1047,7 @@ begin
   // remove extension from TExts object
   Exts.Items[lbFileTypes.ItemIndex].Extensions.Delete(I);
   UpdateEnabledButtons;
+  if lbExts.CanFocus then lbExts.SetFocus;
 end;
 
 { TfrmOptionsFileAssoc.btnUpActClick }
@@ -969,6 +1075,7 @@ begin
   end;
   lbActions.Tag := 0; // end moving
   UpdateEnabledButtons;
+  if lbActions.CanFocus then lbActions.SetFocus;
 end;
 
 { TfrmOptionsFileAssoc.lbActionsDragDrop }
@@ -1024,6 +1131,7 @@ begin
   end;
   lbActions.Tag := 0; // end moving
   UpdateEnabledButtons;
+  if lbActions.CanFocus then lbActions.SetFocus;
 end;
 
 { TfrmOptionsFileAssoc.btnEditExtClick }
@@ -1043,6 +1151,7 @@ begin
     if iRememberIndex >= lbExts.Items.Count then iRememberIndex := -1;
     InsertAddExtensionToLists(sExt, iRememberIndex); //We may add new one, maybe not, maybe bunch of them, etc.
   end;
+  if lbExts.CanFocus then lbExts.SetFocus;
 end;
 
 { TfrmOptionsFileAssoc.btnInsertAddActClick }
@@ -1121,6 +1230,7 @@ begin
   end;
 
   UpdateEnabledButtons;
+  if lbActions.CanFocus then lbActions.SetFocus;
 end;
 
 { TfrmOptionsFileAssoc.btnCommandsClick }
@@ -1171,9 +1281,8 @@ begin
   if (Index >= 0) and (Index < Exts.Count) then
   begin
     FreeIcon(Index);
-    if sFileName <> EmptyStr then
-      // save icon for use in OnDrawItem procedure
-      lbFileTypes.Items.Objects[Index] := PixMapManager.LoadBitmapEnhanced(sFileName, gIconsSize, True, Color);
+    // save icon for use in OnDrawItem procedure
+    if sFileName <> EmptyStr then lbFileTypes.Items.Objects[Index] := PixMapManager.LoadBitmapEnhanced(sFileName, gIconsSize, True, Color);
     lbFileTypes.Repaint;
 
     Exts.Items[Index].Icon := sFileName;
@@ -1185,27 +1294,15 @@ end;
 procedure TfrmOptionsFileAssoc.SetMinimumSize;
 begin
   gbFileTypes.Constraints.MinWidth :=
-    gbFileTypes.BorderSpacing.Left +
-    btnRemoveType.Left +
-    btnRemoveType.Width +
-    5 + // space between
-    btnRenameType.Width +
-    gbFileTypes.Width - (btnRenameType.Left + btnRenameType.Width) +
-    gbFileTypes.BorderSpacing.Right;
+    gbFileTypes.BorderSpacing.Left + btnRemoveType.Left + btnRemoveType.Width + 5 + // space between
+    btnRenameType.Width + gbFileTypes.Width - (btnRenameType.Left + btnRenameType.Width) + gbFileTypes.BorderSpacing.Right;
 
   pnlLeftSettings.Constraints.MinWidth :=
-    gbFileTypes.Constraints.MinWidth +
-    gbFileTypes.BorderSpacing.Around;
+    gbFileTypes.Constraints.MinWidth + gbFileTypes.BorderSpacing.Around;
 
   Constraints.MinWidth :=
-    pnlLeftSettings.Constraints.MinWidth +
-    pnlLeftSettings.BorderSpacing.Left +
-    pnlLeftSettings.BorderSpacing.Right +
-    pnlLeftSettings.BorderSpacing.Around +
-    pnlRightSettings.Constraints.MinWidth +
-    pnlRightSettings.BorderSpacing.Left +
-    pnlRightSettings.BorderSpacing.Right +
-    pnlRightSettings.BorderSpacing.Around;
+    pnlLeftSettings.Constraints.MinWidth + pnlLeftSettings.BorderSpacing.Left + pnlLeftSettings.BorderSpacing.Right + pnlLeftSettings.BorderSpacing.Around + pnlRightSettings.Constraints.MinWidth + pnlRightSettings.BorderSpacing.Left +
+    pnlRightSettings.BorderSpacing.Right + pnlRightSettings.BorderSpacing.Around;
 end;
 
 { TfrmOptionsFileAssoc.MakeUsInPositionToWorkWithActiveFile }
@@ -1309,9 +1406,83 @@ begin
       FreeAndNil(aFile);
     end;
   end;
+  if lbFileTypes.CanFocus then lbFileTypes.SetFocus;
+end;
+
+procedure TfrmOptionsFileAssoc.actSelectFileTypeExecute(Sender: TObject);
+begin
+  if lbFileTypes.CanFocus then
+    lbFileTypes.SetFocus;
+end;
+
+procedure TfrmOptionsFileAssoc.actSelectIconExecute(Sender: TObject);
+begin
+  if edIconFileName.CanFocus then
+    edIconFileName.SetFocus;
+end;
+
+procedure TfrmOptionsFileAssoc.actSelectExtensionsExecute(Sender: TObject);
+begin
+  if lbExts.CanFocus then
+    lbExts.SetFocus;
+end;
+
+procedure TfrmOptionsFileAssoc.actSelectActionsExecute(Sender: TObject);
+begin
+  if lbActions.CanFocus then
+    lbActions.SetFocus;
+end;
+
+procedure TfrmOptionsFileAssoc.actSelectActionDescriptionExecute(Sender: TObject);
+begin
+  if edbActionName.CanFocus then
+    edbActionName.SetFocus;
+end;
+
+{ TfrmOptionsFileAssoc.GetFileAssocFilenameToSave }
+function TfrmOptionsFileAssoc.GetFileAssocFilenameToSave(AFileAssocPathModifierElement:tFileAssocPathModifierElement; sParamFilename: string): string;
+var
+  sMaybeBasePath, SubWorkingPath, MaybeSubstitionPossible: string;
+begin
+  sParamFilename := mbExpandFileName(sParamFilename);
+  Result := sParamFilename;
+
+  if AFileAssocPathModifierElement in gFileAssocPathModifierElements then
+  begin
+    if gFileAssocFilenameStyle = pfsRelativeToDC then sMaybeBasePath := EnvVarCommanderPath else sMaybeBasePath := gFileAssocPathToBeRelativeTo;
+    case gFileAssocFilenameStyle of
+      pfsAbsolutePath: ;
+      pfsRelativeToDC, pfsRelativeToFollowingPath:
+      begin
+        SubWorkingPath := IncludeTrailingPathDelimiter(mbExpandFileName(sMaybeBasePath));
+        MaybeSubstitionPossible := ExtractRelativePath(IncludeTrailingPathDelimiter(SubWorkingPath), sParamFilename);
+        if MaybeSubstitionPossible <> sParamFilename then
+          Result := IncludeTrailingPathDelimiter(sMaybeBasePath) + MaybeSubstitionPossible;
+      end;
+    end;
+  end;
+end;
+
+{ TfrmOptionsFileAssoc.ScanFileAssocForFilenameAndPath }
+procedure TfrmOptionsFileAssoc.ScanFileAssocForFilenameAndPath;
+var
+  ActionList: TExtActionList;
+  iFileType, iAction: Integer;
+begin
+  for iFileType := 0 to Pred(Exts.Count) do
+  begin
+    Exts.FileType[iFileType].Icon := GetFileAssocFilenameToSave(fameIcon, Exts.FileType[iFileType].Icon);
+    ActionList := Exts.FileType[iFileType].ActionList;
+    for iAction := 0 to Pred(ActionList.Count) do
+    begin
+      ActionList.ExtActionCommand[iAction].CommandName := GetFileAssocFilenameToSave(fameCommand, ActionList.ExtActionCommand[iAction].CommandName);
+      ActionList.ExtActionCommand[iAction].StartPath := GetFileAssocFilenameToSave(fameStartingPath, ActionList.ExtActionCommand[iAction].StartPath);
+    end;
+  end;
+
+  //Kind of refresh of what might be displayed.
+  if lbFileTypes.ItemIndex <> -1 then
+    lbFileTypesSelectionChange(lbFileTypes, True);
 end;
 
 end.
-
-
-

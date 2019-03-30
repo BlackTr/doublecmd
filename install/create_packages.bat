@@ -1,6 +1,6 @@
 
 rem Set Double Commander version
-set DC_VER=0.9.0
+set DC_VER=1.0.0
 
 rem Path to subversion
 set SVN_EXE="c:\Program Files\SlikSvn\bin\svn.exe"
@@ -62,7 +62,7 @@ rem Move created package
 move release\*.exe %PACK_DIR%
 
 rem Create *.zip package
-patch doublecmd/doublecmd.xml portable.diff
+copy NUL doublecmd\doublecmd.inf
 zip -9 -Dr %PACK_DIR%\doublecmd-%DC_VER%.%CPU_TARGET%-%OS_TARGET%.zip doublecmd 
 
 rem Create help packages

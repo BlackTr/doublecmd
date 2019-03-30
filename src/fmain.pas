@@ -2,7 +2,7 @@
    Double Commander
    -------------------------------------------------------------------------
    Licence  : GNU GPL v 2.0
-   Copyright (C) 2006-2018 Alexander Koblov (Alexx2000@mail.ru)
+   Copyright (C) 2006-2019 Alexander Koblov (Alexx2000@mail.ru)
 
    Main Dialog window
 
@@ -108,6 +108,7 @@ type
     actFocusSwap: TAction;
     actConfigArchivers: TAction;
     actConfigTooltips: TAction;
+    actConfigPlugins: TAction;
     actUnmarkCurrentNameExt: TAction;
     actMarkCurrentNameExt: TAction;
     actUnmarkCurrentName: TAction;
@@ -115,6 +116,7 @@ type
     actUnmarkCurrentPath: TAction;
     actMarkCurrentPath: TAction;
     actTreeView: TAction;
+    actFocusTreeView: TAction;
     actToggleFullscreenConsole: TAction;
     actSrcOpenDrives: TAction;
     actRightReverseOrder: TAction;
@@ -743,6 +745,7 @@ type
     procedure SetDragCursor(Shift: TShiftState);
 
   protected
+    procedure CreateWnd; override;
 {$if lcl_fullversion >= 1070000}
     procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
                             const AXProportion, AYProportion: Double); override;
@@ -976,9 +979,6 @@ begin
   Application.OnEndSession := @AppEndSession;
   Application.OnQueryEndSession := @AppQueryEndSession;
 
-  // Save real main form handle
-  Application.MainForm.Tag:= Handle;
-
   // Use LCL's method of dropping files from external
   // applications if we don't support it ourselves.
   if not IsExternalDraggingSupported then
@@ -1068,8 +1068,6 @@ begin
   // Register action list for main form hotkeys.
   HMMainForm.RegisterActionList(actionlst);
   { *HotKeys* }
-
-  LoadWindowState;
 
   // frost_asm begin
     lastWindowState:=WindowState;
@@ -2065,11 +2063,11 @@ begin
         if Assigned(aFile) and aFile.IsNameValid then
         begin
           ToolItem := TKASProgramItem.Create;
-          ToolItem.Command := aFile.FullPath;
-          ToolItem.StartPath := aFile.Path;
+          ToolItem.Command := GetToolbarFilenameToSave(tpmeCommand, aFile.FullPath);
+          ToolItem.StartPath := GetToolbarFilenameToSave(tpmeStartingPath, aFile.Path);
           ToolItem.Hint := ExtractOnlyFileName(aFile.Name);
           // ToolItem.Text := ExtractOnlyFileName(aFile.Name);
-          ToolItem.Icon := aFile.FullPath;
+          ToolItem.Icon := GetToolbarFilenameToSave(tpmeIcon, aFile.FullPath);
           MainToolBar.AddButton(ToolItem);
         end;
       finally
@@ -2611,6 +2609,8 @@ procedure TfrmMain.AppShowHint(var HintStr: string; var CanShow: Boolean;
 begin
   // Refresh monitor list
   Screen.UpdateMonitors;
+  // Show hint only when application is active
+  CanShow:= Application.Active;
 end;
 
 constructor TfrmMain.Create(TheOwner: TComponent);
@@ -2805,8 +2805,8 @@ begin
   for I:= 0 to Min(gDirHistoryCount, glsDirHistory.Count - 1) do
   begin
     MenuItem:= TMenuItem.Create(pmDirHistory);
-    MenuItem.Caption:= glsDirHistory[I];
-    MenuItem.Hint:= MenuItem.Caption;
+    MenuItem.Caption:= glsDirHistory[I].Replace('&','&&');
+    MenuItem.Hint:= glsDirHistory[I];
     MenuItem.OnClick:= @HistorySelected;
     pmDirHistory.Items.Add(MenuItem);
   end;
@@ -2971,7 +2971,7 @@ begin
     mi := TMenuItem.Create(pmDirHistory);
     pmDirHistory.Items.Add(mi);
 
-    mi.Caption := ActiveFrame.Path[FromFileSourceIndex, FromPathIndex];
+    mi.Caption := ActiveFrame.Path[FromFileSourceIndex, FromPathIndex].Replace('&','&&');
     mi.OnClick := @ViewHistorySelected;
     // Remember indexes into history.
     mi.Tag := HistoryIndexesToTag(FromFileSourceIndex, FromPathIndex);
@@ -2987,7 +2987,7 @@ begin
     if FromPathIndex = 0 then
     begin
       AddCaptionItem('-');
-      AddCaptionItem('- ' + ActiveFrame.FileSources[FromFileSourceIndex].CurrentAddress + ' -');
+      AddCaptionItem('- ' + ActiveFrame.FileSources[FromFileSourceIndex].CurrentAddress.Replace('&','&&') + ' -');
     end;
   end;
 
@@ -3667,6 +3667,17 @@ procedure TfrmMain.SetDragCursor(Shift: TShiftState);
 begin
   FrameLeft.SetDragCursor(Shift);
   FrameRight.SetDragCursor(Shift);
+end;
+
+procedure TfrmMain.CreateWnd;
+begin
+  // Must be before CreateWnd
+  LoadWindowState;
+
+  inherited CreateWnd;
+
+  // Save real main form handle
+  Application.MainForm.Tag:= Handle;
 end;
 
 {$if lcl_fullversion >= 1070000}
@@ -4787,6 +4798,8 @@ begin
       pnlLeft.BorderSpacing.Bottom := 0;
       MainSplitter.Cursor := crHSplit;
     end;
+    pnlLeftResize(pnlLeft);
+    pnlNotebooksResize(pnlNotebooks);
 
     (* Disk Panels *)
     if gHorizontalFilePanels and gDriveBar1 and gDriveBar2 then
@@ -5921,9 +5934,9 @@ begin
             sboxDrive.Tag := -1;
           sboxDrive.Invalidate;
         end;
-      lblDriveInfo.Hint := Format(rsFreeMsg, [cnvFormatFileSize(FreeSize), cnvFormatFileSize(TotalSize)]);
+      lblDriveInfo.Hint := Format(rsFreeMsg, [cnvFormatFileSize(FreeSize, uoscHeaderFooter), cnvFormatFileSize(TotalSize, uoscHeaderFooter)]); //It's not an "operation" but most probably the closest wanted form.
       if gShortFormatDriveInfo then
-        lblDriveInfo.Caption := Format(rsFreeMsgShort, [cnvFormatFileSize(FreeSize)])
+        lblDriveInfo.Caption := Format(rsFreeMsgShort, [cnvFormatFileSize(FreeSize, uoscHeaderFooter)])
       else
         lblDriveInfo.Caption := lblDriveInfo.Hint;
       sboxDrive.Hint := lblDriveInfo.Hint;
@@ -6116,6 +6129,7 @@ begin
   begin
     frmTreeViewMenu.Close;
   end;
+  Application.CancelHint;
 end;
 
 procedure TfrmMain.AppEndSession(Sender: TObject);

@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Double Commander
-AppVerName=Double Commander 0.9.0 beta
+AppVerName=Double Commander 1.0.0 beta
 AppPublisherURL=http://doublecmd.sourceforge.net
 AppSupportURL=http://doublecmd.sourceforge.net
 AppUpdatesURL=http://doublecmd.sourceforge.net
@@ -54,7 +54,6 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: "doublecmd\doublecmd.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "doublecmd\doublecmd.zdli"; DestDir: "{app}"; Flags: ignoreversion
-Source: "doublecmd\doublecmd.xml"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "doublecmd\pixmaps.txt"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "doublecmd\multiarc.ini"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "doublecmd\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs

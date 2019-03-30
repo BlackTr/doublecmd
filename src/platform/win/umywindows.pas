@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains specific WINDOWS functions.
 
-    Copyright (C) 2006-2017 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -28,6 +28,8 @@ interface
 uses
   Graphics, Classes, SysUtils, JwaWinBase, Windows;
 
+procedure ShowWindowEx(hWnd: HWND);
+function FindMainWindow(ProcessId: DWORD): HWND;
 function GetMenuItemText(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): UnicodeString;
 function GetMenuItemType(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): UINT;
 function InsertMenuItemEx(hMenu, SubMenu: HMENU; Caption: PWideChar; Position, ItemID,  ItemType : UINT; Bitmap:Graphics.TBitmap = nil): boolean;
@@ -74,6 +76,7 @@ procedure mbWaitLabelChange(const sDrv: String; const sCurLabel: String);
    @param(sDrv  String specifying the root directory of a drive)
 }
 procedure mbCloseCD(const sDrv: String);
+procedure mbDriveUnlock(const sDrv: String);
 {en
    Get remote file name by local file name
    @param(sLocalName String specifying the local file name)
@@ -130,6 +133,10 @@ function IsUserAdmin: LongBool;
 }
 function RemoteSession: Boolean;
 {en
+   Creates windows shortcut file (.lnk)
+}
+procedure CreateShortcut(const Target, Shortcut: String);
+{en
    Extract file attributes from find data record.
    Removes reparse point attribute if a reparse point tag is not a name surrogate.
    @param(FindData Find data record from FindFirstFile/FindNextFile function.)
@@ -144,7 +151,60 @@ implementation
 
 uses
   ShellAPI, MMSystem, JwaWinNetWk, JwaWinUser, JwaNative, JwaVista, LazUTF8,
-  DCWindows, uShlObjAdditional;
+  ActiveX, ShlObj, ComObj, DCWindows, uShlObjAdditional;
+
+var
+  Wow64DisableWow64FsRedirection: function(OldValue: PPointer): BOOL; stdcall;
+  Wow64RevertWow64FsRedirection: function(OldValue: Pointer): BOOL; stdcall;
+
+type
+  PHandleData = ^THandleData;
+  THandleData = record
+    ProcessId: DWORD;
+    WindowHandle: HWND;
+end;
+
+function IsMainWindow(Handle: HWND): Boolean;
+begin
+  Result:= (GetWindow(Handle, GW_OWNER) = 0) and IsWindowVisible(Handle);
+end;
+
+function EnumWindowsCallback(Handle: HWND; lParam: LPARAM): BOOL; stdcall;
+var
+  ProcessId: DWORD = 0;
+  Data: PHandleData absolute lParam;
+begin
+  GetWindowThreadProcessId(Handle, @ProcessId);
+  Result:= (Data^.ProcessId <> ProcessId) or (not IsMainWindow(Handle));
+  if not Result then Data^.WindowHandle:= Handle;
+end;
+
+procedure ShowWindowEx(hWnd: HWND);
+var
+  Placement: TWindowPlacement;
+begin
+  ZeroMemory(@Placement, SizeOf(TWindowPlacement));
+  Placement.length:= SizeOf(TWindowPlacement);
+  GetWindowPlacement(hWnd, Placement);
+
+  case (Placement.showCmd) of
+    SW_SHOWMAXIMIZED: ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+    SW_SHOWMINIMIZED: ShowWindow(hWnd, SW_RESTORE);
+    else ShowWindow(hWnd, SW_NORMAL);
+  end;
+
+  SetForegroundWindow(hWnd);
+end;
+
+function FindMainWindow(ProcessId: DWORD): HWND;
+var
+  Data: THandleData;
+begin
+  Data.WindowHandle:= 0;
+  Data.ProcessId:= ProcessId;
+  EnumWindows(@EnumWindowsCallback, {%H-}LPARAM(@Data));
+  Result:= Data.WindowHandle;
+end;
 
 function GetMenuItemText(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): UnicodeString;
 var
@@ -353,6 +413,101 @@ begin
   mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE or MCI_OPEN_ELEMENT, DWORD_PTR(@OpenParms));
   mciSendCommandA(OpenParms.wDeviceID, MCI_SET, MCI_SET_DOOR_CLOSED, 0);
   mciSendCommandA(OpenParms.wDeviceID, MCI_CLOSE, MCI_OPEN_TYPE or MCI_OPEN_ELEMENT, DWORD_PTR(@OpenParms));
+end;
+
+function IsWow64: BOOL;
+const
+  Wow64Process: TDuplicates = dupIgnore;
+var
+  IsWow64Process: function(hProcess: HANDLE; Wow64Process: PBOOL): BOOL; stdcall;
+begin
+  if (Wow64Process = dupIgnore) then
+  begin
+    Result:= False;
+    Pointer(IsWow64Process):= GetProcAddress(GetModuleHandle(Kernel32), 'IsWow64Process');
+    if (IsWow64Process <> nil) then IsWow64Process(GetCurrentProcess, @Result);
+    if Result then Wow64Process:= dupAccept else Wow64Process:= dupError;
+  end;
+  Result:= (Wow64Process = dupAccept);
+end;
+
+function Wow64DisableRedirection(OldValue: PPointer): BOOL;
+begin
+  if (IsWow64 = False) then
+    Result:= True
+  else begin
+    Result:= Wow64DisableWow64FsRedirection(OldValue);
+  end;
+end;
+
+function Wow64RevertRedirection(OldValue: Pointer): BOOL;
+begin
+  if (IsWow64 = False) then
+    Result:= True
+  else begin
+    Result:= Wow64RevertWow64FsRedirection(OldValue);
+  end;
+end;
+
+procedure ShellExecuteThread(Parameter : Pointer);
+var
+  Result: DWORD = 0;
+  OldValue: Pointer = nil;
+  Status : BOOL absolute Result;
+  lpExecInfo: LPShellExecuteInfoW absolute Parameter;
+begin
+  if Wow64DisableRedirection(@OldValue) then
+  begin
+    CoInitializeEx(nil, COINIT_APARTMENTTHREADED);
+    Status:= ShellExecuteExW(lpExecInfo);
+    CoUninitialize();
+    Wow64RevertRedirection(OldValue);
+  end;
+  EndThread(Result);
+end;
+
+procedure mbDriveUnlock(const sDrv: String);
+const
+  FVE_E_LOCKED_VOLUME = HRESULT($80310000);
+  FVE_E_VOLUME_NOT_BOUND = HRESULT($80310017);
+var
+  Msg: TMSG;
+  LastError: HRESULT;
+  ShellThread: TThread;
+  wsDrive: UnicodeString;
+  lpExecInfo: TShellExecuteInfoW;
+begin
+  wsDrive:= UTF8Decode(sDrv);
+  if not GetDiskFreeSpaceExW(PWideChar(wsDrive), nil, nil, nil) then
+  begin
+    LastError:= GetLastError;
+    if (LastError = FVE_E_LOCKED_VOLUME) or (LastError = FVE_E_VOLUME_NOT_BOUND) then
+    begin
+      ZeroMemory(@lpExecInfo, SizeOf(lpExecInfo));
+      lpExecInfo.cbSize:= SizeOf(lpExecInfo);
+      lpExecInfo.fMask:= SEE_MASK_NOCLOSEPROCESS;
+      lpExecInfo.lpFile:= PWideChar(wsDrive);
+      lpExecInfo.lpVerb:= 'unlock-bde';
+      ShellThread:= TThread.ExecuteInThread(@ShellExecuteThread, @lpExecInfo);
+      if (ShellThread.WaitFor <> 0) and (lpExecInfo.hProcess <> 0) then
+      begin
+        while (WaitForSingleObject(lpExecInfo.hProcess, 100) = WAIT_TIMEOUT) do
+        begin
+          if (GetAsyncKeyStateEx(VK_ESCAPE)) then
+          begin
+            TerminateProcess(lpExecInfo.hProcess, 1);
+            Break;
+          end;
+          PeekMessageW({%H-}Msg, 0, 0, 0, PM_REMOVE);
+        end;
+        {
+        if GetExitCodeProcess(lpExecInfo.hProcess, @LastError) then
+          Result:= (LastError = 0);
+        }
+        CloseHandle(lpExecInfo.hProcess);
+      end;
+    end;
+  end;
 end;
 
 function mbGetRemoteFileName(const sLocalName: String): String;
@@ -677,6 +832,34 @@ begin
   end;
 end;
 
+procedure CreateShortcut(const Target, Shortcut: String);
+var
+  IObject: IUnknown;
+  ISLink: IShellLinkW;
+  IPFile: IPersistFile;
+  LinkName: WideString;
+  TargetArguments: WideString;
+begin
+  TargetArguments:= EmptyWideStr;
+
+  { Creates an instance of IShellLink }
+  IObject := CreateComObject(CLSID_ShellLink);
+  IPFile := IObject as IPersistFile;
+  ISLink := IObject as IShellLinkW;
+
+  OleCheckUTF8(ISLink.SetPath(PWideChar(UTF8Decode(Target))));
+  OleCheckUTF8(ISLink.SetArguments(PWideChar(TargetArguments)));
+  OleCheckUTF8(ISLink.SetWorkingDirectory(PWideChar(UTF8Decode(ExtractFilePath(Target)))));
+
+  { Get the desktop location }
+  LinkName := UTF8Decode(Shortcut);
+  if LowerCase(ExtractFileExt(LinkName)) <> '.lnk' then
+    LinkName := LinkName + '.lnk';
+
+  { Create the link }
+  OleCheckUTF8(IPFile.Save(PWideChar(LinkName), False));
+end;
+
 function ExtractFileAttributes(const FindData: TWin32FindDataW): DWORD; inline;
 begin
   // If a reparse point tag is not a name surrogate then remove reparse point attribute
@@ -738,6 +921,12 @@ begin
     LocalFree(HLOCAL(szArgList));
   end;
 end;
+
+initialization
+  if (IsWow64) then begin
+    Pointer(Wow64DisableWow64FsRedirection):= GetProcAddress(GetModuleHandle(Kernel32), 'Wow64DisableWow64FsRedirection');
+    Pointer(Wow64RevertWow64FsRedirection):= GetProcAddress(GetModuleHandle(Kernel32), 'Wow64RevertWow64FsRedirection');
+  end;
 
 end.
 

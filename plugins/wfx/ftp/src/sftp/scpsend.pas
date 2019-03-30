@@ -550,7 +550,7 @@ begin
       begin
         FLastError:= libssh2_session_last_errno(FSession);
         if (FLastError <> LIBSSH2_ERROR_EAGAIN) then Exit(False);
-        DoProgress((FileSize - TotalBytesToWrite) * 100 div FileSize);
+        if (FileSize > 0) then DoProgress((FileSize - TotalBytesToWrite) * 100 div FileSize);
         FSock.CanRead(10);
       end;
     until not ((TargetHandle = nil) and (FLastError = LIBSSH2_ERROR_EAGAIN));
@@ -621,7 +621,7 @@ begin
       begin
         FLastError:= libssh2_session_last_errno(FSession);
         if (FLastError <> LIBSSH2_ERROR_EAGAIN) then Exit(False);
-        DoProgress((FileSize - TotalBytesToRead) * 100 div FileSize);
+        if (FileSize > 0) then DoProgress((FileSize - TotalBytesToRead) * 100 div FileSize);
         FSock.CanRead(10);
       end;
     until not ((SourceHandle = nil) and (FLastError = LIBSSH2_ERROR_EAGAIN));
@@ -694,11 +694,6 @@ begin
       begin
         FDataStream.Position := 0;
         FFTPList.Lines.LoadFromStream(FDataStream);
-        if FFtpList.Lines.Count > 0 then
-        begin
-          if Pos('total', FFtpList.Lines[0]) = 1 then
-            FFtpList.Lines.Delete(0);
-        end;
         FFTPList.ParseLines;
       end;
       FDataStream.Position := 0;

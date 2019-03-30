@@ -15,9 +15,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit fOptionsArchivers;
@@ -36,6 +35,8 @@ type
 
   { TfrmOptionsArchivers }
   TfrmOptionsArchivers = class(TOptionsEditor)
+    chkFileNameOnlyList: TCheckBox;
+    pnlFileNameOnlyList: TPanel;
     pnlArchiverListbox: TPanel;
     lblArchiverListBox: TLabel;
     lbxArchiver: TListBox;
@@ -118,6 +119,7 @@ type
     pmArchiverParamHelper: TPopupMenu;
     SaveArchiverDialog: TSaveDialog;
     OpenArchiverDialog: TOpenDialog;
+    procedure chkFileNameOnlyListChange(Sender: TObject);
     procedure lbxArchiverSelectionChange(Sender: TObject; {%H-}User: boolean);
     procedure lbxArchiverDragOver(Sender, {%H-}Source: TObject; {%H-}X, {%H-}Y: integer; {%H-}State: TDragState; var Accept: boolean);
     procedure lbxArchiverDragDrop(Sender, {%H-}Source: TObject; {%H-}X, Y: integer);
@@ -155,6 +157,7 @@ type
     edtHelperRequested: TEdit; //Used as a kind of pointer of TEdit when it's time to use the % helper.
     procedure FillListBoxWithArchiverList;
   protected
+    procedure Init; override;
     procedure Load; override;
     procedure Done; override;
     function Save: TOptionsEditorSaveFlags; override;
@@ -173,7 +176,8 @@ uses
   //Lazarus, Free-Pascal, etc.
 
   //DC
-  uGlobs, uLng, uSpecialDir, uGlobsPaths, uShowMsg;
+  DCStrUtils, uGlobs, uLng, uSpecialDir, uGlobsPaths, uShowMsg;
+
 const
   CONFIG_NOTSAVED = False;
   CONFIG_SAVED = True;
@@ -182,6 +186,13 @@ var
   iLastDisplayedIndex: integer = -1;
 
 { TfrmOptionsArchivers }
+
+{ TfrmOptionsArchivers.Init }
+procedure TfrmOptionsArchivers.Init;
+begin
+  OpenArchiverDialog.Filter := ParseLineToFileFilter([rsFilterArchiverConfigFiles, '*.ini;*.addon', rsFilterAnyFiles, '*.*']);
+  SaveArchiverDialog.Filter := ParseLineToFileFilter([rsFilterArchiverConfigFiles, '*.ini', rsFilterAnyFiles, '*.*']);
+end;
 
 { TfrmOptionsArchivers.Load }
 procedure TfrmOptionsArchivers.Load;
@@ -329,6 +340,7 @@ begin
         edtArchiverId.Text := FID;
         edtArchiverIdPosition.Text := FIDPos;
         edtArchiverIdSeekRange.Text := FIDSeekRange;
+        chkFileNameOnlyList.Checked:= mafFileNameList in FFlags;
         ckbArchiverUnixPath.Checked := (FFormMode and $01 <> $00);
         ckbArchiverWindowsPath.Checked := (FFormMode and $02 <> $00);
         ckbArchiverUnixFileAttributes.Checked := (FFormMode and $04 <> $00);
@@ -338,11 +350,25 @@ begin
         chkArchiverEnabled.Checked := FEnabled;
       end;
     end;
+    chkFileNameOnlyListChange(chkFileNameOnlyList);
     SetControlsState(chkArchiverEnabled.Checked);
 
     SetConfigurationState(CONFIG_SAVED);
     bCurrentlyLoadingSettings := False;
   end;
+end;
+
+procedure TfrmOptionsArchivers.chkFileNameOnlyListChange(Sender: TObject);
+var
+  AEnabled: Boolean;
+begin
+  AEnabled:= (not chkFileNameOnlyList.Checked) and chkArchiverEnabled.Checked;
+  edtArchiverList.Enabled:= AEnabled;
+  btnArchiverListHelper.Enabled:= AEnabled;
+  edtArchiverListStart.Enabled:= AEnabled;
+  edtArchiverListEnd.Enabled:= AEnabled;
+  memArchiverListFormat.Enabled:= AEnabled;
+  edtAnyChange(Sender);
 end;
 
 { TfrmOptionsArchivers.lbxArchiverDragOver }
@@ -499,6 +525,8 @@ begin
     FID := edtArchiverId.Text;
     FIDPos := edtArchiverIdPosition.Text;
     FIDSeekRange := edtArchiverIdSeekRange.Text;
+    FFlags := [];
+    if chkFileNameOnlyList.Checked then Include(FFlags, mafFileNameList);
     FFormMode := 0;
     if ckbArchiverUnixPath.Checked then  FFormMode := FFormMode or $01;
     if ckbArchiverWindowsPath.Checked then  FFormMode := FFormMode or $02;
