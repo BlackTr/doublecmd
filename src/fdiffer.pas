@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Internal diff and merge tool
 
-   Copyright (C) 2010-2017 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2010-2020 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -29,7 +29,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Dialogs, Menus, ComCtrls,
   ActnList, ExtCtrls, EditBtn, Buttons, SynEdit, uSynDiffControls,
   uPariterControls, uDiffOND, uFormCommands, uHotkeyManager, uOSForms,
-  uBinaryDiffViewer, uShowForm;
+  uBinaryDiffViewer, uShowForm, Graphics;
 
 type
 
@@ -202,6 +202,7 @@ type
     procedure FormRestoreProperties(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormResize(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     BinaryDiffList: TFPList;
     BinaryDiffIndex: Integer;
@@ -227,6 +228,7 @@ type
     procedure Clear(bLeft, bRight: Boolean);
     procedure BuildHashList(bLeft, bRight: Boolean);
     procedure ChooseEncoding(SynDiffEdit: TSynDiffEdit);
+    procedure SetColors(cAdded, cDeleted, cModified: TColor);
     procedure ChooseEncoding(MenuItem: TMenuItem; Encoding: String);
     procedure FillEncodingMenu(TheOwner: TMenuItem; MenuHandler: TNotifyEvent; GroupIndex: LongInt);
     procedure LoadFromFile(SynDiffEdit: TSynDiffEdit; const FileName: String);
@@ -236,6 +238,7 @@ type
     procedure SetEncodingLeft(Sender: TObject);
     procedure SetEncodingRight(Sender: TObject);
     procedure SynDiffEditEnter(Sender: TObject);
+    procedure ShowFirstDifference(Data: PtrInt);
     procedure SynDiffEditLeftStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure SynDiffEditRightStatusChange(Sender: TObject; Changes: TSynStatusChanges);
 
@@ -270,27 +273,33 @@ const
   HotkeysCategory = 'Differ';
 
 procedure ShowDiffer(const FileNameLeft, FileNameRight: String; WaitData: TWaitData = nil; Modal: Boolean = False);
+var
+  Differ: TfrmDiffer;
 begin
-  with TfrmDiffer.Create(Application) do
+  Differ := TfrmDiffer.Create(Application);
+  with Differ do
   begin
     FWaitData := WaitData;
     edtFileNameLeft.Text:= FileNameLeft;
     edtFileNameRight.Text:= FileNameRight;
     FShowIdentical:= actAutoCompare.Checked;
-    actBinaryCompare.Checked:= not (FileIsText(FileNameLeft) and FileIsText(FileNameRight));
-    if actBinaryCompare.Checked then
-      actBinaryCompareExecute(actBinaryCompare)
+    SetColors(gDifferAddedColor, gDifferDeletedColor, gDifferModifiedColor);
+    if not (FileIsText(FileNameLeft) and FileIsText(FileNameRight)) then
+      actBinaryCompare.Execute
     else begin
       OpenFileLeft(FileNameLeft);
       OpenFileRight(FileNameRight);
       if actAutoCompare.Checked then actStartCompare.Execute;
     end;
+    FShowIdentical:= FShowIdentical and actStartCompare.Enabled;
     if actBinaryCompare.Checked or (FShowIdentical = False) then
     begin
       if Modal then
         ShowModal
+      else if (WaitData = nil) then
+        ShowOnTop
       else
-        ShowOnTop;
+        WaitData.ShowOnTop(Differ);
     end;
   end;
 end;
@@ -388,7 +397,12 @@ begin
       if FShowIdentical then
       begin
         FShowIdentical:= (modifies = 0) and (adds = 0) and (deletes = 0);
-        if FShowIdentical then ShowIdentical;
+        if FShowIdentical then
+          ShowIdentical
+        else begin
+          FShowIdentical:= False;
+          Application.QueueAsyncCall(@ShowFirstDifference, 0);
+        end;
       end;
     end;
   finally
@@ -523,7 +537,7 @@ begin
       OpenFileRight(edtFileNameRight.Text);
     end;
 
-  if actAutoCompare.Checked then actStartCompare.Execute;
+  if Visible and actAutoCompare.Checked then actStartCompare.Execute;
 end;
 
 procedure TfrmDiffer.actCancelCompareExecute(Sender: TObject);
@@ -731,6 +745,12 @@ begin
   pnlLeft.Width:= (ClientWidth div 2) - (Splitter.Width div 2);
 end;
 
+procedure TfrmDiffer.FormShow(Sender: TObject);
+begin
+  if actBinaryCompare.Checked and actAutoCompare.Checked then
+    actStartCompare.Execute;
+end;
+
 procedure TfrmDiffer.BinaryCompareFinish;
 begin
   BinaryCompare:= nil;
@@ -745,7 +765,12 @@ begin
   if FShowIdentical then
   begin
     FShowIdentical:= (BinaryDiffList.Count = 0);
-    if FShowIdentical then ShowIdentical;
+    if FShowIdentical then
+      ShowIdentical
+    else begin
+      FShowIdentical:= False;
+      Application.QueueAsyncCall(@ShowFirstDifference, 0);
+    end;
   end;
 end;
 
@@ -755,7 +780,7 @@ var
 begin
   Message:= rsDiffFilesIdentical + LineEnding + LineEnding;
   Message+= edtFileNameLeft.Text + LineEnding + edtFileNameRight.Text;
-  if MessageDlg(rsToolDiffer, Message, mtWarning, [mbClose, mbCancel], 0, mbClose) = mrClose then
+  if MessageDlg(rsToolDiffer, Message, mtWarning, [mbIgnore, mbCancel], 0, mbIgnore) = mrCancel then
     Close
   else begin
     FShowIdentical:= False;
@@ -819,8 +844,34 @@ begin
   I := SynDiffEditLeft.CaretY - 1;
   iStart:= SynDiffEditLeft.DiffBegin(I);
   iFinish:= SynDiffEditLeft.DiffEnd(I);
-  for I:= iStart to iFinish do
-    SynDiffEditRight.Lines[I]:= SynDiffEditLeft.Lines[I];
+  if SynDiffEditLeft.Lines.Kind[iStart] <> ckAdd then
+  begin
+    for I:= iStart to iFinish do
+    begin
+      SynDiffEditRight.Lines[I]:= SynDiffEditLeft.Lines[I];
+      if SynDiffEditLeft.Lines.Kind[I] = ckDelete then
+      begin
+        SynDiffEditLeft.Lines.Kind[I]:= ckNone;
+        SynDiffEditRight.Lines.SetKindAndNumber(I, ckNone, 0);
+      end;
+    end;
+  end
+  else begin
+    for I:= iStart to iFinish do
+    begin
+      if SynDiffEditLeft.Lines[iStart] <> EmptyStr then
+      begin
+        SynDiffEditRight.Lines[iStart]:= SynDiffEditLeft.Lines[iStart];
+        Inc(iStart);
+      end
+      else begin
+        SynDiffEditLeft.Lines.Delete(iStart);
+        SynDiffEditRight.Lines.Delete(iStart);
+      end;
+    end;
+  end;
+  SynDiffEditLeft.Renumber;
+  SynDiffEditRight.Renumber;
 end;
 
 procedure TfrmDiffer.cm_CopyRightToLeft(const Params: array of string);
@@ -831,8 +882,34 @@ begin
   I := SynDiffEditRight.CaretY - 1;
   iStart:= SynDiffEditRight.DiffBegin(I);
   iFinish:= SynDiffEditRight.DiffEnd(I);
-  for I:= iStart to iFinish do
-    SynDiffEditLeft.Lines[I]:= SynDiffEditRight.Lines[I];
+  if SynDiffEditLeft.Lines.Kind[iStart] <> ckDelete then
+  begin
+    for I:= iStart to iFinish do
+    begin
+      SynDiffEditLeft.Lines[I]:= SynDiffEditRight.Lines[I];
+      if SynDiffEditRight.Lines.Kind[I] = ckAdd then
+      begin
+        SynDiffEditRight.Lines.Kind[I]:= ckNone;
+        SynDiffEditLeft.Lines.SetKindAndNumber(I, ckNone, 0);
+      end;
+    end;
+  end
+  else begin
+    for I:= iStart to iFinish do
+    begin
+      if SynDiffEditRight.Lines[iStart] <> EmptyStr then
+      begin
+        SynDiffEditLeft.Lines[iStart]:= SynDiffEditRight.Lines[iStart];
+        Inc(iStart);
+      end
+      else begin
+        SynDiffEditLeft.Lines.Delete(iStart);
+        SynDiffEditRight.Lines.Delete(iStart);
+      end;
+    end;
+  end;
+  SynDiffEditLeft.Renumber;
+  SynDiffEditRight.Renumber;
 end;
 
 procedure TfrmDiffer.cm_Exit(const Params: array of string);
@@ -1044,6 +1121,22 @@ begin
   actStartCompare.Enabled := (Length(HashListLeft) > 0) and (Length(HashListRight) > 0);
 end;
 
+procedure TfrmDiffer.SetColors(cAdded, cDeleted, cModified: TColor);
+begin
+  with SynDiffEditLeft do
+  begin
+    Colors.Added:= cAdded;
+    Colors.Deleted:= cDeleted;
+    Colors.Modified:= cModified;
+  end;
+  with SynDiffEditRight do
+  begin
+    Colors.Added:= cAdded;
+    Colors.Deleted:= cDeleted;
+    Colors.Modified:= cModified;
+  end;
+end;
+
 procedure TfrmDiffer.ChooseEncoding(SynDiffEdit: TSynDiffEdit);
 begin
   if SynDiffEdit = SynDiffEditLeft then
@@ -1087,21 +1180,26 @@ end;
 
 procedure TfrmDiffer.LoadFromFile(SynDiffEdit: TSynDiffEdit; const FileName: String);
 var
-  fsFileStream: TFileStreamEx = nil;
+  AText: String;
+  fsFileStream: TFileStreamEx;
 begin
   try
     fsFileStream:= TFileStreamEx.Create(FileName, fmOpenRead or fmShareDenyNone);
     try
-      SynDiffEdit.BeginUpdate;
-      SynDiffEdit.Lines.LoadFromStream(fsFileStream);
+      SetLength(AText, fsFileStream.Size);
+      fsFileStream.Read(Pointer(AText)^, Length(AText));
       if Length(SynDiffEdit.Encoding) = 0 then
       begin
-        SynDiffEdit.Encoding:= DetectEncoding(SynDiffEdit.Lines.Text);
+        SynDiffEdit.Encoding:= DetectEncoding(AText);
         ChooseEncoding(SynDiffEdit);
       end;
-      SynDiffEdit.Lines.Text:= ConvertEncoding(SynDiffEdit.Lines.Text, SynDiffEdit.Encoding, EncodingUTF8);
+      with SynDiffEdit do
+      begin
+        if (Encoding = EncodingUCS2LE) or (Encoding = EncodingUCS2BE) then
+          AText:= Copy(AText, 3, MaxInt); // Skip BOM
+      end;
+      SynDiffEdit.Lines.Text:= ConvertEncoding(AText, SynDiffEdit.Encoding, EncodingUTF8)
     finally
-      SynDiffEdit.EndUpdate;
       FreeAndNil(fsFileStream);
     end;
   except
@@ -1112,38 +1210,45 @@ begin
   end;
 end;
 
-procedure TfrmDiffer.SaveToFile(SynDiffEdit: TSynDiffEdit;
-  const FileName: String);
+procedure TfrmDiffer.SaveToFile(SynDiffEdit: TSynDiffEdit; const FileName: String);
 var
-  slStringList: TStringListEx;
+  AText: String;
+  AMode: LongWord;
 begin
-  slStringList:= TStringListEx.Create;
+  AText := EmptyStr;
+  if (SynDiffEdit.Encoding = EncodingUCS2LE) then
+    AText := UTF16LEBOM
+  else if (SynDiffEdit.Encoding = EncodingUCS2BE) then begin
+    AText := UTF16BEBOM
+  end;
+  with TStringListEx.Create do
   try
-    slStringList.Assign(SynDiffEdit.Lines);
+    Assign(SynDiffEdit.Lines);
     // remove fake lines
-    slStringList.RemoveFake;
+    RemoveFake;
     // restore encoding
-    slStringList.Text:= ConvertEncoding(slStringList.Text, EncodingUTF8, SynDiffEdit.Encoding);
-    try
-      // save to file
-      slStringList.SaveToFile(FileName);
-      SynDiffEdit.Modified:= False; // needed for the undo stack
-    except
-      on EFCreateError do
-      begin
-        msgError(rsMsgErrECreate + ': ' + FileName);
-      end;
-      on EFOpenError do
-      begin
-        msgError(rsMsgErrEOpen + ': ' + FileName);
-      end;
-      on EWriteError do
-      begin
-        msgError(rsMsgErrEWrite + ': ' + FileName);
-      end;
-    end;
+    AText+= ConvertEncoding(Text, EncodingUTF8, SynDiffEdit.Encoding);
   finally
-    slStringList.Free;
+    Free;
+  end;
+  // save to file
+  try
+    if not mbFileExists(FileName) then
+      AMode:= fmCreate
+    else begin
+      AMode:= fmOpenWrite or fmShareDenyWrite;
+    end;
+    with TFileStreamEx.Create(FileName, AMode) do
+    try
+      WriteBuffer(Pointer(AText)^, Length(AText));
+      if (AMode <> fmCreate) then Size:= Position;
+    finally
+      Free;
+    end;
+    SynDiffEdit.Modified:= False; // needed for the undo stack
+  except
+    on E: Exception do
+      msgError(rsMsgErrSaveFile + ' ' + FileName + LineEnding + E.Message);
   end;
 end;
 
@@ -1204,6 +1309,11 @@ end;
 procedure TfrmDiffer.SynDiffEditEnter(Sender: TObject);
 begin
   SynDiffEditActive:= (Sender as TSynDiffEdit);
+end;
+
+procedure TfrmDiffer.ShowFirstDifference(Data: PtrInt);
+begin
+  cm_FirstDifference([]);
 end;
 
 procedure TfrmDiffer.SynDiffEditLeftStatusChange(Sender: TObject;

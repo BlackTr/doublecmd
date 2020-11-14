@@ -215,7 +215,7 @@ begin
           // Show square brackets around directories
           if gDirBrackets and (AFile.IsDirectory or
             AFile.IsLinkToDirectory) then
-            Result := '[' + AFile.Name + ']'
+            Result := gFolderPrefix + AFile.Name + gFolderPostfix
           else
             Result := AFile.Name;
         end;
@@ -300,7 +300,7 @@ begin
           // Show square brackets around directories
           if gDirBrackets and (AFile.IsDirectory or
             AFile.IsLinkToDirectory) then
-            Result := '[' + AFile.NameNoExt + ']'
+            Result := gFolderPrefix + AFile.NameNoExt + gFolderPostfix
           else
             Result := AFile.NameNoExt;
         end;
@@ -414,11 +414,12 @@ begin
   begin
     if AFileSource.IsClass(TWfxPluginFileSource) then
     begin
-      if IWfxPluginFileSource(AFileSource).WfxModule.ContentPlugin and
-         IWfxPluginFileSource(AFileSource).WfxModule.FileParamVSDetectStr(AFile) then
+      with AFileSource as IWfxPluginFileSource do
       begin
-        Result := IWfxPluginFileSource(AFileSource).WfxModule.CallContentGetValueV(
-          AFile.FullPath, AFunc, AParam, 0);
+        if WfxModule.ContentPlugin and WfxModule.FileParamVSDetectStr(AFile) then
+        begin
+          Result := WfxModule.CallContentGetValueV(AFile.FullPath, AFunc, AParam, 0);
+        end;
       end;
     end
     else if fspDirectAccess in AFileSource.Properties then

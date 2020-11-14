@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Options frame page
 
-   Copyright (C) 2006-2019  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2018  Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,8 +15,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program. If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 }
 
 unit fOptionsFrame;
@@ -174,7 +175,6 @@ uses
   fOptionsTabsExtra,
   fOptionsTerminal,
   fOptionsToolbar,
-  fOptionsToolbarExtra,
   fOptionsTools,
   fOptionsToolsEditor,
   fOptionsToolsDiffer,
@@ -182,8 +182,7 @@ uses
   fOptionsToolTips,
   fOptionsFileAssoc,
   fOptionsFileAssocExtra,
-  fOptionsDirectoryHotlist,
-  fOptionsDirectoryHotlistExtra;
+  fOptionsDirectoryHotlist;
 
 { TOptionsEditorRec }
 
@@ -355,8 +354,7 @@ procedure MakeEditorsClassList;
 var
   Main: TOptionsEditorClassList absolute OptionsEditorClassList;
   Colors, ColumnsView, FilesViews, Keyboard, Layout, Mouse, Tools, Editor,
-  FileAssoc, ToolbarConfig, FileOperation, FolderTabs, Plugins,
-  DirectoryHotlistConfig: TOptionsEditorRec;
+  FileAssoc, FileOperation, FolderTabs, Plugins: TOptionsEditorRec;
 begin
   Main.Add(TfrmOptionsLanguage);
   Main.Add(TfrmOptionsBehavior);
@@ -389,8 +387,7 @@ begin
   Layout.Add(TfrmOptionsDrivesListButton);
   Layout.Add(TfrmOptionsTreeViewMenu);
   Layout.Add(TfrmOptionsTreeViewMenuColor);
-  ToolbarConfig := Main.Add(TfrmOptionsToolbar);
-  ToolbarConfig.Add(TfrmOptionsToolbarExtra);
+  Main.Add(TfrmOptionsToolbar);
   FileOperation := Main.Add(TfrmOptionsFileOperations);
   FileOperation.Add(TfrmOptionsFileSearch);
   FolderTabs := Main.Add(TfrmOptionsTabs);
@@ -407,8 +404,7 @@ begin
   Main.Add(TfrmOptionsToolTips);
   FileAssoc := Main.Add(TfrmOptionsFileAssoc);
   FileAssoc.Add(TfrmOptionsFileAssocExtra);
-  DirectoryHotlistConfig := Main.Add(TfrmOptionsDirectoryHotlist);
-  DirectoryHotlistConfig.Add(TfrmOptionsDirectoryHotlistExtra);
+  Main.Add(TfrmOptionsDirectoryHotlist);
 end;
 
 initialization

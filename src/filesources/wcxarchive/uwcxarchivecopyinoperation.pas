@@ -163,8 +163,7 @@ constructor TWcxArchiveCopyInOperation.Create(aSourceFileSource: IFileSource;
                                               aTargetPath: String);
 begin
   FWcxArchiveFileSource := aTargetFileSource as IWcxArchiveFileSource;
-  FFullFilesTree := nil;
-  FPackingFlags := 0;
+  FPackingFlags := PK_PACK_SAVE_PATHS;
   FTarBefore:= False;
 
   inherited Create(aSourceFileSource, aTargetFileSource, theSourceFiles, aTargetPath);
@@ -244,7 +243,7 @@ begin
   end;
 
   SetProcessDataProc(wcxInvalidHandle);
-  FWcxArchiveFileSource.SetChangeVolProc(wcxInvalidHandle);
+  WcxModule.WcxSetChangeVolProc(wcxInvalidHandle);
 
   // Convert TFiles into String;
   sFileList:= GetFileList(FFullFilesTree);

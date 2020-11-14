@@ -2071,6 +2071,10 @@ msgstr "Configuración de atajos de teclado"
 msgid "Configuration of Plugins"
 msgstr ""
 
+#: tfrmmain.actconfigsavepos.caption
+msgid "Save Position"
+msgstr ""
+
 #: tfrmmain.actconfigsavesettings.caption
 msgid "Save Settings"
 msgstr "Guardar ajustes"
@@ -4017,6 +4021,12 @@ msgstr "Historial de carpetas"
 msgid "&File mask history"
 msgstr "Historial de &máscaras de archivos"
 
+#: tfrmoptionsconfiguration.chkfoldertabs.caption
+#, fuzzy
+msgctxt "tfrmoptionsconfiguration.chkfoldertabs.caption"
+msgid "Folder tabs"
+msgstr "Pestañas"
+
 #: tfrmoptionsconfiguration.chksaveconfiguration.caption
 msgid "Sa&ve configuration"
 msgstr "&Guardar la configuración"
@@ -4024,6 +4034,10 @@ msgstr "&Guardar la configuración"
 #: tfrmoptionsconfiguration.chksearchreplacehistory.caption
 msgid "Searc&h/Replace history"
 msgstr "&Historial de buscar/reemplazar"
+
+#: tfrmoptionsconfiguration.chkwindowstate.caption
+msgid "Main window state"
+msgstr ""
 
 #: tfrmoptionsconfiguration.gbdirectories.caption
 msgctxt "tfrmoptionsconfiguration.gbdirectories.caption"
@@ -4888,37 +4902,6 @@ msgstr "Ajustar la ru&ta de destino"
 msgid "Addition from main panel"
 msgstr "Adición desde el panel principal"
 
-#: tfrmoptionsdirectoryhotlistextra.btnpathtoberelativetoall.caption
-msgid "Apply current settings to directory hotlist"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlistsource.caption
-msgid "Source"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlisttarget.caption
-msgid "Target"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption
-msgctxt "tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption"
-msgid "Paths"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.lbdirectoryhotlistfilenamestyle.caption
-msgid "Way to set paths when adding them:"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption
-msgctxt "tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption"
-msgid "Do this for paths of:"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption"
-msgid "Path to be relative to:"
-msgstr ""
-
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
 msgid "From all the supported formats, ask which one to use every time"
 msgstr "Desde todos los formatos soportados, preguntar cual se usará cada vez"
@@ -5660,10 +5643,6 @@ msgstr "Ver con..."
 msgid "Click me to change icon!"
 msgstr "Pulsa aquí para cambiar el icono"
 
-#: tfrmoptionsfileassocextra.btnpathtoberelativetoall.caption
-msgid "Apply current settings to all current configured filenames and paths"
-msgstr ""
-
 #: tfrmoptionsfileassocextra.cbexecuteviashell.caption
 msgctxt "tfrmoptionsfileassocextra.cbexecuteviashell.caption"
 msgid "Execute via shell"
@@ -5696,43 +5675,9 @@ msgctxt "tfrmoptionsfileassocextra.cbopensystemwithterminalstayopen.caption"
 msgid "Execute via terminal and stay open"
 msgstr "&Ejecutar en terminal y mantener abierto"
 
-#: tfrmoptionsfileassocextra.ckbfileassoccommand.caption
-msgctxt "tfrmoptionsfileassocextra.ckbfileassoccommand.caption"
-msgid "Commands"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.ckbfileassocicons.caption
-msgctxt "tfrmoptionsfileassocextra.ckbfileassocicons.caption"
-msgid "Icons"
-msgstr "Iconos"
-
-#: tfrmoptionsfileassocextra.ckbfileassocstartpath.caption
-msgid "Starting paths"
-msgstr ""
-
 #: tfrmoptionsfileassocextra.gbextendedcontextmenuoptions.caption
 msgid "Extended options items:"
 msgstr "Elementos de opciones extendidas:"
-
-#: tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption
-msgctxt "tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption"
-msgid "Paths"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption
-msgctxt "tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption"
-msgid "Way to set paths when adding elements for icons, commands and starting paths:"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.lblapplysettingsfor.caption
-msgctxt "tfrmoptionsfileassocextra.lblapplysettingsfor.caption"
-msgid "Do this for files and path for:"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionsfileassocextra.lbpathtoberelativeto.caption"
-msgid "Path to be relative to:"
-msgstr ""
 
 #: tfrmoptionsfileoperations.bvlconfirmations.caption
 msgid "Show confirmation window for:"
@@ -6841,7 +6786,6 @@ msgid "Configuration:"
 msgstr ""
 
 #: tfrmoptionspluginsgroup.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionspluginsgroup.lbpathtoberelativeto.caption"
 msgid "Path to be relative to:"
 msgstr ""
 
@@ -7283,6 +7227,26 @@ msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTCURRENTTOTCININOKEEP.CAPTION"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "a «wincmd.ini» de TC (borrar existente)"
 
+#: tfrmoptionstoolbar.miexportseparator1.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR1.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miexportseparator2.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR2.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miexportseparator3.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR3.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miexportseparator4.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR4.CAPTION"
+msgid "-"
+msgstr "-"
+
 #: tfrmoptionstoolbar.miexporttop.caption
 msgid "Top toolbar..."
 msgstr "Barra de herramientas..."
@@ -7399,6 +7363,11 @@ msgctxt "tfrmoptionstoolbar.miimportdcbarreplacetop.caption"
 msgid "to replace top toolbar"
 msgstr "para reemplazar la barra superior"
 
+#: tfrmoptionstoolbar.miimportseparator.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTSEPARATOR.CAPTION"
+msgid "-"
+msgstr "-"
+
 #: tfrmoptionstoolbar.miimporttcbar.caption
 msgid "from a single TC .BAR file"
 msgstr "desde un archivo TC .BAR"
@@ -7482,6 +7451,56 @@ msgctxt "TFRMOPTIONSTOOLBAR.MISEARCHANDREPLACE.CAPTION"
 msgid "Search and replace..."
 msgstr "Buscar y reemplazar..."
 
+#: tfrmoptionstoolbar.miseparator1.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR1.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator10.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR10.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator11.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR11.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator13.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR13.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator14.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR14.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator2.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR2.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator6.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR6.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator7.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR7.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator8.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR8.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator9.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR9.CAPTION"
+msgid "-"
+msgstr "-"
+
 #: tfrmoptionstoolbar.miseparatoraftercurrent.caption
 msgctxt "tfrmoptionstoolbar.miseparatoraftercurrent.caption"
 msgid "just after current selection"
@@ -7505,6 +7524,11 @@ msgstr "antes de la selección actual"
 #: tfrmoptionstoolbar.misrcrplallofall.caption
 msgid "in all of all the above..."
 msgstr "en todas de todo lo anterior..."
+
+#: tfrmoptionstoolbar.misrcrplclickseparator.caption
+msgctxt "TFRMOPTIONSTOOLBAR.MISRCRPLCLICKSEPARATOR.CAPTION"
+msgid "-"
+msgstr "-"
 
 #: tfrmoptionstoolbar.misrcrplcommands.caption
 msgid "in all commands..."
@@ -7545,47 +7569,6 @@ msgstr "antes de la selección actual"
 #: tfrmoptionstoolbar.rgtoolitemtype.caption
 msgid "Button type"
 msgstr "Tipo de botón"
-
-#: tfrmoptionstoolbarextra.btnpathtoberelativetoall.caption
-msgid "Apply current settings to all configured filenames and paths"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.cbtoolbarfilenamestyle.hint
-msgid "terbfdg "
-msgstr ""
-
-#: tfrmoptionstoolbarextra.ckbtoolbarcommand.caption
-msgctxt "tfrmoptionstoolbarextra.ckbtoolbarcommand.caption"
-msgid "Commands"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.ckbtoolbaricons.caption
-msgctxt "tfrmoptionstoolbarextra.ckbtoolbaricons.caption"
-msgid "Icons"
-msgstr "Iconos"
-
-#: tfrmoptionstoolbarextra.ckbtoolbarstartpath.caption
-msgid "Starting paths"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption
-msgctxt "tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption"
-msgid "Paths"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.lblapplysettingsfor.caption
-msgid "Do this for files and paths for:"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionstoolbarextra.lbpathtoberelativeto.caption"
-msgid "Path to be relative to:"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption
-msgctxt "tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption"
-msgid "Way to set paths when adding elements for icons, commands and starting paths:"
-msgstr ""
 
 #: tfrmoptionstoolbase.btnrelativetoolpath.hint
 msgctxt "TFRMOPTIONSTOOLBASE.BTNRELATIVETOOLPATH.HINT"
@@ -8290,21 +8273,6 @@ msgctxt "TFRMSETFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Escritura"
 
-#: tfrmsplitter.btncancel.caption
-msgctxt "TFRMSPLITTER.BTNCANCEL.CAPTION"
-msgid "&Cancel"
-msgstr "&Cancelar"
-
-#: tfrmsplitter.btnftchoice.caption
-msgctxt "TFRMSPLITTER.BTNFTCHOICE.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmsplitter.btnok.caption
-msgctxt "TFRMSPLITTER.BTNOK.CAPTION"
-msgid "&OK"
-msgstr "&Aceptar"
-
 #: tfrmsplitter.btnrelativeftchoice.hint
 msgctxt "TFRMSPLITTER.BTNRELATIVEFTCHOICE.HINT"
 msgid "Some functions to select appropriate path"
@@ -8322,22 +8290,15 @@ msgstr "Requiere un archivo de verificación CRC32"
 msgid "1457664B - 3.5\""
 msgstr "1457664B - 3.5\""
 
-#: tfrmsplitter.grbxfile.caption
-msgctxt "TFRMSPLITTER.GRBXFILE.CAPTION"
-msgid "File name"
-msgstr "Nombre del archivo"
-
 #: tfrmsplitter.grbxsize.caption
 msgid "Size and number of parts"
 msgstr "Tamaño y número de partes"
 
 #: tfrmsplitter.lbdirtarget.caption
-msgid "Directory &target"
+#, fuzzy
+#| msgid "Directory &target"
+msgid "Split the file to directory:"
 msgstr "Carpeta des&tino"
-
-#: tfrmsplitter.lbfilesource.caption
-msgid "File &source"
-msgstr "Archivo ori&gen"
 
 #: tfrmsplitter.lblnumberparts.caption
 msgid "&Number of parts"
@@ -11949,10 +11910,6 @@ msgctxt "ulng.rsoptionseditordirectoryhotlist"
 msgid "Directory Hotlist"
 msgstr "Marcadores"
 
-#: ulng.rsoptionseditordirectoryhotlistextra
-msgid "Directory Hotlist Extra"
-msgstr ""
-
 #: ulng.rsoptionseditordraganddrop
 msgid "Drag & drop"
 msgstr "Arrastrar y soltar"
@@ -12006,6 +11963,7 @@ msgid "File types"
 msgstr "Tipos de archivos"
 
 #: ulng.rsoptionseditorfoldertabs
+msgctxt "ulng.rsoptionseditorfoldertabs"
 msgid "Folder tabs"
 msgstr "Pestañas"
 
@@ -12026,7 +11984,6 @@ msgid "Hot keys"
 msgstr "Atajos"
 
 #: ulng.rsoptionseditoricons
-msgctxt "ulng.rsoptionseditoricons"
 msgid "Icons"
 msgstr "Iconos"
 
@@ -12085,10 +12042,6 @@ msgstr "Terminal"
 #: ulng.rsoptionseditortoolbar
 msgid "Toolbar"
 msgstr "Barra de herramientas"
-
-#: ulng.rsoptionseditortoolbarextra
-msgid "Toolbar Extra"
-msgstr ""
 
 #: ulng.rsoptionseditortools
 msgid "Tools"

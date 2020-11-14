@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains specific WINDOWS functions.
 
-    Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2020 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -91,6 +91,14 @@ function mbGetRemoteFileName(const sLocalName: String): String;
 }
 function mbGetShortPathName(const sLongPath: String; var sShortPath: AnsiString): Boolean;
 {en
+   Retrieves Network Error
+}
+function mbWinNetErrorMessage(dwError: DWORD): String;
+{en
+   Retrieves the current status of the specified service
+}
+function GetServiceStatus(const AName: String): DWORD;
+{en
    Retrieves owner of the file (user and group).
    Both user and group contain computer name.
    @param(sPath Absolute path to the file. May be UNC path.)
@@ -151,7 +159,7 @@ implementation
 
 uses
   ShellAPI, MMSystem, JwaWinNetWk, JwaWinUser, JwaNative, JwaVista, LazUTF8,
-  ActiveX, ShlObj, ComObj, DCWindows, uShlObjAdditional;
+  SysConst, ActiveX, ShlObj, ComObj, DCWindows, uShlObjAdditional;
 
 var
   Wow64DisableWow64FsRedirection: function(OldValue: PPointer): BOOL; stdcall;
@@ -551,6 +559,48 @@ begin
   begin
     sShortPath:= AnsiString(wsShortPath);
     Result:= True;
+  end;
+end;
+
+function mbWinNetErrorMessage(dwError: DWORD): String;
+var
+  dwWNetResult: DWORD;
+  lpNameBuf: array [0..MAX_PATH] of WideChar;
+  lpErrorBuf: array[0..maxSmallint] of WideChar;
+begin
+  if dwError <> ERROR_EXTENDED_ERROR then
+    Result:= SysErrorMessage(dwError)
+  else begin
+    dwWNetResult:= WNetGetLastErrorW(dwError, lpErrorBuf, maxSmallint, lpNameBuf, MAX_PATH);
+    if (dwWNetResult <> NO_ERROR) then
+      Result:= SysErrorMessage(dwWNetResult)
+    else begin
+      Result:= UTF16ToUTF8(UnicodeString(lpErrorBuf));
+    end;
+  end;
+  if (Length(Result) = 0) then Result:= Format(SUnknownErrorCode, [dwError]);
+end;
+
+function GetServiceStatus(const AName: String): DWORD;
+var
+  hSCManager, hService: SC_HANDLE;
+  lpServiceStatus: TServiceStatus;
+begin
+  hSCManager:= OpenSCManagerW(nil, nil, SC_MANAGER_ENUMERATE_SERVICE);
+  if (hSCManager = 0) then Exit(0);
+  try
+    hService:= OpenServiceW(hSCManager, PWideChar(UTF8Decode(AName)), SERVICE_QUERY_STATUS);
+    if (hService = 0) then Exit(0);
+
+    if not QueryServiceStatus(hService, {%H-}lpServiceStatus) then
+      Result:= 0
+    else begin
+      Result:= lpServiceStatus.dwCurrentState;
+    end;
+
+    CloseServiceHandle(hService);
+  finally
+    CloseServiceHandle(hSCManager);
   end;
 end;
 

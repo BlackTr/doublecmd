@@ -2,7 +2,7 @@
    Double Commander
    -------------------------------------------------------------------------
    Licence  : GNU GPL v 2.0
-   Copyright (C) 2006-2019 Alexander Koblov (Alexx2000@mail.ru)
+   Copyright (C) 2006-2018 Alexander Koblov (Alexx2000@mail.ru)
 
    Main Dialog window
 
@@ -54,7 +54,7 @@ uses
   {$ELSEIF DEFINED(LCLGTK2)}
   , Glib2, Gtk2
   {$ENDIF}
-  , Types;
+  , Types, LMessages;
 
 type
 
@@ -103,6 +103,7 @@ type
     actCopyAllTabsToOpposite: TAction;
     actConfigTreeViewMenus: TAction;
     actConfigTreeViewMenusColors: TAction;
+    actConfigSavePos: TAction;
     actConfigSaveSettings: TAction;
     actExecuteScript: TAction;
     actFocusSwap: TAction;
@@ -224,6 +225,7 @@ type
     lblLeftDriveInfo: TLabel;
     lblCommandPath: TLabel;
     miConfigArchivers: TMenuItem;
+    mnuConfigSavePos: TMenuItem;
     mnuConfigSaveSettings: TMenuItem;
     miLine55: TMenuItem;
     mnuConfigureFavoriteTabs: TMenuItem;
@@ -607,6 +609,8 @@ type
       State: TDragState; var Accept: Boolean);
     function MainToolBarLoadButtonGlyph(ToolItem: TKASToolItem;
       iIconSize: Integer; clBackColor: TColor): TBitmap;
+    function MainToolBarLoadButtonOverlay(ToolItem: TKASToolItem;
+      iIconSize: Integer; clBackColor: TColor): TBitmap;
     procedure MainToolBarMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure frmMainClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -700,6 +704,15 @@ type
     FUpdateDiskCount: Boolean;
     FModalOperationResult: Boolean;
 
+    FRestoredLeft: Integer;
+    FRestoredTop: Integer;
+    FRestoredWidth: Integer;
+    FRestoredHeight: Integer;
+    FDelayedEventCtr: Integer;
+    FDelayedWMMove, FDelayedWMSize: Boolean;
+
+    procedure DelayedEvent(Data: PtrInt);
+
     procedure CheckCommandLine(ShiftEx: TShiftState; var Key: Word);
     function ExecuteCommandFromEdit(sCmd: String; bRunInTerm: Boolean): Boolean;
     procedure SetMainSplitterPos(AValue: Double);
@@ -746,10 +759,14 @@ type
 
   protected
     procedure CreateWnd; override;
+    procedure DoFirstShow; override;
 {$if lcl_fullversion >= 1070000}
     procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
                             const AXProportion, AYProportion: Double); override;
 {$endif}
+
+    procedure WMMove(var Message: TLMMove); message LM_MOVE;
+    procedure WMSize(var message: TLMSize); message LM_Size;
 
   public
     constructor Create(TheOwner: TComponent); override;
@@ -829,9 +846,10 @@ type
     procedure SaveWindowState;
     procedure LoadMainToolbar;
     procedure SaveMainToolBar;
-    procedure ConfigSaveSettings;
+    procedure ShowLogWindow(Data: PtrInt);
     function  IsCommandLineVisible: Boolean;
     procedure ShowCommandLine(AFocus: Boolean);
+    procedure ConfigSaveSettings(bForce: Boolean);
     procedure ShowDrivesList(APanel: TFilePanelSelect);
     procedure ExecuteCommandLine(bRunInTerm: Boolean);
     procedure UpdatePrompt;
@@ -1033,9 +1051,6 @@ begin
   FDrivesListPopup.OnDriveSelected := @DriveListDriveSelected;
   FDrivesListPopup.OnClose := @DriveListClose;
 
-  TDriveWatcher.Initialize(Handle);
-  TDriveWatcher.AddObserver(@OnDriveWatcherEvent);
-
   //NOTE: we don't check gOnlyOneAppInstance anymore, because cmdline option "--client" was implemented,
   //      so, we should always listen for the messages
   if Assigned(UniqueInstance) then
@@ -1069,13 +1084,13 @@ begin
   HMMainForm.RegisterActionList(actionlst);
   { *HotKeys* }
 
-  // frost_asm begin
-    lastWindowState:=WindowState;
-  // frost_asm end
-
   UpdateActionIcons;
 
-  UpdateWindowView;
+  LoadTabs;
+
+  // Must be after LoadTabs
+  TDriveWatcher.Initialize(Handle);
+  TDriveWatcher.AddObserver(@OnDriveWatcherEvent);
 
 {$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   // Fixes bug - [0000033] "DC cancels shutdown in KDE"
@@ -1084,7 +1099,7 @@ begin
   QObject_hook_hook_events(QEventHook, @QObjectEventFilter);
 {$ENDIF}
 
-  LoadTabs;
+  UpdateWindowView;
   gFavoriteTabsList.AssociatedMainMenuItem := mnuFavoriteTabs;
   gFavoriteTabsList.RefreshAssociatedMainMenu;
 
@@ -1476,7 +1491,7 @@ begin
     2:
       Commands.cm_ClearLogWindow([]);
     3:
-      ShowLogWindow(False);
+      ShowLogWindow(PtrInt(False));
   end;
 end;
 
@@ -2063,11 +2078,11 @@ begin
         if Assigned(aFile) and aFile.IsNameValid then
         begin
           ToolItem := TKASProgramItem.Create;
-          ToolItem.Command := GetToolbarFilenameToSave(tpmeCommand, aFile.FullPath);
-          ToolItem.StartPath := GetToolbarFilenameToSave(tpmeStartingPath, aFile.Path);
+          ToolItem.Command := aFile.FullPath;
+          ToolItem.StartPath := aFile.Path;
           ToolItem.Hint := ExtractOnlyFileName(aFile.Name);
           // ToolItem.Text := ExtractOnlyFileName(aFile.Name);
-          ToolItem.Icon := GetToolbarFilenameToSave(tpmeIcon, aFile.FullPath);
+          ToolItem.Icon := aFile.FullPath;
           MainToolBar.AddButton(ToolItem);
         end;
       finally
@@ -2100,6 +2115,15 @@ function TfrmMain.MainToolBarLoadButtonGlyph(ToolItem: TKASToolItem;
 begin
   if ToolItem is TKASNormalItem then
     Result := PixMapManager.LoadBitmapEnhanced(TKASNormalItem(ToolItem).Icon, iIconSize, True, clBackColor, nil)
+  else
+    Result := nil;
+end;
+
+function TfrmMain.MainToolBarLoadButtonOverlay(ToolItem: TKASToolItem;
+  iIconSize: Integer; clBackColor: TColor): TBitmap;
+begin
+  if ToolItem is TKASMenuItem then
+    Result := PixMapManager.LoadBitmapEnhanced('emblem-symbolic-link', iIconSize, True, clBackColor, nil)
   else
     Result := nil;
 end;
@@ -2172,7 +2196,7 @@ begin
     Commands.cm_CloseDuplicateTabs(['RightTabs']);
   end;
 
-  if gSaveConfiguration then ConfigSaveSettings;
+  if gSaveConfiguration then ConfigSaveSettings(False);
 
   FreeAndNil(Cons);
 
@@ -2193,7 +2217,7 @@ end;
 procedure TfrmMain.frmMainShow(Sender: TObject);
 begin
   DCDebug('frmMain.frmMainShow');
-{$IF NOT (DEFINED(LCLWIN32) or DEFINED(LCLGTK2) or (DEFINED(DARWIN) and DEFINED(LCLQT)))}
+{$IF NOT (DEFINED(LCLWIN32) or DEFINED(LCLGTK2) or DEFINED(LCLCOCOA) OR (DEFINED(DARWIN) and DEFINED(LCLQT)))}
   OnPaint := @frmMainAfterShow;
 {$ELSE}
   Application.QueueAsyncCall(TDataEvent(@frmMainAfterShow), 0);
@@ -2632,7 +2656,7 @@ begin
   pnlNotebooksResize(pnlNotebooks);
 end;
 
-procedure TfrmMain.UpdateActionIcons();
+procedure TfrmMain.UpdateActionIcons;
 var
   I: Integer;
   imgIndex: Integer;
@@ -3680,6 +3704,45 @@ begin
   Application.MainForm.Tag:= Handle;
 end;
 
+procedure TfrmMain.DoFirstShow;
+var
+  ANode: TXmlNode;
+begin
+  inherited DoFirstShow;
+
+  // Load window state
+  ANode := gConfig.FindNode(gConfig.RootNode, 'MainWindow/Position', True);
+
+  if gConfig.GetValue(ANode, 'Maximized', True) then
+    Self.WindowState := wsMaximized;
+
+  lastWindowState := WindowState;
+end;
+
+procedure TfrmMain.WMMove(var Message: TLMMove);
+begin
+  inherited WMMove(Message);
+
+  if not (csDestroying in ComponentState) then
+  begin
+    FDelayedWMMove := True;
+    Inc(FDelayedEventCtr);
+    Application.QueueAsyncCall(@DelayedEvent, 0);
+  end;
+end;
+
+procedure TfrmMain.WMSize(var message: TLMSize);
+begin
+  inherited WMSize(Message);
+
+  if not (csDestroying in ComponentState) then
+  begin
+    FDelayedWMSize := True;
+    Inc(FDelayedEventCtr);
+    Application.QueueAsyncCall(@DelayedEvent, 0);
+  end;
+end;
+
 {$if lcl_fullversion >= 1070000}
 procedure TfrmMain.DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
   const AXProportion, AYProportion: Double);
@@ -3844,8 +3907,24 @@ end;
 
 procedure TfrmMain.pnlLeftRightDblClick(Sender: TObject);
 var
+  APanel: TPanel;
+  APoint: TPoint;
   FileViewNotebook: TFileViewNotebook;
 begin
+  if Sender is TPanel then
+  begin
+    APanel := Sender as TPanel;
+    if APanel = pnlLeft then
+      begin
+        APoint := FrameLeft.ClientToScreen(Classes.Point(0, FrameLeft.Top));
+        if Mouse.CursorPos.Y < APoint.Y then Commands.DoNewTab(nbLeft);
+      end
+    else if APanel = pnlRight then
+      begin
+        APoint := FrameRight.ClientToScreen(Classes.Point(0, FrameRight.Top));
+        if Mouse.CursorPos.Y < APoint.Y then Commands.DoNewTab(nbRight);
+      end;
+  end;
   if Sender is TFileViewNotebook then
   begin
     FileViewNotebook:= Sender as TFileViewNotebook;
@@ -3968,11 +4047,11 @@ begin
   Special := True;
   case LogMsgType of
   lmtInfo:
-    FG := clNavy;
+    FG := gLogInfoColor;
   lmtSuccess:
-    FG := clGreen;
+    FG := gLogSuccessColor;
   lmtError:
-    FG := clRed
+    FG := gLogErrorColor
   else
     FG := clWindowText;
   end;
@@ -4122,9 +4201,6 @@ begin
   end;
 end;
 
-type
-  TCustomShellTreeViewCrack = class(TCustomShellTreeView);
-
 procedure TfrmMain.UpdateShellTreeView;
 begin
   actTreeView.Checked := gSeparateTree;
@@ -4143,7 +4219,7 @@ begin
       ReadOnly := True;
       RightClickSelect := True;
       FileSortType := fstFoldersFirst;
-      TCustomShellTreeViewCrack(ShellTreeView).PopulateWithBaseFiles;
+      PopulateWithBaseFiles;
 
       Images := TImageList.Create(Self);
       Images.Width := gIconsSize;
@@ -4171,7 +4247,7 @@ end;
 
 procedure TfrmMain.UpdateTreeViewPath;
 begin
-  if (gSeparateTree = False) then Exit;
+  if (ShellTreeView = nil) then Exit;
   if (ShellTreeView.Tag <> 0) then Exit;
   if (fspDirectAccess in ActiveFrame.FileSource.Properties) then
   try
@@ -4232,6 +4308,12 @@ begin
   end;
   dskLeft.AddToolItemExecutor(TKASDriveItem, @LeftDriveBarExecuteDrive);
   dskRight.AddToolItemExecutor(TKASDriveItem, @RightDriveBarExecuteDrive);
+
+  if gSeparateTree and Assigned(ShellTreeView) then
+  begin
+    TShellTreeView(ShellTreeView).PopulateWithBaseFiles;
+    UpdateTreeViewPath;
+  end;
 end;
 
 procedure TfrmMain.AddVirtualDriveButton(dskPanel: TKASToolBar);
@@ -4244,7 +4326,7 @@ var
 begin
   (*virtual drive button*)
   ToolItem := TKASNormalItem.Create;
-  ToolItem.Hint := actOpenVirtualFileSystemList.Caption;
+  ToolItem.Hint := StripHotkey(actOpenVirtualFileSystemList.Caption);
   ToolItem.Text := btnCaption;
   Button := dskPanel.AddButton(ToolItem);
   bmpBitmap:= PixMapManager.GetVirtualDriveIcon(dskPanel.GlyphSize, clBtnFace);
@@ -5310,19 +5392,54 @@ begin
     begin
       aFile:= ActiveFrame.CloneActiveFile;
       if Assigned(aFile) then
-        try
-          sCmd:= 'quote' + #32 + sCmd;
-          aFile.FullPath:= ActiveFrame.CurrentPath;
-          Operation:= ActiveFrame.FileSource.CreateExecuteOperation(
-                                           aFile,
-                                           ActiveFrame.CurrentPath,
-                                           sCmd) as TFileSourceExecuteOperation;
-          if Assigned(Operation) then
-            Operation.Execute;
-        finally
-          FreeThenNil(aFile);
-          FreeThenNil(Operation);
+      try
+        sCmd:= 'quote' + #32 + sCmd;
+        aFile.FullPath:= ActiveFrame.CurrentPath;
+        Operation:= ActiveFrame.FileSource.CreateExecuteOperation(
+                                         aFile,
+                                         ActiveFrame.CurrentPath,
+                                         sCmd) as TFileSourceExecuteOperation;
+        if Assigned(Operation) then
+        begin
+          Operation.Execute;
+          case Operation.ExecuteOperationResult of
+            fseorSuccess:
+              begin
+                ActiveFrame.Reload(True);
+              end;
+            fseorError:
+              begin
+                // Show error message
+                if Length(Operation.ResultString) = 0 then
+                  msgError(rsMsgErrEOpen)
+                else
+                  msgError(Operation.ResultString);
+              end;
+            fseorSymLink:
+              begin
+                // Change directory to new path (returned in Operation.ResultString)
+                with ActiveFrame do
+                begin
+                  // If path is URI
+                  if Pos('://', Operation.ResultString) > 0 then
+                    ChooseFileSource(ActiveFrame, Operation.ResultString)
+                  else if not mbSetCurrentDir(ExcludeTrailingPathDelimiter(Operation.ResultString)) then
+                  begin
+                    // Simply change path
+                    CurrentPath:= Operation.ResultString;
+                  end
+                  else begin
+                    // Get a new filesystem file source
+                    AddFileSource(TFileSystemFileSource.GetFileSource, Operation.ResultString);
+                  end;
+                end;
+              end;
+          end;
         end;
+      finally
+        FreeAndNil(aFile);
+        FreeAndNil(Operation);
+      end;
     end;
 end;
 
@@ -5370,6 +5487,12 @@ procedure TfrmMain.LoadTabs;
 begin
   LoadTabsXml(gConfig,'Tabs/OpenedTabs/Left', nbLeft);
   LoadTabsXml(gConfig,'Tabs/OpenedTabs/Right', nbRight);
+
+  if not CommandLineParams.ActivePanelSpecified then
+  begin
+    CommandLineParams.ActivePanelSpecified:= True;
+    CommandLineParams.ActiveRight:= gActiveRight;
+  end;
 
   LoadTabsCommandLine(CommandLineParams);
 
@@ -5447,27 +5570,22 @@ procedure TfrmMain.LoadWindowState;
 var
   ANode: TXmlNode;
   FPixelsPerInch: Integer;
-  ALeft, ATop, AWidth, AHeight: Integer;
 begin
-  (* Load window bounds and state *)
+  // Load window bounds
   ANode := gConfig.FindNode(gConfig.RootNode, 'MainWindow/Position', True);
   begin
     MainSplitterPos := gConfig.GetValue(ANode, 'Splitter', 50.0);
-    ALeft := gConfig.GetValue(ANode, 'Left', 80);
-    ATop := gConfig.GetValue(ANode, 'Top', 48);
-    AWidth := gConfig.GetValue(ANode, 'Width', 800);
-    AHeight := gConfig.GetValue(ANode, 'Height', 480);
-{$if lcl_fullversion >= 1070000}
+    FRestoredLeft := gConfig.GetValue(ANode, 'Left', 80);
+    FRestoredTop := gConfig.GetValue(ANode, 'Top', 48);
+    FRestoredWidth := gConfig.GetValue(ANode, 'Width', 800);
+    FRestoredHeight := gConfig.GetValue(ANode, 'Height', 480);
     FPixelsPerInch := gConfig.GetValue(ANode, 'PixelsPerInch', DesignTimePPI);
     if Scaled and (Screen.PixelsPerInch <> FPixelsPerInch) then
     begin
-      AWidth := MulDiv(AWidth, Screen.PixelsPerInch, FPixelsPerInch);
-      AHeight := MulDiv(AHeight, Screen.PixelsPerInch, FPixelsPerInch);
+      FRestoredWidth := MulDiv(FRestoredWidth, Screen.PixelsPerInch, FPixelsPerInch);
+      FRestoredHeight := MulDiv(FRestoredHeight, Screen.PixelsPerInch, FPixelsPerInch);
     end;
-{$endif}
-    SetBounds(ALeft, ATop, AWidth, AHeight);
-    if gConfig.GetValue(ANode, 'Maximized', True) then
-      Self.WindowState := wsMaximized;
+    SetBounds(FRestoredLeft, FRestoredTop, FRestoredWidth, FRestoredHeight);
   end;
 end;
 
@@ -5475,23 +5593,17 @@ procedure TfrmMain.SaveWindowState;
 var
   ANode: TXmlNode;
 begin
-  (* Save all tabs *)
-  SaveTabsXml(gConfig, 'Tabs/OpenedTabs/', nbLeft, gSaveDirHistory);
-  SaveTabsXml(gConfig, 'Tabs/OpenedTabs/', nbRight, gSaveDirHistory);
-
-  (* Save window bounds and state *)
+  // Save window bounds and state
   ANode := gConfig.FindNode(gConfig.RootNode, 'MainWindow/Position', True);
-  // save window size only if it's not Maximized (for not break normal size)
-  if (WindowState <> wsMaximized) then
   begin
-    gConfig.SetValue(ANode, 'Left', Left);
-    gConfig.SetValue(ANode, 'Top', Top);
-    gConfig.SetValue(ANode, 'Width', Width);
-    gConfig.SetValue(ANode, 'Height', Height);
+    gConfig.SetValue(ANode, 'Left', FRestoredLeft);
+    gConfig.SetValue(ANode, 'Top', FRestoredTop);
+    gConfig.SetValue(ANode, 'Width', FRestoredWidth);
+    gConfig.SetValue(ANode, 'Height', FRestoredHeight);
     gConfig.SetValue(ANode, 'PixelsPerInch', Screen.PixelsPerInch);
+    gConfig.SetValue(ANode, 'Maximized', (WindowState = wsMaximized));
+    gConfig.SetValue(ANode, 'Splitter', FMainSplitterPos);
   end;
-  gConfig.SetValue(ANode, 'Maximized', (WindowState = wsMaximized));
-  gConfig.SetValue(ANode, 'Splitter', FMainSplitterPos);
 end;
 
 procedure TfrmMain.LoadMainToolbar;
@@ -5521,14 +5633,34 @@ begin
   MainToolBar.SaveConfiguration(gConfig, ToolBarNode);
 end;
 
-procedure TfrmMain.ConfigSaveSettings;
+procedure TfrmMain.ShowLogWindow(Data: PtrInt);
+var
+  bShow: Boolean absolute Data;
+begin
+  LogSplitter.Visible:= bShow;
+  seLogWindow.Visible:= bShow;
+  LogSplitter.Top:= seLogWindow.Top - LogSplitter.Height;
+end;
+
+procedure TfrmMain.ConfigSaveSettings(bForce: Boolean);
 begin
   try
     DebugLn('Saving configuration');
+
     if gSaveCmdLineHistory then
       glsCmdLineHistory.Assign(edtCommand.Items);
-    SaveWindowState;
+
+    (* Save all tabs *)
+    if gSaveFolderTabs or bForce then
+    begin
+      SaveTabsXml(gConfig, 'Tabs/OpenedTabs/', nbLeft, gSaveDirHistory);
+      SaveTabsXml(gConfig, 'Tabs/OpenedTabs/', nbRight, gSaveDirHistory);
+    end;
+
+    if gSaveWindowState then SaveWindowState;
+
     if gButtonBar then SaveMainToolBar;
+
     SaveGlobs; // Should be last, writes configuration file
   except
     on E: Exception do
@@ -6113,6 +6245,30 @@ begin
   end;
 
   UpdateSelectedDrives;
+end;
+
+procedure TfrmMain.DelayedEvent(Data: PtrInt);
+begin
+  { discard duplicate calls, accept last call only }
+  Dec(FDelayedEventCtr);
+  if FDelayedEventCtr > 0 then
+    Exit;
+  { update restored bounds }
+  if WindowState = wsNormal then
+    begin
+      if FDelayedWMMove then
+        begin
+          FRestoredLeft := Left;
+          FRestoredTop := Top;
+        end;
+      if FDelayedWMSize then
+        begin
+          FRestoredWidth := Width;
+          FRestoredHeight := Height;
+        end;
+    end;
+  FDelayedWMMove := False;
+  FDelayedWMSize := False;
 end;
 
 procedure TfrmMain.AppActivate(Sender: TObject);

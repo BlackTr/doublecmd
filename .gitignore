@@ -17,3 +17,4 @@ components/*/lib
 *.wcx
 plugins/wcx/zip/zip.app/Contents/MacOS
 libunrar.dylib
+fpc.cfg

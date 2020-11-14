@@ -5,7 +5,7 @@
    (TC WDX-API v1.5)
 
    Copyright (C) 2008  Dmitry Kolomiets (B4rr4cuda@rambler.ru)
-   Copyright (C) 2008-2018 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2008-2019 Alexander Koblov (alexx2000@mail.ru)
 
    Some ideas were found in sources of WdxGuide by Alexey Torgashin
    and SuperWDX by Pavel Dubrovsky and Dmitry Vorotilin.
@@ -21,9 +21,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 
@@ -34,9 +32,11 @@ unit uWDXModule;
 interface
 
 uses
-  Classes, SysUtils, DCClassesUtf8,
-  uWdxPrototypes, WdxPlugin,
-  dynlibs, uDetectStr, lua, uFile, DCXmlConfig;
+  //Lazarus, Free-Pascal, etc.
+  Classes, SysUtils, dynlibs,
+
+  //DC
+  uLng, uWdxPrototypes, WdxPlugin, uDetectStr, lua, uFile, DCXmlConfig;
 
 const
   WDX_MAX_LEN = 2048;
@@ -159,7 +159,7 @@ type
          ContentEditValue
          ContentSendStateInformation}
     //------------------------------------------------------
-    property ModuleHandle: TLibHandle read FModuleHandle write FModuleHandle;
+    property ModuleHandle: TLibHandle read FModuleHandle;
     property Force: Boolean read FForce write FForce;
     //---------------------
   end;
@@ -213,9 +213,9 @@ type
     function GetAName: String; override;
     function GetAFileName: String; override;
     function GetADetectStr: String; override;
-    procedure SetAName(AValue: String); override;
-    procedure SetAFileName(AValue: String); override;
-    procedure SetADetectStr(const AValue: String); override;
+    procedure SetAName({%H-}AValue: String); override;
+    procedure SetAFileName({%H-}AValue: String); override;
+    procedure SetADetectStr(const {%H-}AValue: String); override;
   protected
     procedure AddField(const AName: String; AType: Integer);
   public
@@ -294,8 +294,7 @@ begin
   ft_date: Result := StrToDate(Value);
   ft_time: Result := StrToTime(Value);
   ft_datetime: Result := StrToDateTime(Value);
-  ft_boolean: Result := StrToBool(Value);
-
+  ft_boolean: Result := ((LowerCase(Value) = 'true') OR (Value = rsSimpleWordTrue));
   ft_multiplechoice,
   ft_string,
   ft_fulltext,
@@ -547,7 +546,7 @@ end;
 
 function TPluginWDX.IsLoaded: Boolean;
 begin
-  Result := FModuleHandle <> 0;
+  Result := FModuleHandle <> NilHandle;
 end;
 
 function TPluginWDX.GetADetectStr: String;
@@ -581,34 +580,44 @@ begin
 end;
 
 function TPluginWDX.LoadModule: Boolean;
+var
+  AHandle: TLibHandle;
 begin
-  FModuleHandle := mbLoadLibrary(mbExpandFileName(Self.FileName));
-  Result := (FModuleHandle <> 0);
-  if FModuleHandle = 0 then
-    exit;
-  { Mandatory }
-  ContentGetSupportedField := TContentGetSupportedField(GetProcAddress(FModuleHandle, 'ContentGetSupportedField'));
-  ContentGetValue := TContentGetValue(GetProcAddress(FModuleHandle, 'ContentGetValue'));
-  { Optional (must NOT be implemented if unsupported!) }
-  ContentGetDetectString := TContentGetDetectString(GetProcAddress(FModuleHandle, 'ContentGetDetectString'));
-  ContentSetDefaultParams := TContentSetDefaultParams(GetProcAddress(FModuleHandle, 'ContentSetDefaultParams'));
-  ContentStopGetValue := TContentStopGetValue(GetProcAddress(FModuleHandle, 'ContentStopGetValue'));
-  ContentGetDefaultSortOrder := TContentGetDefaultSortOrder(GetProcAddress(FModuleHandle, 'ContentGetDefaultSortOrder'));
-  ContentPluginUnloading := TContentPluginUnloading(GetProcAddress(FModuleHandle, 'ContentPluginUnloading'));
-  ContentGetSupportedFieldFlags := TContentGetSupportedFieldFlags(GetProcAddress(FModuleHandle, 'ContentGetSupportedFieldFlags'));
-  ContentSetValue := TContentSetValue(GetProcAddress(FModuleHandle, 'ContentSetValue'));
-  ContentEditValue := TContentEditValue(GetProcAddress(FModuleHandle, 'ContentEditValue'));
-  ContentSendStateInformation := TContentSendStateInformation(GetProcAddress(FModuleHandle, 'ContentSendStateInformation'));
-  { Unicode }
-  ContentGetValueW := TContentGetValueW(GetProcAddress(FModuleHandle, 'ContentGetValueW'));
-  ContentStopGetValueW := TContentStopGetValueW(GetProcAddress(FModuleHandle, 'ContentStopGetValueW'));
-  ContentSetValueW := TContentSetValueW(GetProcAddress(FModuleHandle, 'ContentSetValueW'));
-  ContentSendStateInformationW := TContentSendStateInformationW(GetProcAddress(FModuleHandle, 'ContentSendStateInformationW'));
+  EnterCriticalSection(FMutex);
+  try
+    if FModuleHandle <> NilHandle then Exit(True);
+    AHandle := mbLoadLibrary(mbExpandFileName(Self.FileName));
+    Result := (AHandle <> NilHandle);
+    if not Result then Exit;
 
-  CallContentSetDefaultParams;
-  CallContentGetSupportedField;
-  if Length(Self.DetectStr) = 0 then
-    Self.DetectStr := CallContentGetDetectString;
+    { Mandatory }
+    ContentGetSupportedField := TContentGetSupportedField(GetProcAddress(AHandle, 'ContentGetSupportedField'));
+    ContentGetValue := TContentGetValue(GetProcAddress(AHandle, 'ContentGetValue'));
+    { Optional (must NOT be implemented if unsupported!) }
+    ContentGetDetectString := TContentGetDetectString(GetProcAddress(AHandle, 'ContentGetDetectString'));
+    ContentSetDefaultParams := TContentSetDefaultParams(GetProcAddress(AHandle, 'ContentSetDefaultParams'));
+    ContentStopGetValue := TContentStopGetValue(GetProcAddress(AHandle, 'ContentStopGetValue'));
+    ContentGetDefaultSortOrder := TContentGetDefaultSortOrder(GetProcAddress(AHandle, 'ContentGetDefaultSortOrder'));
+    ContentPluginUnloading := TContentPluginUnloading(GetProcAddress(AHandle, 'ContentPluginUnloading'));
+    ContentGetSupportedFieldFlags := TContentGetSupportedFieldFlags(GetProcAddress(AHandle, 'ContentGetSupportedFieldFlags'));
+    ContentSetValue := TContentSetValue(GetProcAddress(AHandle, 'ContentSetValue'));
+    ContentEditValue := TContentEditValue(GetProcAddress(AHandle, 'ContentEditValue'));
+    ContentSendStateInformation := TContentSendStateInformation(GetProcAddress(AHandle, 'ContentSendStateInformation'));
+    { Unicode }
+    ContentGetValueW := TContentGetValueW(GetProcAddress(AHandle, 'ContentGetValueW'));
+    ContentStopGetValueW := TContentStopGetValueW(GetProcAddress(AHandle, 'ContentStopGetValueW'));
+    ContentSetValueW := TContentSetValueW(GetProcAddress(AHandle, 'ContentSetValueW'));
+    ContentSendStateInformationW := TContentSendStateInformationW(GetProcAddress(AHandle, 'ContentSendStateInformationW'));
+
+    CallContentSetDefaultParams;
+    CallContentGetSupportedField;
+    if Length(Self.DetectStr) = 0 then
+      Self.DetectStr := CallContentGetDetectString;
+
+    FModuleHandle := AHandle;
+  finally
+    LeaveCriticalSection(FMutex);
+  end;
 end;
 
 
@@ -650,34 +659,42 @@ begin
 end;
 
 procedure TPluginWDX.UnloadModule;
+var
+  AHandle: TLibHandle;
 begin
-  if assigned(ContentPluginUnloading) then
-    ContentPluginUnloading;
+  EnterCriticalSection(FMutex);
+  try
+    if Assigned(ContentPluginUnloading) then
+      ContentPluginUnloading;
 
-{$IF (not DEFINED(LINUX)) or ((FPC_VERSION > 2) or ((FPC_VERSION=2) and (FPC_RELEASE >= 5)))}
-  if FModuleHandle <> 0 then
-    FreeLibrary(FModuleHandle);
-{$ENDIF}
-  FModuleHandle := 0;
+    if FModuleHandle <> NilHandle then
+    begin
+      AHandle:= FModuleHandle;
+      FModuleHandle := NilHandle;
+      FreeLibrary(AHandle);
+    end;
 
-  { Mandatory }
-  ContentGetSupportedField := nil;
-  ContentGetValue := nil;
-  { Optional (must NOT be implemented if unsupported!) }
-  ContentGetDetectString := nil;
-  ContentSetDefaultParams := nil;
-  ContentStopGetValue := nil;
-  ContentGetDefaultSortOrder := nil;
-  ContentPluginUnloading := nil;
-  ContentGetSupportedFieldFlags := nil;
-  ContentSetValue := nil;
-  ContentEditValue := nil;
-  ContentSendStateInformation := nil;
-  { Unicode }
-  ContentGetValueW := nil;
-  ContentStopGetValueW := nil;
-  ContentSetValueW := nil;
-  ContentSendStateInformationW := nil;
+    { Mandatory }
+    ContentGetSupportedField := nil;
+    ContentGetValue := nil;
+    { Optional (must NOT be implemented if unsupported!) }
+    ContentGetDetectString := nil;
+    ContentSetDefaultParams := nil;
+    ContentStopGetValue := nil;
+    ContentGetDefaultSortOrder := nil;
+    ContentPluginUnloading := nil;
+    ContentGetSupportedFieldFlags := nil;
+    ContentSetValue := nil;
+    ContentEditValue := nil;
+    ContentSendStateInformation := nil;
+    { Unicode }
+    ContentGetValueW := nil;
+    ContentStopGetValueW := nil;
+    ContentSetValueW := nil;
+    ContentSendStateInformationW := nil;
+  finally
+    LeaveCriticalSection(FMutex);
+  end;
 end;
 
 procedure TPluginWDX.CallContentGetSupportedField;
@@ -688,6 +705,8 @@ var
   I, Index, Rez: Integer;
   xFieldName, xUnits: array[0..Pred(MAX_LEN)] of AnsiChar;
 begin
+  FFieldsList.Clear;
+
   if Assigned(ContentGetSupportedField) then
   begin
     Index := 0;
@@ -695,7 +714,7 @@ begin
     xFieldName[0] := #0;
     repeat
       Rez := ContentGetSupportedField(Index, xFieldName, xUnits, MAX_LEN);
-      if Rez <> ft_nomorefields then
+      if Rez > ft_nomorefields then
       begin
         sFieldName := CeSysToUtf8(xFieldName);
         I := FFieldsList.AddObject(sFieldName, TWdxField.Create);
@@ -707,7 +726,7 @@ begin
         end;
       end;
       Inc(Index);
-    until Rez = ft_nomorefields;
+    until (Rez <= ft_nomorefields);
   end;
 end;
 
@@ -792,12 +811,7 @@ begin
       ft_date: Result :=  Format('%2.2d.%2.2d.%4.4d', [fdate.wDay, fdate.wMonth, fdate.wYear]);
       ft_time: Result := Format('%2.2d:%2.2d:%2.2d', [ftime.wHour, ftime.wMinute, ftime.wSecond]);
       ft_datetime: Result := DateTimeToStr(WinFileTimeToDateTime(wtime));
-
-      ft_boolean: if fnval = 0 then
-          Result := 'FALSE'
-        else
-          Result := 'TRUE';
-
+      ft_boolean: Result := ifThen((fnval = 0), rsSimpleWordFalse, rsSimpleWordTrue);
       ft_multiplechoice,
       ft_string,
       ft_fulltext: Result := CeSysToUtf8(AnsiString(PAnsiChar(@Buf[0])));
@@ -983,6 +997,8 @@ var
   Index, Rez, tmp: Integer;
   xFieldName, xUnits: String;
 begin
+  FFieldsList.Clear;
+
   Index := 0;
   repeat
     Rez := WdxLuaContentGetSupportedField(Index, xFieldName, xUnits);
@@ -1093,6 +1109,8 @@ begin
           Result := lua_toboolean(L, -1);
         ft_numeric_floating:
           Result := lua_tonumber(L, -1);
+        ft_datetime:
+          Result := WinFileTimeToDateTime(TWinFileTime(lua_tointeger(L, -1)));
       end;
     end;
 
@@ -1134,7 +1152,9 @@ begin
         ft_numeric_floating:
           Result := FloatToStr(lua_tonumber(L, -1));
         ft_boolean:
-          Result := BoolToStr(lua_toboolean(L, -1), True);
+          Result := IfThen(lua_toboolean(L, -1), rsSimpleWordTrue, rsSimpleWordFalse);
+        ft_datetime:
+          Result := DateTimeToStr(WinFileTimeToDateTime(TWinFileTime(lua_tointeger(L, -1))));
       end;
     end;
 
@@ -1263,19 +1283,13 @@ begin
   InitCriticalSection(FMutex);
   FParser:= TParserControl.Create;
   FFieldsList:= TStringList.Create;
+  FFieldsList.OwnsObjects:= True;
 end;
 
 destructor TWDXModule.Destroy;
-var
-  I: Integer;
 begin
   FParser.Free;
-  if Assigned(FFieldsList) then
-  begin
-    for I := 0 to FFieldsList.Count - 1 do
-      TWdxField(FFieldsList.Objects[I]).Free;
-    FFieldsList.Free;
-  end;
+  FFieldsList.Free;
   Self.UnloadModule;
   inherited Destroy;
   DoneCriticalSection(FMutex);

@@ -45,7 +45,7 @@ const
 
 type
   { TfrmFindDlg }
-  TfrmFindDlg = class(TForm, IFormCommands)
+  TfrmFindDlg = class(TAloneForm, IFormCommands)
     actIntelliFocus: TAction;
     actCancel: TAction;
     actClose: TAction;
@@ -133,7 +133,6 @@ type
     miShowInEditor: TMenuItem;
     miShowAllFound: TMenuItem;
     miRemoveFromLlist: TMenuItem;
-    miCopyPath: TMenuItem;
     pnlDirectoriesDepth: TPanel;
     pnlLoadSaveBottomButtons: TPanel;
     pnlLoadSaveBottom: TPanel;
@@ -246,7 +245,6 @@ type
     procedure lsFoundedFilesMouseWheelUp(Sender: TObject; Shift: TShiftState;
       {%H-}MousePos: TPoint; var Handled: boolean);
     procedure miOpenInNewTabClick(Sender: TObject);
-    procedure miCopyPathClick(Sender: TObject);
     procedure miRemoveFromLlistClick(Sender: TObject);
     procedure miShowAllFoundClick(Sender: TObject);
     procedure miShowInEditorClick(Sender: TObject);
@@ -380,7 +378,7 @@ uses
   uLng, uGlobs, uShowForm, uDCUtils, uFileSource, uFileSourceUtil,
   uSearchResultFileSource, uFile,
   uFileViewNotebook, uKeyboard, uOSUtils, uArchiveFileSourceUtil,
-  DCOSUtils, RegExpr, uDebug, uShowMsg, uConvEncoding, uClipboard;
+  DCOSUtils, RegExpr, uDebug, uShowMsg, uConvEncoding;
 
 const
   TimeUnitToComboIndex: array[TTimeUnit] of integer = (0, 1, 2, 3, 4, 5, 6);
@@ -715,11 +713,11 @@ var
 begin
   SingleByte:= SingleByteEncoding(cmbEncoding.Text);
 
-  cbTextRegExp.Enabled := cbFindText.Checked and SingleByte;
+  cbTextRegExp.Enabled := cbFindText.Checked and SingleByte and (not chkHex.Checked);
   if not cbTextRegExp.Enabled then cbTextRegExp.Checked := False;
 
-  cbCaseSens.Enabled:= cbFindText.Checked and (SingleByte or (not cbReplaceText.Checked));
-  if cbFindText.Checked and (not cbCaseSens.Enabled) then cbCaseSens.Checked := True;
+  cbCaseSens.Enabled:= cbFindText.Checked and (not cbReplaceText.Checked) and (not chkHex.Checked) and (not cbTextRegExp.Checked);
+  if cbFindText.Checked and (not cbCaseSens.Enabled) then cbCaseSens.Checked := not cbTextRegExp.Checked;
 end;
 
 { TfrmFindDlg.Create }
@@ -998,16 +996,14 @@ begin
   begin
     if cbCaseSens.Enabled then
     begin
-      cbCaseSens.Tag := integer(cbCaseSens.Checked);
-      cbCaseSens.Checked := False;
-      cbCaseSens.Enabled := False;
+      cbCaseSens.Tag := Integer(cbCaseSens.Checked);
     end;
   end
   else if not cbCaseSens.Enabled then
   begin
-    cbCaseSens.Checked := boolean(cbCaseSens.Tag);
-    cbCaseSens.Enabled := True;
+    cbCaseSens.Checked := Boolean(cbCaseSens.Tag);
   end;
+  cmbEncodingSelect(cmbEncoding);
 end;
 
 { TfrmFindDlg.cbSelectedFilesChange }
@@ -1020,15 +1016,20 @@ procedure TfrmFindDlg.chkHexChange(Sender: TObject);
 begin
   if chkHex.Checked then
   begin
-    cbCaseSens.Checked:= True;
     cmbEncoding.ItemIndex:= 0;
-    cbTextRegExp.Checked:= False;
+    if cbCaseSens.Enabled then
+    begin
+      cbCaseSens.Tag := Integer(cbCaseSens.Checked);
+    end;
     cbReplaceText.Checked:= False;
+  end
+  else if not cbCaseSens.Enabled then
+  begin
+    cbCaseSens.Checked := Boolean(cbCaseSens.Tag);
   end;
-  cbCaseSens.Enabled:= not chkHex.Checked;
   cmbEncoding.Enabled:= not chkHex.Checked;
-  cbTextRegExp.Enabled:= not chkHex.Checked;
   cbReplaceText.Enabled:= not chkHex.Checked;
+  cmbEncodingSelect(cmbEncoding);
 end;
 
 { TfrmFindDlg.btnSelDirClick }
@@ -2224,24 +2225,6 @@ begin
     lsFoundedFiles.Font.Size := lsFoundedFiles.Font.Size + 1;
     Handled := True;
   end;
-end;
-
-{ TfrmFindDlg.miCopyPathClick }
-procedure TfrmFindDlg.miCopyPathClick(Sender: TObject);
-var
-  i: integer;
-  Str: String;
-begin
-  Str := '';
-  if lsFoundedFiles.ItemIndex = -1 then Exit;
-  if lsFoundedFiles.SelCount = 0 then Exit;
-  for i := 0 to lsFoundedFiles.Items.Count - 1 do
-    if lsFoundedFiles.Selected[i] then
-    begin
-      Str := Str + lsFoundedFiles.Items[i];
-      if lsFoundedFiles.SelCount > 1 then Str := Str + #$0A;
-    end;
-  ClipboardSetText(Str);
 end;
 
 { TfrmFindDlg.miOpenInNewTabClick }

@@ -59,7 +59,7 @@ type
 implementation
 
 uses
-  DCOSUtils, uLng, uFileSystemUtil, uTrash, uAdministrator, uOSUtils
+  DCOSUtils, DCStrUtils, uLng, uFileSystemUtil, uTrash, uAdministrator, uOSUtils
 {$IF DEFINED(MSWINDOWS)}
   , Windows,  uFileUnlock, fFileUnlock
 {$ENDIF}
@@ -185,7 +185,7 @@ begin
   begin
     case FDeleteReadOnly of
       fsoogNone:
-        case AskQuestion(Format(rsMsgFileReadOnly, [FileName]), '',
+        case AskQuestion(Format(rsMsgFileReadOnly, [WrapTextSimple(FileName, 100)]), '',
                          [fsourYes, fsourSkip, fsourAbort, fsourAll, fsourSkipAll],
                          fsourYes, fsourAbort) of
           fsourAll:
@@ -242,7 +242,7 @@ begin
                   Move(ResponsesTrash[0], PossibleResponses[0], SizeOf(ResponsesTrash));
                   PossibleResponses[High(PossibleResponses)]:= fsourRetryAdmin;
                 end;
-                case AskQuestion(Format(rsMsgDelToTrashForce, [FileName]), '',
+                case AskQuestion(Format(rsMsgDelToTrashForce, [WrapTextSimple(FileName, 100)]), '',
                                  PossibleResponses,
                                  fsourYes, fsourAbort) of
                   fsourYes:
@@ -294,7 +294,10 @@ begin
     begin // success
       // process comments if need
       if gProcessComments then
+      begin
         FDescription.DeleteDescription(FileName);
+        if mbCompareFileNames(aFile.Name, DESCRIPT_ION) then FDescription.Reset;
+      end;
 
       if aFile.IsDirectory then
       begin
@@ -335,7 +338,9 @@ begin
             if (Length(ProcessInfo[0].ApplicationName) > 0) then begin
               sQuestion+= Format(rsMsgApplicationName, [ProcessInfo[0].ApplicationName]) + LineEnding;
             end;
-            sQuestion+= Format(rsMsgExecutablePath, [ProcessInfo[0].ExecutablePath]) + LineEnding;
+            if (Length(ProcessInfo[0].ExecutablePath) > 0) then begin
+              sQuestion+= Format(rsMsgExecutablePath, [ProcessInfo[0].ExecutablePath]) + LineEnding;
+            end;
           end
           else
 {$ENDIF}

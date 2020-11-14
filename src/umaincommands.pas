@@ -347,6 +347,7 @@ type
    procedure cm_CopyAllTabsToOpposite(const {%H-}Params: array of string);
    procedure cm_ConfigTreeViewMenus(const {%H-}Params: array of string);
    procedure cm_ConfigTreeViewMenusColors(const {%H-}Params: array of string);
+   procedure cm_ConfigSavePos(const {%H-}Params: array of string);
    procedure cm_ConfigSaveSettings(const {%H-}Params: array of string);
    procedure cm_AddNewSearch(const Params: array of string);
    procedure cm_ViewSearches(const {%H-}Params: array of string);
@@ -488,6 +489,7 @@ begin
                 // TODO:
                 // If TempFileSource is used, create a wait thread that will
                 // keep the TempFileSource alive until the command is finished.
+                aCopyOutOperation.SourceFileSource.AddChild(aFileSource);
               end;
           end; // if selected
         end; // for
@@ -1045,6 +1047,8 @@ begin
     AFileView:= ActiveFrame;
     NFileView:= NotActiveFrame;
 
+    if Assigned(QuickViewPanel) then QuickViewClose;
+
     AFree:= ActiveNotebook.ActivePage.LockState <> tlsDirsInNewTab;
     if AFree then ActiveNotebook.ActivePage.RemoveComponent(AFileView);
 
@@ -1073,56 +1077,55 @@ end;
 procedure TMainCommands.cm_FlatView(const Params: array of string);
 var
   AFile: TFile;
+  AFileView: TFileView;
+  AValue, Param: String;
 begin
   with frmMain do
-  if not (fspListFlatView in ActiveFrame.FileSource.GetProperties) then
   begin
-    msgWarning(rsMsgErrNotSupported);
-  end
-  else
-  begin
-    ActiveFrame.FlatView:= not ActiveFrame.FlatView;
-    if not ActiveFrame.FlatView then
+    AFileView:= ActiveFrame;
+
+    for Param in Params do
     begin
-      AFile:= ActiveFrame.CloneActiveFile;
-      if Assigned(AFile) and AFile.IsNameValid then
+      if GetParamValue(Param, 'side', AValue) then
       begin
-        if not mbCompareFileNames(ActiveFrame.CurrentPath, AFile.Path) then
-        begin
-          ActiveFrame.CurrentPath:= AFile.Path;
-          ActiveFrame.SetActiveFile(AFile.Name);
-        end;
-      end;
-      AFile.Free;
+        if AValue = 'left' then AFileView:= FrameLeft
+        else if AValue = 'right' then AFileView:= FrameRight
+        else if AValue = 'inactive' then AFileView:= NotActiveFrame;
+      end
     end;
-    ActiveFrame.Reload;
+
+    if not (fspListFlatView in AFileView.FileSource.GetProperties) then
+    begin
+      msgWarning(rsMsgErrNotSupported);
+    end
+    else begin
+      AFileView.FlatView:= not AFileView.FlatView;
+      if not AFileView.FlatView then
+      begin
+        AFile:= AFileView.CloneActiveFile;
+        if Assigned(AFile) and AFile.IsNameValid then
+        begin
+          if not mbCompareFileNames(AFileView.CurrentPath, AFile.Path) then
+          begin
+            AFileView.CurrentPath:= AFile.Path;
+            AFileView.SetActiveFile(AFile.Name);
+          end;
+        end;
+        AFile.Free;
+      end;
+      AFileView.Reload;
+    end;
   end;
 end;
 
 procedure TMainCommands.cm_LeftFlatView(const Params: array of string);
 begin
-  if not (fspListFlatView in frmMain.FrameLeft.FileSource.GetProperties) then
-  begin
-    msgWarning(rsMsgErrNotSupported);
-  end
-  else
-  begin
-    frmMain.FrameLeft.FlatView:= not frmMain.FrameLeft.FlatView;
-    frmMain.FrameLeft.Reload;
-  end;
+  cm_FlatView(['side=left']);
 end;
 
 procedure TMainCommands.cm_RightFlatView(const Params: array of string);
 begin
-  if not (fspListFlatView in frmMain.FrameRight.FileSource.GetProperties) then
-  begin
-    msgWarning(rsMsgErrNotSupported);
-  end
-  else
-  begin
-    frmMain.FrameRight.FlatView:= not frmMain.FrameRight.FlatView;
-    frmMain.FrameRight.Reload;
-  end;
+  cm_FlatView(['side=right']);
 end;
 
 procedure TMainCommands.cm_OpenDirInNewTab(const Params: array of string);
@@ -1990,13 +1993,20 @@ begin
   begin
     // Save current file view type
     WorkingNotebook.ActivePage.BackupViewClass := TFileViewClass(WorkingFileView.ClassType);
+    // Save current columns set name
+    if (WorkingFileView is TColumnsFileView) then begin
+      WorkingNotebook.ActivePage.BackupColumnSet:= TColumnsFileView(WorkingFileView).ActiveColm;
+    end;
     // Create thumbnails view
     aFileView:= TThumbFileView.Create(WorkingNotebook.ActivePage, WorkingFileView);
   end
   else
   begin
     // Restore previous file view type
-    aFileView:= WorkingNotebook.ActivePage.BackupViewClass.Create(WorkingNotebook.ActivePage, WorkingFileView);
+    if WorkingNotebook.ActivePage.BackupViewClass <> TColumnsFileView then
+      aFileView:= WorkingNotebook.ActivePage.BackupViewClass.Create(WorkingNotebook.ActivePage, WorkingFileView)
+    else
+      aFileView:= TColumnsFileView.Create(WorkingNotebook.ActivePage, WorkingFileView, WorkingNotebook.ActivePage.BackupColumnSet);
   end;
   WorkingNotebook.ActivePage.FileView:= aFileView;
 end;
@@ -2180,7 +2190,7 @@ begin
     else
       sPath := EmptyStr;
 
-    if not frmMkDir.ShowMkDir(sPath) then Exit;   // show makedir dialog
+    if not ShowMkDir(frmMain, sPath) then Exit;   // show makedir dialog
     if (sPath = EmptyStr) then Exit;
 
     if bMakeViaCopy then
@@ -3535,6 +3545,7 @@ begin
     Attrs := mbFileGetAttr(sNewFile);
     if Attrs = faInvalidAttributes then
     begin
+      sNewFile := TrimPath(sNewFile);
       hFile := mbFileCreate(sNewFile);
       if hFile = feInvalidHandle then
       begin
@@ -3921,9 +3932,9 @@ begin
       if (not Assigned(aFile)) or (aFile.IsDirectory or aFile.IsLinkToDirectory) then
         msgWarning(rsMsgInvalidSelection)
       else
-        ShowSplitterFileForm(FileSource, aFile, NotActiveFrame.CurrentPath);
+        ShowSplitterFileForm(frmMain, FileSource, aFile, NotActiveFrame.CurrentPath);
     finally
-      FreeThenNil(aFile);
+      FreeAndNil(aFile);
     end; // try
   end; // with
 end;
@@ -4751,7 +4762,7 @@ begin
     end;
 
     sMaybeMenuItem := GetUserChoiceFromTreeViewMenuLoadedFromPopupMenu(frmMain.pmFavoriteTabs, tvmcFavoriteTabs, p.X, p.Y, iWantedWidth, iWantedHeight);
-    if sMaybeMenuItem <> nil then sMaybeMenuItem.OnClick(sMaybeMenuItem);
+    if sMaybeMenuItem <> nil then sMaybeMenuItem.Click;
   end
   else
   begin
@@ -4801,10 +4812,20 @@ begin
   cm_Options(['TfrmOptionsTreeViewMenuColor']);
 end;
 
+procedure TMainCommands.cm_ConfigSavePos(const Params: array of string);
+begin
+  frmMain.SaveWindowState;
+  try
+    gConfig.Save;
+  except
+    on E: Exception do msgError(E.Message);
+  end;
+end;
+
 { TMainCommands.cm_ConfigSaveSettings }
 procedure TMainCommands.cm_ConfigSaveSettings(const Params: array of string);
 begin
-  frmMain.ConfigSaveSettings;
+  frmMain.ConfigSaveSettings(True);
 end;
 
 { TMainCommands.cm_ExecuteScript }

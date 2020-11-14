@@ -67,6 +67,8 @@ var
   // stringobject.h
   PyString_AsString: function(ob: PPyObject): PAnsiChar; cdecl;
   PyString_FromString: function(s: PAnsiChar): PPyObject; cdecl;
+  // sysmodule.h
+  PySys_SetArgvEx: procedure(argc: cint; argv: PPAnsiChar; updatepath: cint); cdecl;
   // listobject.h
   PyList_New: function(size: csize_t): PPyObject; cdecl;
   PyList_Size: function (ob: PPyObject): csize_t; cdecl;
@@ -83,6 +85,7 @@ function  PyStringToString(S: PPyObject): String;
 
 procedure PythonAddModulePath(const Path: String);
 function  PythonLoadModule(const ModuleName: String): PPyObject;
+function  PythonRunFunction(Module: PPyObject; const FunctionName: String): PPyObject; overload;
 function  PythonRunFunction(Module: PPyObject; const FunctionName, FunctionArg: String): PPyObject; overload;
 function  PythonRunFunction(Module: PPyObject; const FunctionName: String; FileList: TStrings): PPyObject; overload;
 
@@ -168,7 +171,11 @@ begin
     pyFunc:= PyObject_GetAttrString(Module, PAnsiChar(FunctionName));
     if (Assigned(pyFunc) and (PyCallable_Check(pyFunc) <> 0)) then
     begin
-      pyArgs:= PyObjectsToPyTuple([FunctionArg]);
+      if (FunctionArg = nil) then
+        pyArgs:= nil
+      else begin
+        pyArgs:= PyObjectsToPyTuple([FunctionArg]);
+      end;
       Result:= PyObject_CallObject(pyFunc, pyArgs);
       Py_XDECREF(pyArgs);
       if (Result = nil) then begin
@@ -177,6 +184,11 @@ begin
       Py_DECREF(pyFunc);
     end;
   end;
+end;
+
+function PythonRunFunction(Module: PPyObject; const FunctionName: String): PPyObject;
+begin
+  Result:= PythonCallFunction(Module, FunctionName, nil);
 end;
 
 function PythonRunFunction(Module: PPyObject; const FunctionName, FunctionArg: String): PPyObject;
@@ -226,6 +238,7 @@ begin
     @PyObject_CallFunctionObjArgs:= SafeGetProcAddress(libpython, 'PyObject_CallFunctionObjArgs');
     @PyString_AsString:= SafeGetProcAddress(libpython, 'PyString_AsString');
     @PyString_FromString:= SafeGetProcAddress(libpython, 'PyString_FromString');
+    @PySys_SetArgvEx:= SafeGetProcAddress(libpython, 'PySys_SetArgvEx');
     @PyList_New:= SafeGetProcAddress(libpython, 'PyList_New');
     @PyList_Size:= SafeGetProcAddress(libpython, 'PyList_Size');
     @PyList_GetItem:= SafeGetProcAddress(libpython, 'PyList_GetItem');
@@ -234,6 +247,7 @@ begin
     @PyTuple_SetItem:= SafeGetProcAddress(libpython, 'PyTuple_SetItem');
     // Initialize the Python interpreter
     Py_Initialize();
+    PySys_SetArgvEx(0, nil, 0);
   except
     HasPython:= False;
   end;

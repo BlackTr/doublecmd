@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Graphic functions
 
-   Copyright (C) 2013-2017 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2013-2019 Alexander Koblov (alexx2000@mail.ru)
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -27,29 +27,43 @@ unit uGraphics;
 interface
 
 uses
-  Classes, SysUtils, Graphics, Controls;
+  Classes, SysUtils, Graphics, Controls, IntfGraphics;
 
-type
-
-  { TImageListHelper }
-
-  TImageListHelper = class helper for TImageList
-  public
-    procedure LoadThemeIcon(Index: Integer; const AIconName: String);
-  end;
-
-procedure BitmapAssign(Bitmap: TBitmap; Image: TRasterImage);
+procedure BitmapConvert(Bitmap: TRasterImage);
+procedure BitmapAssign(Bitmap, Image: TRasterImage);
 procedure BitmapAlpha(var ABitmap: TBitmap; APercent: Single);
+procedure BitmapAssign(Bitmap: TRasterImage; Image: TLazIntfImage);
+procedure BitmapCenter(var Bitmap: TBitmap; Width, Height: Integer);
+procedure LoadThemeIcon(ImageList: TImageList; Index: Integer; const AIconName: String);
 
 implementation
 
 uses
-  GraphType, FPimage, IntfGraphics, uPixMapManager;
+  GraphType, FPimage, uPixMapManager;
 
 type
   TRawAccess = class(TRasterImage) end;
 
-procedure BitmapAssign(Bitmap: TBitmap; Image: TRasterImage);
+procedure BitmapConvert(Bitmap: TRasterImage);
+var
+  Source, Target: TLazIntfImage;
+begin
+  Source:= TLazIntfImage.Create(Bitmap.RawImage, False);
+  try
+    Target:= TLazIntfImage.Create(Bitmap.Width, Bitmap.Height, [riqfRGB, riqfAlpha]);
+    try
+      Target.CreateData;
+      Target.CopyPixels(Source);
+      BitmapAssign(Bitmap, Target);
+    finally
+      Target.Free;
+    end;
+  finally
+    Source.Free;
+  end;
+end;
+
+procedure BitmapAssign(Bitmap, Image: TRasterImage);
 var
   RawImage: PRawImage;
 begin
@@ -60,41 +74,102 @@ begin
   RawImage^.ReleaseData;
 end;
 
+procedure BitmapAssign(Bitmap: TRasterImage; Image: TLazIntfImage);
+var
+  ARawImage: TRawImage;
+begin
+  Image.GetRawImage(ARawImage, True);
+  // Simply change raw image owner without data copy
+  Bitmap.LoadFromRawImage(ARawImage, True);
+end;
+
 procedure BitmapAlpha(var ABitmap: TBitmap; APercent: Single);
 var
   X, Y: Integer;
   Color: TFPColor;
+  Masked: Boolean;
   AImage: TLazIntfImage;
+  SrcIntfImage: TLazIntfImage;
 begin
   if ABitmap.RawImage.Description.AlphaPrec <> 0 then
   begin
-    AImage:= ABitmap.CreateIntfImage();
+    ABitmap.BeginUpdate;
+    try
+      AImage:= TLazIntfImage.Create(ABitmap.RawImage, False);
+      for X:= 0 to AImage.Width - 1 do
+      begin
+        for Y:= 0 to AImage.Height - 1 do
+        begin
+          Color:= AImage.Colors[X, Y];
+          Color.Alpha:= Round(Color.Alpha * APercent);
+          AImage.Colors[X, Y]:= Color;
+        end;
+      end;
+      AImage.Free;
+    finally
+      ABitmap.EndUpdate;
+    end;
+  end
+  else begin
+    Masked:= ABitmap.RawImage.Description.MaskBitsPerPixel > 0;
+    SrcIntfImage:= TLazIntfImage.Create(ABitmap.RawImage, False);
+    AImage:= TLazIntfImage.Create(ABitmap.Width, ABitmap.Height, [riqfRGB, riqfAlpha]);
+    AImage.CreateData;
     for X:= 0 to AImage.Width - 1 do
     begin
       for Y:= 0 to AImage.Height - 1 do
       begin
-        Color:= AImage.Colors[X, Y];
-        Color.Alpha:= Round(Color.Alpha * APercent);
+        Color := SrcIntfImage.Colors[X, Y];
+        if Masked and SrcIntfImage.Masked[X, Y] then
+          Color.Alpha:= Low(Color.Alpha)
+        else begin
+          Color.Alpha:= Round(High(Color.Alpha) * APercent);
+        end;
         AImage.Colors[X, Y]:= Color;
-      end;
+      end
     end;
-    ABitmap.LoadFromIntfImage(AImage);
+    SrcIntfImage.Free;
+    BitmapAssign(ABitmap, AImage);
     AImage.Free;
   end;
 end;
 
-{ TImageListHelper }
+procedure BitmapCenter(var Bitmap: TBitmap; Width, Height: Integer);
+var
+  X, Y: Integer;
+  Source, Target: TLazIntfImage;
+begin
+  if (Bitmap.Width <> Width) or (Bitmap.Height <> Height) then
+  begin
+    Source:= TLazIntfImage.Create(Bitmap.RawImage, False);
+    try
+      Target:= TLazIntfImage.Create(Width, Height, [riqfRGB, riqfAlpha]);
+      try
+        Target.CreateData;
+        Target.FillPixels(colTransparent);
+        X:= (Width - Bitmap.Width) div 2;
+        Y:= (Height - Bitmap.Height) div 2;
+        Target.CopyPixels(Source, X, Y);
+        BitmapAssign(Bitmap, Target);
+      finally
+        Target.Free;
+      end;
+    finally
+      Source.Free;
+    end;
+  end;
+end;
 
-procedure TImageListHelper.LoadThemeIcon(Index: Integer; const AIconName: String);
+procedure LoadThemeIcon(ImageList: TImageList; Index: Integer; const AIconName: String);
 var
   ABitmap: TBitmap;
 begin
-  ABitmap:= PixMapManager.GetThemeIcon(AIconName, Self.Width);
+  ABitmap:= PixMapManager.GetThemeIcon(AIconName, ImageList.Width);
   if (ABitmap = nil) then ABitmap:= TBitmap.Create;
-  if (Index < Count) then
-    Self.Replace(Index, ABitmap , nil)
+  if (Index < ImageList.Count) then
+    ImageList.Replace(Index, ABitmap , nil)
   else begin
-    Self.Insert(Index, ABitmap , nil)
+    ImageList.Insert(Index, ABitmap , nil)
   end;
   ABitmap.Free;
 end;

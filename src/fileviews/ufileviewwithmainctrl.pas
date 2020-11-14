@@ -28,7 +28,8 @@ unit uFileViewWithMainCtrl;
 interface
 
 uses
-  Classes, SysUtils, Controls, ExtCtrls, StdCtrls, LCLType, LMessages,
+  Classes, SysUtils, Controls, ExtCtrls, StdCtrls, LCLType, LMessages, EditBtn,
+  Graphics,
   uFile,
   uFileViewWorker,
   uOrderedFileView,
@@ -48,6 +49,19 @@ type
     UserManualEdit:boolean; // true if user press a key or click/select part of filename, false - if pressed F2(or assigned key)
 
     LastAction:TRenameFileActionType;  // need for organize correct cycle Name-FullName-Ext (or FullName-Name-Ext)
+  end;
+
+  { TEditButtonEx }
+
+  TEditButtonEx = class(TEditButton)
+  private
+    function GetFont: TFont;
+    procedure SetFont(AValue: TFont);
+  protected
+    function CalcButtonVisible: Boolean; override;
+    function GetDefaultGlyphName: String; override;
+  public
+    property Font: TFont read GetFont write SetFont;
   end;
 
   { TFileViewWithMainCtrl }
@@ -77,11 +91,13 @@ type
 
     procedure edtRenameEnter(Sender: TObject);
     procedure edtRenameExit(Sender: TObject);
+    procedure edtRenameButtonClick(Sender: TObject);
     procedure edtRenameKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtRenameMouseDown(Sender: TObject; Button: TMouseButton;Shift: TShiftState; X, Y: Integer);
 
   protected
-    edtRename: TEdit;
+    edtRename: TEditButtonEx;
+    FRenameFile: TFile;
     FRenFile:TRenameFileEditInfo;
     FRenTags:string;  // rename separators
 
@@ -166,8 +182,8 @@ type
     procedure WorkerStarting(const Worker: TFileViewWorker); override;
     procedure WorkerFinished(const Worker: TFileViewWorker); override;
 
-    procedure ShowRenameFileEdit(AFile: TFile); virtual;
-    procedure UpdateRenameFileEditPosition; virtual;abstract;
+    procedure ShowRenameFileEdit(var AFile: TFile); virtual;
+    procedure UpdateRenameFileEditPosition; virtual;
     procedure RenameSelectPart(AActionType:TRenameFileActionType); virtual;
 
     property MainControl: TWinControl read FMainControl write SetMainControl;
@@ -208,7 +224,7 @@ uses
   Gtk2Proc,  // for ReleaseMouseCapture
   GTK2Globals,  // for DblClickTime
 {$ENDIF}
-  LCLIntf, LCLProc, LazUTF8, Forms, Dialogs,
+  LCLIntf, LCLProc, LazUTF8, Forms, Dialogs, Buttons, DCOSUtils,
   fMain, uShowMsg, uLng, uFileProperty, uFileSource, uFileSourceOperationTypes,
   uGlobs, uInfoToolTip, uDisplayFile, uFileSystemFileSource, uFileSourceUtil,
   uArchiveFileSourceUtil, uFormCommands, uKeyboard, uFileSourceSetFilePropertyOperation;
@@ -216,6 +232,28 @@ uses
 type
   TControlHandlersHack = class(TWinControl)
   end;
+
+{ TEditButtonEx }
+
+function TEditButtonEx.GetFont: TFont;
+begin
+  Result:= BaseEditor.Font;
+end;
+
+procedure TEditButtonEx.SetFont(AValue: TFont);
+begin
+  BaseEditor.Font:= AValue;
+end;
+
+function TEditButtonEx.GetDefaultGlyphName: String;
+begin
+  Result:= BitBtnResNames[idButtonOk];
+end;
+
+function TEditButtonEx.CalcButtonVisible: Boolean;
+begin
+  Result:= (inherited CalcButtonVisible) and gInplaceRenameButton;
+end;
 
 { TFileViewWithMainCtrl }
 
@@ -272,7 +310,7 @@ begin
 
   inherited CreateDefault(AOwner);
 
-  edtRename := TEdit.Create(Self);
+  edtRename := TEditButtonEx.Create(Self);
   edtRename.Visible := False;
   edtRename.TabStop := False;
   edtRename.AutoSize := False;
@@ -280,6 +318,7 @@ begin
   edtRename.OnMouseDown:=@edtRenameMouseDown;
   edtRename.OnEnter := @edtRenameEnter;
   edtRename.OnExit := @edtRenameExit;
+  edtRename.OnButtonClick := @edtRenameButtonClick;
 
   tmMouseScroll := TTimer.Create(Self);
   tmMouseScroll.Enabled  := False;
@@ -674,7 +713,7 @@ begin
   if not AtFileList then
     Exit;
 
-{$IFDEF LCLWIN32}
+{$IF DEFINED(LCLWIN32) OR DEFINED(LCLCOCOA)}
   FMouseFocus:= MainControl.Focused;
   SetFocus;
 {$ELSE}
@@ -725,7 +764,7 @@ begin
       begin
         if gMouseSelectionEnabled then
         begin
-          if ssCtrl in Shift then
+          if ssModifier in Shift then
             begin
               // if there is no selected files then select also previous file
               if not HasSelectedFiles then
@@ -844,7 +883,8 @@ begin
   else
 
   // if we are about to start dragging
-  if FStartDrag then
+  if FStartDrag and ((Abs(FDragStartPoint.X - X) > DragManager.DragThreshold) or
+                     (Abs(FDragStartPoint.Y - Y) > DragManager.DragThreshold)) then
     begin
       FStartDrag := False;
 
@@ -893,7 +933,7 @@ begin
 
   // A single click starts programs and opens files
   if (gMouseSingleClickStart in [1..3]) and (FMainControlMouseDown = False) and
-     (Shift * [ssShift, ssAlt, ssCtrl] = []) and (not MainControl.Dragging) then
+     (Shift * [ssShift, ssAlt, ssModifier] = []) and (not MainControl.Dragging) then
   begin
     FileIndex := GetFileIndexFromCursor(X, Y, AtFileList);
     if IsFileIndexInRange(FileIndex) and
@@ -948,7 +988,7 @@ begin
 
   // A single click is used to open items
   if (gMouseSingleClickStart > 0) and (Button = mbLeft) and
-     (Shift * [ssShift, ssAlt, ssCtrl] = []) and FMouseFocus then
+     (Shift * [ssShift, ssAlt, ssModifier, ssDouble] = []) and FMouseFocus then
   begin
     // A single click only opens folders. For files, a double click is needed.
     if (gMouseSingleClickStart and 2 <> 0) then
@@ -1208,7 +1248,7 @@ begin
       try
         if aFile.IsNameValid then
           ShowRenameFileEdit(aFile)
-        else
+        else if gCurDir then
           ShowPathEdit;
       finally
         FreeAndNil(aFile);
@@ -1306,6 +1346,7 @@ begin
   end;
   FRenameFileIndex := -1;
 end;
+
 procedure TFileViewWithMainCtrl.TransformDraggingToExternal(ScreenPoint: TPoint);
 begin
   // Set flag temporarily before stopping internal dragging,
@@ -1345,6 +1386,7 @@ end;
 
 procedure TFileViewWithMainCtrl.edtRenameExit(Sender: TObject);
 begin
+  FreeAndNil(FRenameFile);
   edtRename.Visible := False;
   MainControl.WindowProc:= FWindowProc;
 
@@ -1353,12 +1395,18 @@ begin
   FMainControl.OnEnter(Self);
 end;
 
+procedure TFileViewWithMainCtrl.edtRenameButtonClick(Sender: TObject);
+var
+  Key: Word = VK_RETURN;
+begin
+  edtRenameKeyDown(Sender, Key, []);
+end;
+
 procedure TFileViewWithMainCtrl.edtRenameKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 var
   NewFileName: String;
   OldFileNameAbsolute: String;
-  aFile: TFile = nil;
 begin
 
   case Key of
@@ -1377,26 +1425,21 @@ begin
         NewFileName         := edtRename.Text;
         OldFileNameAbsolute := edtRename.Hint;
 
-        aFile := CloneActiveFile;
         try
-          try
-            case RenameFile(FileSource, aFile, NewFileName, True) of
-              sfprSuccess:
-                begin
-                  edtRename.Visible:=False;
-                  SetActiveFile(CurrentPath + NewFileName);
-                  SetFocus;
-                end;
-              sfprError:
-                msgError(Format(rsMsgErrRename, [ExtractFileName(OldFileNameAbsolute), NewFileName]));
-            end;
-
-          except
-            on e: EInvalidFileProperty do
-              msgError(Format(rsMsgErrRename + ':' + LineEnding + '%s (%s)', [ExtractFileName(OldFileNameAbsolute), NewFileName, rsMsgInvalidFileName, e.Message]));
+          case RenameFile(FileSource, FRenameFile, NewFileName, True) of
+            sfprSuccess:
+              begin
+                edtRename.Visible:=False;
+                SetActiveFile(CurrentPath + NewFileName);
+                SetFocus;
+              end;
+            sfprError:
+              msgError(Format(rsMsgErrRename, [ExtractFileName(OldFileNameAbsolute), NewFileName]));
           end;
-        finally
-          FreeAndNil(aFile);
+
+        except
+          on e: EInvalidFileProperty do
+            msgError(Format(rsMsgErrRename + ':' + LineEnding + '%s (%s)', [ExtractFileName(OldFileNameAbsolute), NewFileName, rsMsgInvalidFileName, e.Message]));
         end;
       end;
 
@@ -1459,7 +1502,7 @@ begin
   if not (csDestroying in ComponentState) then UpdateInfoPanel;
 end;
 
-procedure TFileViewWithMainCtrl.ShowRenameFileEdit(AFile: TFile);
+procedure TFileViewWithMainCtrl.ShowRenameFileEdit(var AFile: TFile);
 var
   S: String;
 begin
@@ -1509,6 +1552,7 @@ begin
 
   end else
   begin
+    FRenameFile := aFile;
     edtRename.Hint := aFile.FullPath;
     edtRename.Text := aFile.Name;
     edtRename.Visible := True;
@@ -1521,8 +1565,26 @@ begin
 
     if gRenameSelOnlyName and not (AFile.IsDirectory or AFile.IsLinkToDirectory) then
        RenameSelectPart(rfatName)
-    else
+    else begin
        RenameSelectPart(rfatFull);
+    end;
+    aFile:= nil;
+  end;
+end;
+
+procedure TFileViewWithMainCtrl.UpdateRenameFileEditPosition;
+var
+  AFile: TDisplayFile;
+begin
+  if edtRename.Visible then
+  begin
+    AFile:= GetActiveDisplayFile;
+    // Cannot find original file, cancel rename
+    if (AFile = nil) or (not mbCompareFileNames(AFile.FSFile.FullPath, FRenameFile.FullPath)) then
+    begin
+      edtRename.Hide;
+      SetFocus;
+    end;
   end;
 end;
 

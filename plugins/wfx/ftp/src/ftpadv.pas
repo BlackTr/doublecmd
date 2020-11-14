@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    WFX plugin for working with File Transfer Protocol
 
-   Copyright (C) 2009-2018 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2009-2020 Alexander Koblov (alexx2000@mail.ru)
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -23,12 +23,13 @@
 unit FtpAdv;
 
 {$mode delphi}
+{$macro on}
 
 interface
 
 uses
   Classes, SysUtils, WfxPlugin, FtpSend, LazUTF8Classes, LConvEncoding,
-  DCConvertEncoding, DCFileAttributes, DCBasicTypes, blcksock;
+  DCConvertEncoding, DCFileAttributes, DCBasicTypes, blcksock, LazVersion;
 
 type
   TConvertUTF8ToEncodingFunc = function(const S: String {$IFDEF FPC_HAS_CPSTRING}; SetTargetCodePage: Boolean = False{$ENDIF}): RawByteString;
@@ -106,8 +107,9 @@ type
     procedure DoStatus(Response: Boolean; const Value: string); override;
     procedure OnSocketStatus(Sender: TObject; Reason: THookSocketReason; const Value: String);
   public
-    function ClientToServer(const Value: UnicodeString): AnsiString;
     function ServerToClient(const Value: AnsiString): UnicodeString;
+    function ClientToServer(const Value: AnsiString): AnsiString; overload;
+    function ClientToServer(const Value: UnicodeString): AnsiString; overload;
   public
     function FsFindFirstW(const Path: String; var FindData: TWin32FindDataW): Pointer; virtual;
     function FsFindNextW(Handle: Pointer; var FindData: TWin32FindDataW): BOOL; virtual;
@@ -175,6 +177,13 @@ const
   EncodingCPIso1 = 'iso88591';
   EncodingCPIso2 = 'iso88592';
   EncodingCPIso15 = 'iso885915';
+{$ENDIF}
+
+{$IF NOT DECLARED(EncodingCPKOI8R)}
+const
+  EncodingCPKOI8R = 'koi8r';
+  {$define KOI8RToUTF8:= KOI8ToUTF8}
+  {$define UTF8ToKOI8R:= UTF8ToKOI8}
 {$ENDIF}
 
 function Dummy(const S: String): String;
@@ -407,10 +416,10 @@ begin
     ConvertToUtf8:= @CP950ToUTF8;
     ConvertFromUtf8:= @UTF8ToCP950;
   end
-  else if FEncoding = EncodingCPKOI8 then
+  else if FEncoding = EncodingCPKOI8R then
   begin
-    ConvertToUtf8:= @KOI8ToUTF8;
-    ConvertFromUtf8:= @UTF8ToKOI8;
+    ConvertToUtf8:= @KOI8RToUTF8;
+    ConvertFromUtf8:= @UTF8ToKOI8R;
   end;
 end;
 
@@ -556,6 +565,11 @@ procedure TFTPSendEx.OnSocketStatus(Sender: TObject; Reason: THookSocketReason; 
 begin
   if (Reason in [HR_Error]) and (Length(Value) > 0) then
     LogProc(PluginNumber, msgtype_importanterror, PWideChar(ServerToClient(Value)));
+end;
+
+function TFTPSendEx.ClientToServer(const Value: AnsiString): AnsiString;
+begin
+  Result:= ConvertFromUtf8(Value);
 end;
 
 function TFTPSendEx.ClientToServer(const Value: UnicodeString): AnsiString;

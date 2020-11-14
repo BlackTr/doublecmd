@@ -354,7 +354,7 @@ begin
   case FSF of
     fsfByte, fsfPersonalizedByte: Result := Format('%.0n%s', [FloatSize, gSizeDisplayUnits[FSF]]);
     else
-      Result := FloatToStrF(FloatSize / DIVISORS[FSF], ffFixed, 15, Number) + gSizeDisplayUnits[FSF];
+      Result := FloatToStrF(FloatSize / DIVISORS[FSF], ffNumber, 15, Number) + gSizeDisplayUnits[FSF];
   end;
 end;
 
@@ -579,7 +579,17 @@ end;
 
 function TrimQuotes(const Str: String): String;
 begin
-  Result:= TrimSet(Str, ['"', '''']);
+  Result:= Str;
+  if (Length(Str) > 0) then
+  begin
+    if (Str[1] in ['"', '''']) then
+    begin
+      if (Length(Str) = 1) then
+        Result:= EmptyStr
+      else if (Str[1] = Str[Length(Str)]) then
+        Result:= Copy(Str, 2, Length(Str) - 2);
+    end;
+  end;
 end;
 
 function QuoteStr(const Str: String): String;

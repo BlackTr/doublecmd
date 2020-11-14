@@ -39,6 +39,8 @@ type
     function GetCurrentWorkingDirectory: String; override;
     function SetCurrentWorkingDirectory(NewDir: String): Boolean; override;
 
+    procedure DoReload(const PathsToReload: TPathsArray); override;
+
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -82,6 +84,7 @@ type
     function GetPathType(sPath : String): TPathType; override;
 
     function CreateDirectory(const Path: String): Boolean; override;
+    function FileSystemEntryExists(const Path: String): Boolean; override;
     function GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean; override;
 
     function CreateListOperation(TargetPath: String): TFileSourceOperation; override;
@@ -735,6 +738,11 @@ begin
     Result := mbSetCurrentDir(NewDir);
 end;
 
+procedure TFileSystemFileSource.DoReload(const PathsToReload: TPathsArray);
+begin
+  FDescr.Reset;
+end;
+
 function TFileSystemFileSource.IsPathAtRoot(Path: String): Boolean;
 var
   sPath: String;
@@ -779,6 +787,11 @@ begin
     if (log_dir_op in gLogOptions) and (log_errors in gLogOptions) then
       logWrite(Format(rsMsgLogError + rsMsgLogMkDir, [Path]), lmtError);
   end;
+end;
+
+function TFileSystemFileSource.FileSystemEntryExists(const Path: String): Boolean;
+begin
+  Result:= mbFileSystemEntryExists(Path);
 end;
 
 function TFileSystemFileSource.GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean;

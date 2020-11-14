@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Globals variables and some consts
 
-   Copyright (C) 2008-2019 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2008-2018 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 
    Copyright (C) 2008  Dmitry Kolomiets (B4rr4cuda@rambler.ru)
    Copyright (C) 2008  Vitaly Zotov (vitalyzotov@mail.ru)
-   Copyright (C) 2006-2019 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
 
 }
 
@@ -114,6 +114,7 @@ type
 
   TPluginType = (ptDSX, ptWCX, ptWDX, ptWFX, ptWLX); //*Important: Keep that order to to fit with procedures LoadXmlConfig/SaveXmlConfig when we save/restore widths of "TfrmTweakPlugin".
   TWcxCfgViewMode = (wcvmByPlugin, wcvmByExtension);
+  TPluginFilenameStyle = (pfsAbsolutePath, pfsRelativeToDC, pfsRelativeToFollowingPath);
 
   TDCFont = (dcfMain, dcfViewer, dcfEditor, dcfLog, dcfViewerBook, dcfConsole, dcfSearchResults, dcfPathEdit, dcfFunctionButtons, dcfOptionsTree, dcfOptionsMain);
   TDCFontOptions = record
@@ -150,17 +151,6 @@ type
 
   TToolTipMode = (tttmCombineDcSystem, tttmDcSystemCombine, tttmDcIfPossThenSystem, tttmDcOnly, tttmSystemOnly);
   TToolTipHideTimeOut = (ttthtSystem, tttht1Sec, tttht2Sec, tttht3Sec, tttht5Sec, tttht10Sec, tttht30Sec, tttht1Min, ttthtNeverHide);
-
-  TConfigFilenameStyle = (pfsAbsolutePath, pfsRelativeToDC, pfsRelativeToFollowingPath);
-
-  tToolbarPathModifierElement = (tpmeIcon, tpmeCommand, tpmeStartingPath);
-  tToolbarPathModifierElements = set of tToolbarPathModifierElement;
-
-  tFileAssocPathModifierElement = (fameIcon, fameCommand, fameStartingPath);
-  tFileAssocPathModifierElements = set of tFileAssocPathModifierElement;
-
-  tHotDirPathModifierElement = (hdpmSource, hdpmTarget);
-  tHotDirPathModifierElements = set of tHotDirPathModifierElement;
 
 const
   { Default hotkey list version number }
@@ -245,7 +235,7 @@ var
   gTweakPluginHeight: array[ord(ptDSX)..ord(ptWLX)] of integer;
   gPluginInAutoTweak: boolean;
   gWCXConfigViewMode: TWcxCfgViewMode;
-  gPluginFilenameStyle: TConfigFilenameStyle = pfsAbsolutePath;
+  gPluginFilenameStyle: TPluginFilenameStyle = pfsAbsolutePath;
   gPluginPathToBeRelativeTo: string = '%COMMANDER_PATH%';
   
   { MultiArc addons }
@@ -284,9 +274,6 @@ var
   gToolBarButtonSize,
   gToolBarIconSize: Integer;
   gToolbarReportErrorWithCommands: boolean;
-  gToolbarFilenameStyle: TConfigFilenameStyle;
-  gToolbarPathToBeRelativeTo: string;
-  gToolbarPathModifierElements: tToolbarPathModifierElements;
 
   gRepeatPassword:Boolean;  // repeat password when packing files
   gDirHistoryCount:Integer; // how many history we remember
@@ -305,6 +292,8 @@ var
   gLynxLike:Boolean;
   gFirstTextSearch: Boolean;
   gExtraLineSpan: Integer;
+  gFolderPrefix,
+  gFolderPostfix: String;
 
   { Mouse }
   gMouseSelectionEnabled: Boolean;
@@ -327,10 +316,6 @@ var
   gShowPathInPopup: boolean;
   gShowOnlyValidEnv: boolean = TRUE;
   gWhereToAddNewHotDir: TPositionWhereToAddHotDir;
-  gHotDirFilenameStyle: TConfigFilenameStyle;
-  gHotDirPathToBeRelativeTo: string;
-  gHotDirPathModifierElements: tHotDirPathModifierElements;
-
   glsDirHistory:TStringListEx;
   glsCmdLineHistory: TStringListEx;
   glsMaskHistory : TStringListEx;
@@ -338,6 +323,7 @@ var
   glsSearchPathHistory : TStringListEx;
   glsReplaceHistory : TStringListEx;
   glsReplacePathHistory : TStringListEx;
+  glsCreateDirectoriesHistory : TStringListEx;
   glsSearchDirectories: TStringList;
   glsSearchExcludeFiles: TStringList;
   glsSearchExcludeDirectories: TStringList;
@@ -428,6 +414,10 @@ var
   gIndForeColor, // foreColor of use space on drive label
   gIndBackColor: TColor; // backColor of free space on drive label
 
+  gLogInfoColor,
+  gLogErrorColor,
+  gLogSuccessColor: TColor;
+
   gShowIcons: TShowIconsMode;
   gShowIconsNew: TShowIconsMode;
   gIconOverlays : Boolean;
@@ -491,6 +481,8 @@ var
   gUseConfigInProgramDir,
   gUseConfigInProgramDirNew,
   gSaveConfiguration,
+  gSaveWindowState,
+  gSaveFolderTabs,
   gSaveSearchReplaceHistory,
   gSaveDirHistory,
   gSaveCmdLineHistory,
@@ -509,8 +501,10 @@ var
   gShowWarningMessages,
   gDirBrackets,
   gInplaceRename,
+  gInplaceRenameButton,
   gDblClickToParent,
   gGoToRoot: Boolean;
+  gActiveRight: Boolean;
   gShowToolTip: Boolean;
   gShowToolTipMode: TToolTipMode;
   gToolTipHideTimeOut: TToolTipHideTimeOut;
@@ -552,6 +546,9 @@ var
   gOperationOptionCopyPermissions: Boolean;
   gOperationOptionExcludeEmptyDirectories: Boolean;
 
+  {Extract dialog options}
+  gExtractOverwrite: Boolean;
+
   {Error file}
   gErrorFile: String;
 
@@ -582,11 +579,17 @@ var
   gEditorSynEditOptions: TSynEditorOptions;
   gEditorSynEditTabWidth: Integer;
 
+  { Differ }
+  gDifferAddedColor: TColor;
+  gDifferDeletedColor: TColor;
+  gDifferModifiedColor: TColor;
+
   {SyncDirs}
   gSyncDirsSubdirs,
   gSyncDirsByContent,
   gSyncDirsAsymmetric,
   gSyncDirsIgnoreDate,
+  gSyncDirsAsymmetricSave,
   gSyncDirsShowFilterCopyRight,
   gSyncDirsShowFilterEqual,
   gSyncDirsShowFilterNotEqual,
@@ -604,9 +607,6 @@ var
   gExecuteViaTerminalClose: boolean;
   gExecuteViaTerminalStayOpen: boolean;
   gIncludeFileAssociation: boolean;
-  gFileAssocFilenameStyle: TConfigFilenameStyle;
-  gFileAssocPathToBeRelativeTo: string;
-  gFileAssocPathModifierElements: tFileAssocPathModifierElements;
 
   { TreeViewMenu }
   gslAccents, gslAccentsStripped: TStringList;
@@ -675,7 +675,7 @@ var
 implementation
 
 uses
-   LCLProc, LCLType, Dialogs, Laz2_XMLRead, LazUTF8, uExifWdx,
+   LCLProc, LCLType, Dialogs, Laz2_XMLRead, LazUTF8, uExifWdx, uSynDiffControls,
    uGlobsPaths, uLng, uShowMsg, uFileProcs, uOSUtils, uFindFiles,
    uDCUtils, fMultiRename, uFile, uDCVersion, uDebug, uFileFunctions,
    uDefaultPlugins, Lua, uKeyboard, DCOSUtils, DCStrUtils, uPixMapManager
@@ -840,6 +840,7 @@ begin
       LoadHistory('SearchTextPath', glsSearchPathHistory);
       LoadHistory('ReplaceText', glsReplaceHistory);
       LoadHistory('ReplaceTextPath', glsReplacePathHistory);
+      LoadHistory('CreateDirectories', glsCreateDirectoriesHistory);
       LoadHistory('SearchDirectories', glsSearchDirectories);
       LoadHistory('SearchExcludeFiles', glsSearchExcludeFiles);
       LoadHistory('SearchExcludeDirectories', glsSearchExcludeDirectories);
@@ -883,6 +884,7 @@ begin
       SaveHistory('SearchTextPath', glsSearchPathHistory);
       SaveHistory('ReplaceText', glsReplaceHistory);
       SaveHistory('ReplaceTextPath', glsReplacePathHistory);
+      SaveHistory('CreateDirectories', glsCreateDirectoriesHistory);
       SaveHistory('SearchDirectories', glsSearchDirectories);
       SaveHistory('SearchExcludeFiles', glsSearchExcludeFiles);
       SaveHistory('SearchExcludeDirectories', glsSearchExcludeDirectories);
@@ -1350,6 +1352,7 @@ begin
   glsSearchPathHistory := TStringListEx.Create;
   glsReplaceHistory := TStringListEx.Create;
   glsReplacePathHistory := TStringListEx.Create;
+  glsCreateDirectoriesHistory := TStringListEx.Create;
   glsIgnoreList := TStringListEx.Create;
   glsSearchDirectories := TStringList.Create;
   glsSearchExcludeFiles:= TStringList.Create;
@@ -1380,6 +1383,7 @@ begin
   FreeThenNil(glsSearchPathHistory);
   FreeThenNil(glsReplaceHistory);
   FreeThenNil(glsReplacePathHistory);
+  FreeAndNil(glsCreateDirectoriesHistory);
   FreeThenNil(glsIgnoreList);
   FreeThenNil(glsSearchDirectories);
   FreeThenNil(glsSearchExcludeFiles);
@@ -1451,8 +1455,8 @@ begin
   gNewFilesPosition := nfpSortedPosition;
   gUpdatedFilesPosition := ufpNoChange;
   gFileSizeFormat := fsfFloat;
-  gHeaderFooterSizeFormat := fsfPersonalizedFloat;
-  gOperationSizeFormat := fsfPersonalizedFloat;
+  gHeaderFooterSizeFormat := fsfFloat;
+  gOperationSizeFormat := fsfFloat;
   gFileSizeDigits := 1;
   gHeaderFooterDigits := 1;
   gOperationSizeDigits := 1;
@@ -1486,6 +1490,8 @@ begin
 
   { File views page }
   gExtraLineSpan := 2;
+  gFolderPrefix := '[';
+  gFolderPostfix := ']';
   { Brief view page }
   gBriefViewFixedCount := 2;
   gBriefViewFixedWidth := 100;
@@ -1577,6 +1583,10 @@ begin
   gIndForeColor := clBlack;
   gIndBackColor := clWhite;
 
+  gLogInfoColor:= clNavy;
+  gLogErrorColor:= clRed;
+  gLogSuccessColor:= clGreen;
+
   { Layout page }
   gMainMenu := True;
   gButtonBar := True;
@@ -1584,10 +1594,6 @@ begin
   gToolBarButtonSize := 24;
   gToolBarIconSize := 16;
   gToolbarReportErrorWithCommands := FALSE;
-  gToolbarFilenameStyle := pfsAbsolutePath;
-  gToolbarPathToBeRelativeTo := EnvVarCommanderPath;
-  gToolbarPathModifierElements := [];
-
   gDriveBar1 := True;
   gDriveBar2 := True;
   gDriveBarFlat := True;
@@ -1663,6 +1669,8 @@ begin
   gOperationOptionCopyPermissions := False;
   gOperationOptionExcludeEmptyDirectories := True;
 
+  // Extract
+  gExtractOverwrite := False;
 
   { Tabs page }
   gDirTabOptions := [tb_always_visible,
@@ -1697,6 +1705,8 @@ begin
 
   { Configuration page }
   gSaveConfiguration := True;
+  gSaveWindowState := True;
+  gSaveFolderTabs := True;
   gSaveSearchReplaceHistory := True;
   gSaveDirHistory := True;
   gSaveCmdLineHistory := True;
@@ -1718,16 +1728,13 @@ begin
   gSpaceMovesDown := False;
   gDirBrackets := True;
   gInplaceRename := False;
+  gInplaceRenameButton := False;
   gDblClickToParent := False;
   gHotDirAddTargetOrNot := False;
   gHotDirFullExpandOrNot:=False;
   gShowPathInPopup:=FALSE;
   gShowOnlyValidEnv:=TRUE;
   gWhereToAddNewHotDir := ahdSmart;
-  gHotDirFilenameStyle := pfsAbsolutePath;
-  gHotDirPathToBeRelativeTo := EnvVarCommanderPath;
-  gHotDirPathModifierElements := [];
-
   gShowToolTip := True;
   gShowToolTipMode := tttmCombineDcSystem;
   gToolTipHideTimeOut := ttthtSystem;
@@ -1793,11 +1800,17 @@ begin
   gEditorSynEditOptions := SYNEDIT_DEFAULT_OPTIONS;
   gEditorSynEditTabWidth := 8;
 
+  { Differ }
+  gDifferAddedColor := clPaleGreen;
+  gDifferDeletedColor := clPaleRed;
+  gDifferModifiedColor := clPaleBlue;
+
   {SyncDirs}
   gSyncDirsSubdirs := False;
   gSyncDirsByContent := False;
   gSyncDirsAsymmetric := False;
   gSyncDirsIgnoreDate := False;
+  gSyncDirsAsymmetricSave := False;
   gSyncDirsShowFilterCopyRight := True;
   gSyncDirsShowFilterEqual := True;
   gSyncDirsShowFilterNotEqual := True;
@@ -1814,9 +1827,6 @@ begin
   gExecuteViaTerminalClose := False;
   gExecuteViaTerminalStayOpen := False;
   gIncludeFileAssociation := False;
-  gFileAssocFilenameStyle := pfsAbsolutePath;
-  gFileAssocPathToBeRelativeTo := EnvVarCommanderPath;
-  gFileAssocPathModifierElements := [];
 
   { Tree View Menu }
   gUseTreeViewMenuWithDirectoryHotlistFromMenuCommand := False;
@@ -1852,6 +1862,7 @@ begin
   { - Other - }
   gGoToRoot := False;
   gLuaLib := LuaDLL;
+  gActiveRight := False;
   gNameSCFile := 'shortcuts.scf';
   gHotKeySortOrder := hksoByCommand;
   gUseEnterToCloseHotKeyEditor := True;
@@ -1903,6 +1914,7 @@ begin
   glsSearchPathHistory.Clear;
   glsReplaceHistory.Clear;
   glsReplacePathHistory.Clear;
+  glsCreateDirectoriesHistory.Clear;
   glsIgnoreList.Clear;
   gSearchTemplateList.Clear;
   gDSXPlugins.Clear;
@@ -2271,6 +2283,7 @@ begin
     if Assigned(Node) then
     begin
       gGoToRoot := GetValue(Node, 'GoToRoot', gGoToRoot);
+      gActiveRight := GetValue(Node, 'ActiveRight', gActiveRight);
 
       //Trick to split initial legacy command for terminal
       //  Initial name in config was "RunInTerminal".
@@ -2433,6 +2446,11 @@ begin
       gIndUseGradient := GetValue(Node, 'FreeSpaceIndicator/UseGradient', gIndUseGradient);
       gIndForeColor := GetValue(Node, 'FreeSpaceIndicator/ForeColor', gIndForeColor);
       gIndBackColor := GetValue(Node, 'FreeSpaceIndicator/BackColor', gIndBackColor);
+
+      gLogInfoColor:= GetValue(Node, 'LogWindow/Info', gLogInfoColor);
+      gLogErrorColor:= GetValue(Node, 'LogWindow/Error', gLogErrorColor);
+      gLogSuccessColor:= GetValue(Node, 'LogWindow/Success', gLogSuccessColor);
+
       gColorExt.Load(gConfig, Node);
     end;
 
@@ -2462,9 +2480,6 @@ begin
         else
           gToolBarIconSize := GetValue(SubNode, 'IconSize', gToolBarIconSize);
         gToolbarReportErrorWithCommands := GetValue(SubNode,'ReportErrorWithCommands',gToolbarReportErrorWithCommands);
-        gToolbarFilenameStyle := TConfigFilenameStyle(GetValue(SubNode, 'FilenameStyle', ord(gToolbarFilenameStyle)));
-        gToolbarPathToBeRelativeTo := gConfig.GetValue(SubNode, 'PathToBeRelativeTo', gToolbarPathToBeRelativeTo);
-        gToolbarPathModifierElements := tToolbarPathModifierElements(GetValue(SubNode, 'PathModifierElements', Integer(gToolbarPathModifierElements)));
       end;
       gDriveBar1 := GetValue(Node, 'DriveBar1', gDriveBar1);
       gDriveBar2 := GetValue(Node, 'DriveBar2', gDriveBar2);
@@ -2532,6 +2547,8 @@ begin
         end;
       end;
       gExtraLineSpan := GetValue(Node, 'ExtraLineSpan', gExtraLineSpan);
+      gFolderPrefix := GetValue(Node, 'FolderPrefix', gFolderPrefix);
+      gFolderPostfix := GetValue(Node, 'FolderPostfix', gFolderPostfix);
     end;
 
     { Keys page }
@@ -2597,6 +2614,12 @@ begin
         gOperationOptionCopyPermissions := GetValue(SubNode, 'CopyPermissions', gOperationOptionCopyPermissions);
         gOperationOptionExcludeEmptyDirectories := GetValue(SubNode, 'ExcludeEmptyTemplateDirectories', gOperationOptionExcludeEmptyDirectories);
       end;
+      // Extract
+      SubNode := Node.FindNode('Extract');
+      if Assigned(SubNode) then
+      begin
+        gExtractOverwrite := GetValue(SubNode, 'Overwrite', gExtractOverwrite);
+      end;
     end;
 
     { Tabs page }
@@ -2628,6 +2651,8 @@ begin
 
     { Configuration page }
     gSaveConfiguration := GetAttr(Root, 'Configuration/Save', gSaveConfiguration);
+    gSaveWindowState := GetAttr(Root, 'MainWindow/Position/Save', gSaveWindowState);
+    gSaveFolderTabs := GetAttr(Root, 'Configuration/FolderTabs/Save', gSaveFolderTabs);
     gSaveSearchReplaceHistory:= GetAttr(Root, 'History/SearchReplaceHistory/Save', gSaveSearchReplaceHistory);
     gSaveDirHistory := GetAttr(Root, 'History/DirHistory/Save', gSaveDirHistory);
     gSaveCmdLineHistory := GetAttr(Root, 'History/CmdLineHistory/Save', gSaveCmdLineHistory);
@@ -2679,15 +2704,13 @@ begin
       gSpaceMovesDown := GetValue(Node, 'SpaceMovesDown', gSpaceMovesDown);
       gDirBrackets := GetValue(Node, 'DirBrackets', gDirBrackets);
       gInplaceRename := GetValue(Node, 'InplaceRename', gInplaceRename);
+      gInplaceRenameButton := GetValue(Node, 'InplaceRenameButton', gInplaceRenameButton);
       gDblClickToParent := GetValue(Node, 'DblClickToParent', gDblClickToParent);
       gHotDirAddTargetOrNot:=GetValue(Node, 'HotDirAddTargetOrNot', gHotDirAddTargetOrNot);
       gHotDirFullExpandOrNot:=GetValue(Node, 'HotDirFullExpandOrNot', gHotDirFullExpandOrNot);
       gShowPathInPopup:=GetValue(Node, 'ShowPathInPopup', gShowPathInPopup);
       gShowOnlyValidEnv:=GetValue(Node, 'ShowOnlyValidEnv', gShowOnlyValidEnv);
       gWhereToAddNewHotDir:=TPositionWhereToAddHotDir(GetValue(Node, 'WhereToAddNewHotDir', Integer(gWhereToAddNewHotDir)));
-      gHotDirFilenameStyle := TConfigFilenameStyle(GetValue(Node, 'FilenameStyle', ord(gHotDirFilenameStyle)));
-      gHotDirPathToBeRelativeTo := gConfig.GetValue(Node, 'PathToBeRelativeTo', gHotDirPathToBeRelativeTo);
-      gHotDirPathModifierElements := tHotDirPathModifierElements(GetValue(Node, 'PathModifierElements', Integer(gHotDirPathModifierElements)));
     end;
 
     { Thumbnails }
@@ -2794,6 +2817,19 @@ begin
       gEditorSynEditTabWidth := GetValue(Node, 'SynEditTabWidth', gEditorSynEditTabWidth);
     end;
 
+    { Differ }
+    Node := Root.FindNode('Differ');
+    if Assigned(Node) then
+    begin
+      SubNode := FindNode(Node, 'Colors');
+      if Assigned(SubNode) then
+      begin
+        gDifferAddedColor := GetValue(SubNode, 'Added', gDifferAddedColor);
+        gDifferDeletedColor := GetValue(SubNode, 'Deleted', gDifferDeletedColor);
+        gDifferModifiedColor := GetValue(SubNode, 'Modified', gDifferModifiedColor);
+      end;
+    end;
+
     { SyncDirs }
     Node := Root.FindNode('SyncDirs');
     if Assigned(Node) then
@@ -2801,6 +2837,7 @@ begin
       gSyncDirsSubdirs := GetValue(Node, 'Subdirs', gSyncDirsSubdirs);
       gSyncDirsByContent := GetValue(Node, 'ByContent', gSyncDirsByContent);
       gSyncDirsAsymmetric := GetValue(Node, 'Asymmetric', gSyncDirsAsymmetric);
+      gSyncDirsAsymmetricSave := GetAttr(Node, 'Asymmetric/Save', gSyncDirsAsymmetricSave);
       gSyncDirsIgnoreDate := GetValue(Node, 'IgnoreDate', gSyncDirsIgnoreDate);
       gSyncDirsShowFilterCopyRight := GetValue(Node, 'FilterCopyRight', gSyncDirsShowFilterCopyRight);
       gSyncDirsShowFilterEqual := GetValue(Node, 'FilterEqual', gSyncDirsShowFilterEqual);
@@ -2822,9 +2859,6 @@ begin
       gExecuteViaTerminalClose := GetValue(Node,'OpenSystemWithTerminalClose', gExecuteViaTerminalClose);
       gExecuteViaTerminalStayOpen := GetValue(Node,'OpenSystemWithTerminalStayOpen', gExecuteViaTerminalStayOpen);
       gIncludeFileAssociation := GetValue(Node,'IncludeFileAssociation',gIncludeFileAssociation);
-      gFileAssocFilenameStyle := TConfigFilenameStyle(GetValue(Node, 'FilenameStyle', ord(gFileAssocFilenameStyle)));
-      gFileAssocPathToBeRelativeTo := GetValue(Node, 'PathToBeRelativeTo', gFileAssocPathToBeRelativeTo);
-      gFileAssocPathModifierElements := tFileAssocPathModifierElements(GetValue(Node, 'PathModifierElements', Integer(gFileAssocPathModifierElements)));
     end;
 
     { Tree View Menu }
@@ -2926,7 +2960,7 @@ begin
       gTweakPluginWidth[iIndexContextMode]:=gConfig.GetValue(Node, Format('TweakPluginWidth%d',[iIndexContextMode]), 0);
       gTweakPluginHeight[iIndexContextMode]:=gConfig.GetValue(Node, Format('TweakPluginHeight%d',[iIndexContextMode]), 0);
     end;
-    gPluginFilenameStyle := TConfigFilenameStyle(gConfig.GetValue(Node, 'PluginFilenameStyle', ord(gPluginFilenameStyle)));
+    gPluginFilenameStyle := TPluginFilenameStyle(gConfig.GetValue(Node, 'PluginFilenameStyle', ord(gPluginFilenameStyle)));
     gPluginPathToBeRelativeTo := gConfig.GetValue(Node, 'PluginPathToBeRelativeTo', gPluginPathToBeRelativeTo);
     gPluginInAutoTweak := gConfig.GetValue(Node, 'AutoTweak', gPluginInAutoTweak);
     gWCXConfigViewMode :=  TWcxCfgViewMode(gConfig.GetValue(Node, 'WCXConfigViewMode', Integer(gWCXConfigViewMode)));
@@ -2977,6 +3011,7 @@ begin
     Node := FindNode(Root, 'Behaviours', True);
     ClearNode(Node);
     SetValue(Node, 'GoToRoot', gGoToRoot);
+    SetValue(Node, 'ActiveRight', gActiveRight);
     SetValue(Node, 'RunInTerminalStayOpenCmd', gRunInTermStayOpenCmd);
     SetValue(Node, 'RunInTerminalStayOpenParams', gRunInTermStayOpenParams);
     SetValue(Node, 'RunInTerminalCloseCmd', gRunInTermCloseCmd);
@@ -3070,6 +3105,11 @@ begin
     SetValue(Node, 'FreeSpaceIndicator/UseGradient', gIndUseGradient);
     SetValue(Node, 'FreeSpaceIndicator/ForeColor', gIndForeColor);
     SetValue(Node, 'FreeSpaceIndicator/BackColor', gIndBackColor);
+
+    SetValue(Node, 'LogWindow/Info', gLogInfoColor);
+    SetValue(Node, 'LogWindow/Error', gLogErrorColor);
+    SetValue(Node, 'LogWindow/Success', gLogSuccessColor);
+
     gColorExt.Save(gConfig, Node);
 
     { ToolTips page }
@@ -3089,10 +3129,6 @@ begin
     SetValue(SubNode, 'ButtonHeight', gToolBarButtonSize);
     SetValue(SubNode, 'IconSize', gToolBarIconSize);
     SetValue(SubNode, 'ReportErrorWithCommands', gToolbarReportErrorWithCommands);
-    SetValue(SubNode, 'FilenameStyle', ord(gToolbarFilenameStyle));
-    SetValue(SubNode, 'PathToBeRelativeTo', gToolbarPathToBeRelativeTo);
-    SetValue(SubNode, 'PathModifierElements', Integer(gToolbarPathModifierElements));
-
     SetValue(Node, 'DriveBar1', gDriveBar1);
     SetValue(Node, 'DriveBar2', gDriveBar2);
     SetValue(Node, 'DriveBarFlat', gDriveBarFlat);
@@ -3136,6 +3172,8 @@ begin
     SetValue(SubNode, 'FixedCount', gBriefViewFixedCount);
     SetValue(SubNode, 'AutoSize', Integer(gBriefViewMode));
     SetValue(Node, 'ExtraLineSpan', gExtraLineSpan);
+    SetValue(Node, 'FolderPrefix', gFolderPrefix);
+    SetValue(Node, 'FolderPostfix', gFolderPostfix);
 
     { Keys page }
     Node := FindNode(Root, 'Keyboard', True);
@@ -3189,6 +3227,12 @@ begin
     SetValue(SubNode, 'CopyOwnership', gOperationOptionCopyOwnership);
     SetValue(SubNode, 'CopyPermissions', gOperationOptionCopyPermissions);
     SetValue(SubNode, 'ExcludeEmptyTemplateDirectories', gOperationOptionExcludeEmptyDirectories);
+    // Extract
+    SubNode := FindNode(Node, 'Extract', True);
+    if Assigned(SubNode) then
+    begin
+      SetValue(SubNode, 'Overwrite', gExtractOverwrite);
+    end;
 
     { Tabs page }
     Node := FindNode(Root, 'Tabs', True);
@@ -3206,6 +3250,8 @@ begin
 
     { Configuration page }
     SetAttr(Root, 'Configuration/Save', gSaveConfiguration);
+    SetAttr(Root, 'MainWindow/Position/Save', gSaveWindowState);
+    SetAttr(Root, 'Configuration/FolderTabs/Save', gSaveFolderTabs);
     SetAttr(Root, 'History/SearchReplaceHistory/Save', gSaveSearchReplaceHistory);
     SetAttr(Root, 'History/DirHistory/Save', gSaveDirHistory);
     SetAttr(Root, 'History/CmdLineHistory/Save', gSaveCmdLineHistory);
@@ -3231,15 +3277,13 @@ begin
     SetValue(Node, 'SpaceMovesDown', gSpaceMovesDown);
     SetValue(Node, 'DirBrackets', gDirBrackets);
     SetValue(Node, 'InplaceRename', gInplaceRename);
+    SetValue(Node, 'InplaceRenameButton', gInplaceRenameButton);
     SetValue(Node, 'DblClickToParent', gDblClickToParent);
     SetValue(Node, 'HotDirAddTargetOrNot',gHotDirAddTargetOrNot);
     SetValue(Node, 'HotDirFullExpandOrNot', gHotDirFullExpandOrNot);
     SetValue(Node, 'ShowPathInPopup', gShowPathInPopup);
     SetValue(Node, 'ShowOnlyValidEnv', gShowOnlyValidEnv);
     SetValue(Node, 'WhereToAddNewHotDir', Integer(gWhereToAddNewHotDir));
-    SetValue(Node, 'FilenameStyle', ord(gHotDirFilenameStyle));
-    SetValue(Node, 'PathToBeRelativeTo', gHotDirPathToBeRelativeTo);
-    SetValue(Node, 'PathModifierElements', Integer(gHotDirPathModifierElements));
 
     { Thumbnails }
     Node := FindNode(Root, 'Thumbnails', True);
@@ -3314,11 +3358,19 @@ begin
     SetValue(Node, 'SynEditOptions', Integer(gEditorSynEditOptions));
     SetValue(Node, 'SynEditTabWidth', gEditorSynEditTabWidth);
 
+    { Differ }
+    Node := FindNode(Root, 'Differ',True);
+    SubNode := FindNode(Node, 'Colors', True);
+    SetValue(SubNode, 'Added', gDifferAddedColor);
+    SetValue(SubNode, 'Deleted', gDifferDeletedColor);
+    SetValue(SubNode, 'Modified', gDifferModifiedColor);
+
     { SyncDirs }
     Node := FindNode(Root, 'SyncDirs', True);
     SetValue(Node, 'Subdirs', gSyncDirsSubdirs);
     SetValue(Node, 'ByContent', gSyncDirsByContent);
-    SetValue(Node, 'Asymmetric', gSyncDirsAsymmetric);
+    SetValue(Node, 'Asymmetric', gSyncDirsAsymmetric and gSyncDirsAsymmetricSave);
+    SetAttr(Node, 'Asymmetric/Save', gSyncDirsAsymmetricSave);
     SetValue(Node, 'IgnoreDate', gSyncDirsIgnoreDate);
     SetValue(Node, 'FilterCopyRight', gSyncDirsShowFilterCopyRight);
     SetValue(Node, 'FilterEqual', gSyncDirsShowFilterEqual);
@@ -3337,9 +3389,6 @@ begin
     SetValue(Node, 'OpenSystemWithTerminalClose', gExecuteViaTerminalClose);
     SetValue(Node, 'OpenSystemWithTerminalStayOpen', gExecuteViaTerminalStayOpen);
     SetValue(Node, 'IncludeFileAssociation', gIncludeFileAssociation);
-    SetValue(Node, 'FilenameStyle', ord(gFileAssocFilenameStyle));
-    SetValue(Node, 'PathToBeRelativeTo', gFileAssocPathToBeRelativeTo);
-    SetValue(Node, 'PathModifierElements', Integer(gFileAssocPathModifierElements));
 
     { Tree View Menu }
     Node := FindNode(Root, 'TreeViewMenu', True);

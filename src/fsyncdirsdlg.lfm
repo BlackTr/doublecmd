@@ -489,6 +489,9 @@ object frmSyncDirsDlg: TfrmSyncDirsDlg
     ClientHeight = 81
     ClientWidth = 240
     Constraints.MinWidth = 240
+    ParentBackground = False
+    ParentColor = False
+    ParentFont = False
     TabOrder = 9
     Visible = False
     object lblProgress: TLabel

@@ -2425,14 +2425,14 @@ function TViewerControl.DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): 
 begin
   Result := inherited;
   if not Result then
-    Result := Scroll(1);    //Mouse.WheelScrollLines
+    Result := Scroll(Mouse.WheelScrollLines);
 end;
 
 function TViewerControl.DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := inherited;
   if not Result then
-    Result := Scroll(-1);
+    Result := Scroll(-Mouse.WheelScrollLines);
 end;
 
 {$if lcl_fullversion >= 1070000}
@@ -2548,7 +2548,6 @@ var
     begin
       Exit(-1); // No position.
     end;
-    px := px + charWidth;
 
     // Clicked on ascii part.
     for i := 0 to FCustom.ValuesPerLine - 1 do

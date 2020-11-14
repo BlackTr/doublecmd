@@ -58,8 +58,13 @@ type
     }
     FFileSource: IFileSource;
 
+    procedure FileSourceReloadEvent(const aFileSource: IFileSource;
+                                    const ReloadedPaths: TPathsArray);
+
+  protected
     function GetFileList: TFileTree;
     function GetFileSource: IFileSource;
+    procedure DoReload(const PathsToReload: TPathsArray); override;
 
   public
     constructor Create; override;
@@ -80,6 +85,9 @@ type
     function GetSupportedFileProperties: TFilePropertiesTypes; override;
     function GetOperationsTypes: TFileSourceOperationTypes; override;
     function GetProperties: TFileSourceProperties; override;
+
+    function CreateDirectory(const Path: String): Boolean; override;
+    function FileSystemEntryExists(const Path: String): Boolean; override;
 
     function GetRetrievableFileProperties: TFilePropertiesTypes; override;
     procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String); override;
@@ -120,9 +128,11 @@ end;
 
 destructor TMultiListFileSource.Destroy;
 begin
+  if Assigned(FFileSource) then begin
+    FFileSource.RemoveReloadEventListener(@FileSourceReloadEvent);
+  end;
   inherited Destroy;
-  if Assigned(FFileList) then
-    FreeAndNil(FFileList);
+  FreeAndNil(FFileList);
   FFileSource := nil;
 end;
 
@@ -134,6 +144,8 @@ begin
   FFileList := aFileList;
   aFileList := nil;
   FFileSource := aFileSource;
+
+  FFileSource.AddReloadEventListener(@FileSourceReloadEvent);
 end;
 
 function TMultiListFileSource.GetSupportedFileProperties: TFilePropertiesTypes;
@@ -165,6 +177,16 @@ begin
   Result := FFileSource.GetProperties;
 end;
 
+function TMultiListFileSource.CreateDirectory(const Path: String): Boolean;
+begin
+  Result:= FFileSource.CreateDirectory(Path);
+end;
+
+function TMultiListFileSource.FileSystemEntryExists(const Path: String): Boolean;
+begin
+  Result:= FFileSource.FileSystemEntryExists(Path);
+end;
+
 function TMultiListFileSource.GetRetrievableFileProperties: TFilePropertiesTypes;
 begin
   Result:= FFileSource.GetRetrievableFileProperties;
@@ -182,6 +204,12 @@ begin
   Result:= FFileSource.CanRetrieveProperties(AFile, PropertiesToSet);
 end;
 
+procedure TMultiListFileSource.FileSourceReloadEvent(
+  const aFileSource: IFileSource; const ReloadedPaths: TPathsArray);
+begin
+  Reload(ReloadedPaths);
+end;
+
 function TMultiListFileSource.GetFileList: TFileTree;
 begin
   Result := FFileList;
@@ -190,6 +218,31 @@ end;
 function TMultiListFileSource.GetFileSource: IFileSource;
 begin
   Result := FFileSource;
+end;
+
+procedure TMultiListFileSource.DoReload(const PathsToReload: TPathsArray);
+
+  procedure ReloadNode(aNode: TFileTreeNode);
+  var
+    Index: Integer;
+    ASubNode: TFileTreeNode;
+  begin
+    if Assigned(aNode) then
+    begin
+      for Index := aNode.SubNodesCount - 1 downto 0 do
+      begin
+        ASubNode:= aNode.SubNodes[Index];
+        if FFileSource.FileSystemEntryExists(ASubNode.TheFile.FullPath) then
+          ReloadNode(ASubNode)
+        else begin
+          aNode.RemoveSubNode(Index);
+        end;
+      end;
+    end;
+  end;
+
+begin
+  ReloadNode(FileList);
 end;
 
 function TMultiListFileSource.CreateListOperation(TargetPath: String): TFileSourceOperation;

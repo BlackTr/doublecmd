@@ -158,6 +158,9 @@ uses
   DCBasicTypes, uFileSource, uFileSystemFileSource, uFileProperty,
   StrUtils, DCDateTimeUtils, uShowMsg, Forms, LazUTF8, uHash;
 
+const
+  HASH_TYPE = HASH_BLAKE2S;
+
 function ApplyRenameMask(aFile: TFile; NameMask: String; ExtMask: String): String; overload;
 begin
   // Only change name for files.
@@ -205,6 +208,7 @@ procedure FillAndCount(Files: TFiles; CountDirs: Boolean; ExcludeRootDir: Boolea
 var
   i: Integer;
   aFile: TFile;
+  aFindData: TSearchRecEx;
 begin
   FilesCount:= 0;
   FilesSize:= 0;
@@ -223,6 +227,14 @@ begin
     begin
       aFile := Files[i];
 
+      // Update file attributes
+      if mbFileGetAttr(aFile.FullPath, aFindData) then
+      begin
+        aFile.Size:= aFindData.Size;
+        aFile.Attributes:= aFindData.Attr;
+        aFile.ModificationTime:= FileTimeToDateTime(aFindData.Time);
+      end;
+
       NewFiles.Add(aFile.Clone);
 
       if aFile.IsLink then
@@ -232,7 +244,7 @@ begin
       begin
         if CountDirs then
           Inc(FilesCount);
-        FillAndCountRec(aFile.Path + aFile.Name + DirectorySeparator);  // recursive browse child dir
+        FillAndCountRec(aFile.FullPath + DirectorySeparator);  // recursive browse child dir
       end
       else
       begin
@@ -246,13 +258,13 @@ end;
 function FileExistsMessage(const TargetName, SourceName: String;
                            SourceSize: Int64; SourceTime: TDateTime): String;
 var
-  TargetInfo: TSearchRec;
+  TargetInfo: TSearchRecEx;
 begin
   Result:= rsMsgFileExistsOverwrite + LineEnding + WrapTextSimple(TargetName, 100) + LineEnding;
   if mbFileGetAttr(TargetName, TargetInfo) then
   begin
     Result:= Result + Format(rsMsgFileExistsFileInfo, [Numb2USA(IntToStr(TargetInfo.Size)),
-                             DateTimeToStr(FileDateToDateTime(TargetInfo.Time))]) + LineEnding;
+                             DateTimeToStr(FileTimeToDateTime(TargetInfo.Time))]) + LineEnding;
   end;
   Result:= Result + LineEnding + rsMsgFileExistsWithFile + LineEnding + WrapTextSimple(SourceName, 100) + LineEnding +
            Format(rsMsgFileExistsFileInfo, [Numb2USA(IntToStr(SourceSize)), DateTimeToStr(SourceTime)]);
@@ -268,7 +280,7 @@ var
   AddedIndex: Integer;
 begin
   LinkedFilePath := mbReadAllLinks(aFile.FullPath);
-  if LinkedFilePath <> '' then
+  if (LinkedFilePath <> '') and (LinkedFilePath <> PathDelim) then
   begin
     try
       LinkedFile := TFileSystemFileSource.CreateFileFromFile(LinkedFilePath);
@@ -592,7 +604,7 @@ begin
   SourceFileStream := nil;
   TargetFileStream := nil; // for safety exception handling
   BytesToRead := FBufferSize;
-  if FVerify then HashInit(Context, HASH_SHA3_224);
+  if FVerify then HashInit(Context, HASH_TYPE);
   try
     try
       OpenSourceFile;
@@ -766,7 +778,7 @@ procedure TFileSystemOperationHelper.CopyProperties(SourceFile: TFile;
 var
   Msg: String = '';
   ACopyTime: Boolean;
-  CopyAttrResult: TCopyAttributesOptions;
+  CopyAttrResult: TCopyAttributesOptions = [];
   ACopyAttributesOptions: TCopyAttributesOptions;
 begin
   if FCopyAttributesOptions <> [] then
@@ -778,12 +790,14 @@ begin
       CopyAttrResult := mbFileCopyAttr(SourceFile.FullPath, TargetFileName, ACopyAttributesOptions);
     end;
     if ACopyTime then
-    begin
+    try
       // Copy time from properties because move operation change time of original folder
       if not mbFileSetTime(TargetFileName, DateTimeToFileTime(SourceFile.ModificationTime),
                    {$IF DEFINED(MSWINDOWS)}DateTimeToFileTime(SourceFile.CreationTime){$ELSE}0{$ENDIF},
                                            DateTimeToFileTime(SourceFile.LastAccessTime)) then
         CopyAttrResult += [caoCopyTime];
+    except
+      on E: EDateOutOfRange do CopyAttrResult += [caoCopyTime];
     end;
     if CopyAttrResult <> [] then
     begin
@@ -892,7 +906,7 @@ begin
     UpdateStatistics(FStatistics);
 
     // Check if moving to the same file.
-    if mbSameFile(TargetName, aFile.FullPath) then
+    if mbFileSame(TargetName, aFile.FullPath) then
     begin
       if (FMode = fsohmCopy) and FAutoRenameItSelf then
         TargetName := GetNextCopyName(TargetName, aFile.IsDirectory or aFile.IsLinkToDirectory)
@@ -1573,7 +1587,7 @@ begin
   {$PUSH}{$HINTS OFF}{$WARNINGS OFF}
   Aligned:= Pointer(PtrUInt(Buffer + BytesToRead - 1) and not (BytesToRead - 1));
   {$POP}
-  HashInit(Context, HASH_SHA3_224);
+  HashInit(Context, HASH_TYPE);
   try
     Handle:= mbFileOpen(FileName, fmOpenRead or fmShareDenyWrite or fmOpenSync or fmOpenDirect);
 

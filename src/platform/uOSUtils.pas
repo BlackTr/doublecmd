@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains platform depended functions.
 
-    Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2019 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ unit uOSUtils;
 interface
 
 uses
-    SysUtils, Classes, LCLType, uDrive, DCBasicTypes
+    SysUtils, Classes, LCLType, uDrive, DCBasicTypes, uFindEx
     {$IF DEFINED(UNIX)}
     , DCFileAttributes
       {$IFDEF DARWIN}
@@ -57,9 +57,8 @@ const
   faFolder = S_IFDIR;
   ReversePathDelim = '\';
   {$IFDEF DARWIN)}
-  RunTermCmd = '/Applications/Utilities/Terminal.app %D';  // default terminal
-  RunTermParams = '';
-  RunInTerm = ''; // default run in terminal command
+  RunTermCmd = '/Applications/Utilities/Terminal.app';  // default terminal
+  RunTermParams = '%D';
   RunInTermStayOpenCmd = '%COMMANDER_PATH%/scripts/terminal.sh'; // default run in terminal command AND Stay open after command
   RunInTermStayOpenParams = '''{command}''';
   RunInTermCloseCmd = ''; // default run in terminal command AND Close after command
@@ -143,6 +142,7 @@ function mbReadAllLinks(const PathToLink : String) : String;
    If PathToLink does not point to a link then PathToLink value is returned.
 }
 function mbCheckReadLinks(const PathToLink : String) : String;
+function mbFileGetAttr(const FileName: String; out Attr: TSearchRecEx): Boolean; overload;
 {en
    Get the user home directory
    @returns(The user home directory)
@@ -220,7 +220,9 @@ function GetCurrentUserName : String;
 function GetComputerNetName: String;
 
 var
-  AdministratorPrivileges: Boolean = False;
+  // While elevated operations is not implemented
+  // https://doublecmd.sourceforge.io/mantisbt/view.php?id=110
+  AdministratorPrivileges: Boolean = True;
 
 implementation
 
@@ -647,6 +649,35 @@ begin
   else
     Result := PathToLink;
 end;
+
+function mbFileGetAttr(const FileName: String; out Attr: TSearchRecEx): Boolean;
+{$IFDEF MSWINDOWS}
+var
+  FileInfo: Windows.TWin32FileAttributeData;
+begin
+  Result:= GetFileAttributesExW(PWideChar(UTF16LongName(FileName)),
+                                GetFileExInfoStandard, @FileInfo);
+  if Result then
+  begin
+    Attr.Time:= TWinFileTime(FileInfo.ftLastWriteTime);
+    Int64Rec(Attr.Size).Lo:= FileInfo.nFileSizeLow;
+    Int64Rec(Attr.Size).Hi:= FileInfo.nFileSizeHigh;
+    Attr.Attr:= FileInfo.dwFileAttributes;
+  end;
+end;
+{$ELSE}
+var
+  StatInfo: BaseUnix.Stat;
+begin
+  Result:= fpLStat(UTF8ToSys(FileName), StatInfo) >= 0;
+  if Result then
+  begin
+    Attr.Time:= StatInfo.st_mtime;
+    Attr.Size:= StatInfo.st_size;
+    Attr.Attr:= StatInfo.st_mode;
+  end;
+end;
+{$ENDIF}
 
 function GetHomeDir : String;
 {$IFDEF MSWINDOWS}
@@ -1148,12 +1179,5 @@ begin
   Result:= Utf8ToSys(FileName);
 end;
 {$ENDIF}
-
-initialization
-  {$IF DEFINED(UNIX)}
-  AdministratorPrivileges:= True; // (fpGetUID = 0); temporary while ExecCmdAdmin not implemented
-  {$ELSE}
-  AdministratorPrivileges:= IsUserAdmin;
-  {$ENDIF}
 
 end.

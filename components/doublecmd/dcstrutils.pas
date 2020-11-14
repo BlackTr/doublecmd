@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Useful functions dealing with strings.
    
-   Copyright (C) 2006-2018  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2020  Alexander Koblov (alexx2000@mail.ru)
    Copyright (C) 2012       Przemyslaw Nagay (cobines@gmail.com)
 
    This program is free software; you can redistribute it and/or modify
@@ -239,6 +239,10 @@ function ApplyRenameMask(aFileName: String; NameMask: String; ExtMask: String): 
 }
 function NumCountChars(const Char: Char; const S: String): Integer;
 {en
+   Trim the leading and ending spaces
+}
+function TrimPath(const Path: String): String;
+{en
    Remove last line ending in text
    @param(sText Text)
    @param(TextLineBreakStyle Text line break style)
@@ -328,7 +332,7 @@ procedure SetValue(var anArray: TDynamicStringArray; Key, NewValue: String);
 procedure SetValue(var anArray: TDynamicStringArray; Key: String; NewValue: Boolean);
 function ShortcutsToText(const Shortcuts: TDynamicStringArray): String;
 function GetDateTimeInStrEZSortable(DateTime:TDateTime):string;
-function WrapTextSimple(const S: String; MaxCol: Integer): String;
+function WrapTextSimple(const S: String; MaxCol: Integer = 100): String;
 
 {en
    Escapes characters to be inserted between single quotes (')
@@ -359,7 +363,7 @@ function EscapeNoQuotes(const Str: String): String;
 implementation
 
 uses
-  DCOSUtils;
+  DCOSUtils, StrUtils;
 
 function NormalizePathDelimiters(const Path: String): String;
 {$IFDEF UNIX}
@@ -519,17 +523,21 @@ end;
 
 function ExtractOnlyFileName(const FileName: string): string;
 var
- I, Index : LongInt;
- EndSep : Set of Char;
+  SOF : Boolean;
+  I, Index : LongInt;
+  EndSep : Set of Char;
 begin
+  Index := MaxInt;
   // Find a dot index
   I := Length(FileName);
   EndSep:= AllowDirectorySeparators + AllowDriveSeparators + [ExtensionSeparator];
   while (I > 0) and not (FileName[I] in EndSep) do Dec(I);
   if (I > 0) and (FileName[I] = ExtensionSeparator) then
-     Index := I
-  else
-     Index := MaxInt;
+  begin
+    SOF:= (I = 1) or (FileName[I - 1] in AllowDirectorySeparators);
+    if (not SOF) or FirstDotAtFileNameStartIsExtension then
+      Index := I
+  end;
   // Find file name index
   EndSep := EndSep - [ExtensionSeparator];
   while (I > 0) and not (FileName[I] in EndSep) do Dec(I);
@@ -539,30 +547,37 @@ end;
 function ExtractOnlyFileExt(const FileName: string): string;
 var
   I : LongInt;
+  SOF : Boolean;
   EndSep : Set of Char;
 begin
+  Result := EmptyStr;
   I := Length(FileName);
   EndSep:= AllowDirectorySeparators + AllowDriveSeparators + [ExtensionSeparator];
   while (I > 0) and not (FileName[I] in EndSep) do Dec(I);
   if (I > 0) and (FileName[I] = ExtensionSeparator) then
-    Result := Copy(FileName, I + 1, MaxInt)
-  else
-    Result := '';
+  begin
+    SOF:= (I = 1) or (FileName[I - 1] in AllowDirectorySeparators);
+    if (not SOF) or FirstDotAtFileNameStartIsExtension then
+      Result := Copy(FileName, I + 1, MaxInt)
+  end;
 end;
 
 function RemoveFileExt(const FileName: String): String;
 var
   I : LongInt;
+  SOF : Boolean;
   EndSep : Set of Char;
 begin
+  Result := FileName;
   I := Length(FileName);
   EndSep:= AllowDirectorySeparators + AllowDriveSeparators + [ExtensionSeparator];
-  while (I > 0) and not (FileName[I] in EndSep) do
-    Dec(I);
+  while (I > 0) and not (FileName[I] in EndSep) do Dec(I);
   if (I > 0) and (FileName[I] = ExtensionSeparator) then
-    Result := Copy(FileName, 1, I - 1)
-  else
-    Result := FileName;
+  begin
+    SOF:= (I = 1) or (FileName[I - 1] in AllowDirectorySeparators);
+    if (not SOF) or FirstDotAtFileNameStartIsExtension then
+      Result := Copy(FileName, 1, I - 1)
+  end;
 end;
 
 function ContainsWildcards(const Path: String): Boolean;
@@ -734,6 +749,7 @@ var
   S: Integer = 1;
 begin
   L:= Length(Path);
+  SetLength(Result, 0);
   for F:= 1 to L - cDelta do
   begin
     if (Path[F] = ';') and (Path[F + cDelta] = cDelimiter) then
@@ -880,6 +896,25 @@ begin
   if Length(S) > 0 then
     for I := 1 to Length(S) do
       if S[I] = Char then Inc(Result);
+end;
+
+function TrimPath(const Path: String): String;
+const
+  WhiteSpace = [#0..' '{$IFDEF MSWINDOWS},'.'{$ENDIF}];
+var
+  Index: Integer;
+  S: TStringArray;
+begin
+  S:= TrimRightSet(Path, WhiteSpace).Split([PathDelim]);
+  if Length(S) = 0 then
+    Result:= EmptyStr
+  else begin
+    Result:= TrimRightSet(S[0], WhiteSpace);
+    for Index := Low(S) + 1 to High(S) do
+    begin
+      Result+= PathDelim + TrimRightSet(S[Index], WhiteSpace);
+    end;
+  end;
 end;
 
 function TrimRightLineEnding(const sText: String; TextLineBreakStyle: TTextLineBreakStyle): String;
@@ -1084,7 +1119,8 @@ var
   Len, Finish: Integer;
 begin
   Len:= Length(S);
-  for Finish:= 1 to Len - 1 do
+  SetLength(Result, 0);
+  for Finish:= 1 to Len do
   begin
     if S[Finish] = Delimiter then
     begin

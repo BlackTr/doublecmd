@@ -89,10 +89,12 @@ type
     function GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean;
     function GetLocalName(var aFile: TFile): Boolean;
     function CreateDirectory(const Path: String): Boolean;
+    function FileSystemEntryExists(const Path: String): Boolean;
 
     function GetConnection(Operation: TFileSourceOperation): TFileSourceConnection;
     procedure RemoveOperationFromQueue(Operation: TFileSourceOperation);
 
+    procedure AddChild(AFileSource: IFileSource);
     procedure Reload(const PathsToReload: TPathsArray);
     procedure Reload(const PathToReload: String);
     procedure AddReloadEventListener(FunctionToCall: TFileSourceReloadEventNotify);
@@ -130,6 +132,10 @@ type
     FURI: TURI;
     FCurrentAddress: String;
     FOperationsClasses: TFileSourceOperationsClasses;
+    {en
+       Children file source list
+    }
+    FChildrenFileSource: TInterfaceList;
 
     function GetURI: TURI;
     {en
@@ -261,6 +267,7 @@ type
     function GetPathType(sPath : String): TPathType; virtual;
 
     function CreateDirectory(const Path: String): Boolean; virtual;
+    function FileSystemEntryExists(const Path: String): Boolean; virtual;
     function GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean; virtual;
     function GetLocalName(var aFile: TFile): Boolean; virtual;
 
@@ -272,13 +279,14 @@ type
     }
     procedure RemoveOperationFromQueue(Operation: TFileSourceOperation); virtual;
 
+    procedure AddChild(AFileSource: IFileSource);
     {en
        Reloads the file list from the file source.
        This is used if a file source has any internal cache or file list.
        Overwrite DoReload in descendant classes.
     }
-    procedure Reload(const PathsToReload: TPathsArray); virtual;
-    procedure Reload(const PathToReload: String);
+    procedure Reload(const PathsToReload: TPathsArray); virtual; overload;
+    procedure Reload(const PathToReload: String); overload;
 
     procedure AddReloadEventListener(FunctionToCall: TFileSourceReloadEventNotify);
     procedure RemoveReloadEventListener(FunctionToCall: TFileSourceReloadEventNotify);
@@ -434,6 +442,7 @@ begin
   else
     DCDebug('Error: Cannot remove file source - manager already destroyed!');
 
+  FreeAndNil(FChildrenFileSource);
   FreeAndNil(FReloadEventListeners);
 
   inherited Destroy;
@@ -557,6 +566,11 @@ end;
 function TFileSource.CreateDirectory(const Path: String): Boolean;
 begin
   Result := False;
+end;
+
+function TFileSource.FileSystemEntryExists(const Path: String): Boolean;
+begin
+  Result := True;
 end;
 
 function TFileSource.GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean;
@@ -734,6 +748,19 @@ end;
 procedure TFileSource.RemoveOperationFromQueue(Operation: TFileSourceOperation);
 begin
   // Nothing by default.
+end;
+
+procedure TFileSource.AddChild(AFileSource: IFileSource);
+begin
+  if (FChildrenFileSource = nil) then
+  begin
+    FChildrenFileSource:= TInterfaceList.Create;
+  end
+  else if FChildrenFileSource.Count > 32 then
+  begin
+    FChildrenFileSource.Delete(0);
+  end;
+  FChildrenFileSource.Add(AFileSource);
 end;
 
 procedure TFileSource.OperationFinishedCallback(Operation: TFileSourceOperation;

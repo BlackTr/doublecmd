@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Double Commander 0.9.0 alpha\n"
+"Project-Id-Version: Double Commander 0.9.0 beta\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-12-12 13:24+0300\n"
+"PO-Revision-Date: 2020-02-01 03:11+0300\n"
 "Last-Translator: Alexander Koblov <alexx2000@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -2107,6 +2107,10 @@ msgstr "Настройка горячих клавиш"
 msgid "Configuration of Plugins"
 msgstr "Настройка плагинов"
 
+#: tfrmmain.actconfigsavepos.caption
+msgid "Save Position"
+msgstr "Сохранить позицию"
+
 #: tfrmmain.actconfigsavesettings.caption
 msgid "Save Settings"
 msgstr "Со&хранить настройки"
@@ -2223,7 +2227,7 @@ msgstr "Редактировать ко&мментарий..."
 
 #: tfrmmain.acteditnew.caption
 msgid "Edit new file"
-msgstr "Редактировать новый"
+msgstr "Создать новый текстовый файл или открыть существующий"
 
 #: tfrmmain.acteditpath.caption
 msgid "Edit path field above file list"
@@ -2551,7 +2555,7 @@ msgstr "Восс&тановить выделение"
 
 #: tfrmmain.actreverseorder.caption
 msgid "Re&verse Order"
-msgstr "Обра&тный п&орядок"
+msgstr "Обра&тный порядок"
 
 #: tfrmmain.actrightbriefview.caption
 msgid "Brief view on right panel"
@@ -4091,6 +4095,11 @@ msgctxt "TFRMOPTIONSCONFIGURATION.CBFILEMASKHISTORY.CAPTION"
 msgid "&File mask history"
 msgstr "Историю &масок файлов"
 
+#: tfrmoptionsconfiguration.chkfoldertabs.caption
+msgctxt "tfrmoptionsconfiguration.chkfoldertabs.caption"
+msgid "Folder tabs"
+msgstr "Вкладки каталогов"
+
 #: tfrmoptionsconfiguration.chksaveconfiguration.caption
 msgctxt "TFRMOPTIONSCONFIGURATION.CHKSAVECONFIGURATION.CAPTION"
 msgid "Sa&ve configuration"
@@ -4100,6 +4109,10 @@ msgstr "Со&хранять конфигурацию"
 msgctxt "TFRMOPTIONSCONFIGURATION.CHKSEARCHREPLACEHISTORY.CAPTION"
 msgid "Searc&h/Replace history"
 msgstr "Истори&ю поиска/замены"
+
+#: tfrmoptionsconfiguration.chkwindowstate.caption
+msgid "Main window state"
+msgstr "Состояние главного окна"
 
 #: tfrmoptionsconfiguration.gbdirectories.caption
 msgctxt "tfrmoptionsconfiguration.gbdirectories.caption"
@@ -4118,7 +4131,7 @@ msgstr "Сохранять при выходе"
 
 #: tfrmoptionsconfiguration.gbsortorderconfigurationoption.caption
 msgid "Sort order of configuration order in left tree"
-msgstr "Сортировка дерева конфигурации (слева)"
+msgstr "Сортировка дерева разделов настроек (слева)"
 
 #: tfrmoptionsconfiguration.gpconfigurationtreestate.caption
 msgid "Tree state when entering in configuration page"
@@ -4600,7 +4613,7 @@ msgstr "Выделение:"
 #: tfrmoptionscustomcolumns.lblpreviewtop.caption
 msgctxt "tfrmoptionscustomcolumns.lblpreviewtop.caption"
 msgid "Below is a preview. You may move cursor and select files to get immediately an actual look and feel of the various settings."
-msgstr "Ниже находится предварительный просмотр. Вы можете перемещать курсор и выбирать файлы, чтобы получить полное представление о выбранных настройках."
+msgstr "Предварительный просмотр, можно перемещать курсор и выбирать файлы, получив полное представление о выбранных настройках:"
 
 #: tfrmoptionscustomcolumns.lblworkingcolumn.caption
 msgid "Settings for column:"
@@ -4983,37 +4996,6 @@ msgstr "Изменить &целевой путь"
 #: tfrmoptionsdirectoryhotlist.rgwheretoadd.caption
 msgid "Addition from main panel"
 msgstr "Добавление из главной панели"
-
-#: tfrmoptionsdirectoryhotlistextra.btnpathtoberelativetoall.caption
-msgid "Apply current settings to directory hotlist"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlistsource.caption
-msgid "Source"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlisttarget.caption
-msgid "Target"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption
-msgctxt "tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption"
-msgid "Paths"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.lbdirectoryhotlistfilenamestyle.caption
-msgid "Way to set paths when adding them:"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption
-msgctxt "tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption"
-msgid "Do this for paths of:"
-msgstr ""
-
-#: tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption"
-msgid "Path to be relative to:"
-msgstr "Путь:"
 
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
 msgid "From all the supported formats, ask which one to use every time"
@@ -5761,10 +5743,6 @@ msgstr "Просмотреть с помощью..."
 msgid "Click me to change icon!"
 msgstr "Нажмите здесь для смены значка"
 
-#: tfrmoptionsfileassocextra.btnpathtoberelativetoall.caption
-msgid "Apply current settings to all current configured filenames and paths"
-msgstr ""
-
 #: tfrmoptionsfileassocextra.cbexecuteviashell.caption
 msgctxt "tfrmoptionsfileassocextra.cbexecuteviashell.caption"
 msgid "Execute via shell"
@@ -5797,43 +5775,9 @@ msgctxt "tfrmoptionsfileassocextra.cbopensystemwithterminalstayopen.caption"
 msgid "Execute via terminal and stay open"
 msgstr "Запустить в терминале и оставить открытым"
 
-#: tfrmoptionsfileassocextra.ckbfileassoccommand.caption
-msgctxt "tfrmoptionsfileassocextra.ckbfileassoccommand.caption"
-msgid "Commands"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.ckbfileassocicons.caption
-msgctxt "tfrmoptionsfileassocextra.ckbfileassocicons.caption"
-msgid "Icons"
-msgstr "Значки"
-
-#: tfrmoptionsfileassocextra.ckbfileassocstartpath.caption
-msgid "Starting paths"
-msgstr ""
-
 #: tfrmoptionsfileassocextra.gbextendedcontextmenuoptions.caption
 msgid "Extended options items:"
 msgstr "Дополнительные пункты:"
-
-#: tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption
-msgctxt "tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption"
-msgid "Paths"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption
-msgctxt "tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption"
-msgid "Way to set paths when adding elements for icons, commands and starting paths:"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.lblapplysettingsfor.caption
-msgctxt "tfrmoptionsfileassocextra.lblapplysettingsfor.caption"
-msgid "Do this for files and path for:"
-msgstr ""
-
-#: tfrmoptionsfileassocextra.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionsfileassocextra.lbpathtoberelativeto.caption"
-msgid "Path to be relative to:"
-msgstr "Путь:"
 
 #: tfrmoptionsfileoperations.bvlconfirmations.caption
 msgctxt "tfrmoptionsfileoperations.bvlconfirmations.caption"
@@ -5884,7 +5828,7 @@ msgstr "Показ&ывать панель выбора вкладок в диа
 #: tfrmoptionsfileoperations.cbskipfileoperror.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBSKIPFILEOPERROR.CAPTION"
 msgid "S&kip file operations errors and write them to log window"
-msgstr "Пропускать о&шибки при файловых операциях и выводить их в окно протокола"
+msgstr "Выводить сообщения об о&шибках файловых операций только в окно протокола"
 
 #: tfrmoptionsfileoperations.cbverifychecksumconfirmation.caption
 msgid "Verify checksum operation"
@@ -6062,7 +6006,7 @@ msgstr "&Выделение:"
 
 #: tfrmoptionsfilepanelscolors.lblpreview.caption
 msgid "Below is a preview. You may move cursor, select file and get immediately an actual look and feel of the various settings."
-msgstr "Ниже находится предварительный просмотр. Вы можете перемещать курсор и выбирать файлы, чтобы получить полное представление о выбранных настройках."
+msgstr "Предварительный просмотр, можно перемещать курсор и выбирать файлы, получив полное представление о выбранных настройках:"
 
 #: tfrmoptionsfilepanelscolors.lbltextcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLTEXTCOLOR.CAPTION"
@@ -7019,7 +6963,6 @@ msgid "Configuration:"
 msgstr "Общие настройки:"
 
 #: tfrmoptionspluginsgroup.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionspluginsgroup.lbpathtoberelativeto.caption"
 msgid "Path to be relative to:"
 msgstr "Путь:"
 
@@ -7480,6 +7423,26 @@ msgctxt "tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "в файл \"wincmd.ini\" TC (удалить существующий)"
 
+#: tfrmoptionstoolbar.miexportseparator1.caption
+msgctxt "tfrmoptionstoolbar.miexportseparator1.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miexportseparator2.caption
+msgctxt "tfrmoptionstoolbar.miexportseparator2.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miexportseparator3.caption
+msgctxt "tfrmoptionstoolbar.miexportseparator3.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miexportseparator4.caption
+msgctxt "tfrmoptionstoolbar.miexportseparator4.caption"
+msgid "-"
+msgstr "-"
+
 #: tfrmoptionstoolbar.miexporttop.caption
 msgid "Top toolbar..."
 msgstr "Наивысшая панель инструментов..."
@@ -7596,6 +7559,11 @@ msgctxt "tfrmoptionstoolbar.miimportdcbarreplacetop.caption"
 msgid "to replace top toolbar"
 msgstr "заменить наивысшую панель инструментов"
 
+#: tfrmoptionstoolbar.miimportseparator.caption
+msgctxt "tfrmoptionstoolbar.miimportseparator.caption"
+msgid "-"
+msgstr "-"
+
 #: tfrmoptionstoolbar.miimporttcbar.caption
 msgid "from a single TC .BAR file"
 msgstr "из одного файла TC .BAR"
@@ -7679,6 +7647,56 @@ msgctxt "tfrmoptionstoolbar.misearchandreplace.caption"
 msgid "Search and replace..."
 msgstr "Найти и заменить..."
 
+#: tfrmoptionstoolbar.miseparator1.caption
+msgctxt "tfrmoptionstoolbar.miseparator1.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator10.caption
+msgctxt "tfrmoptionstoolbar.miseparator10.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator11.caption
+msgctxt "tfrmoptionstoolbar.miseparator11.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator13.caption
+msgctxt "tfrmoptionstoolbar.miseparator13.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator14.caption
+msgctxt "tfrmoptionstoolbar.miseparator14.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator2.caption
+msgctxt "tfrmoptionstoolbar.miseparator2.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator6.caption
+msgctxt "tfrmoptionstoolbar.miseparator6.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator7.caption
+msgctxt "tfrmoptionstoolbar.miseparator7.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator8.caption
+msgctxt "tfrmoptionstoolbar.miseparator8.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmoptionstoolbar.miseparator9.caption
+msgctxt "tfrmoptionstoolbar.miseparator9.caption"
+msgid "-"
+msgstr "-"
+
 #: tfrmoptionstoolbar.miseparatoraftercurrent.caption
 msgctxt "tfrmoptionstoolbar.miseparatoraftercurrent.caption"
 msgid "just after current selection"
@@ -7702,6 +7720,11 @@ msgstr "сразу перед выбранным"
 #: tfrmoptionstoolbar.misrcrplallofall.caption
 msgid "in all of all the above..."
 msgstr "во всём вышеперечисленном..."
+
+#: tfrmoptionstoolbar.misrcrplclickseparator.caption
+msgctxt "tfrmoptionstoolbar.misrcrplclickseparator.caption"
+msgid "-"
+msgstr "-"
 
 #: tfrmoptionstoolbar.misrcrplcommands.caption
 msgid "in all commands..."
@@ -7742,47 +7765,6 @@ msgstr "сразу перед выбранным"
 #: tfrmoptionstoolbar.rgtoolitemtype.caption
 msgid "Button type"
 msgstr "Тип кнопки"
-
-#: tfrmoptionstoolbarextra.btnpathtoberelativetoall.caption
-msgid "Apply current settings to all configured filenames and paths"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.cbtoolbarfilenamestyle.hint
-msgid "terbfdg "
-msgstr ""
-
-#: tfrmoptionstoolbarextra.ckbtoolbarcommand.caption
-msgctxt "tfrmoptionstoolbarextra.ckbtoolbarcommand.caption"
-msgid "Commands"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.ckbtoolbaricons.caption
-msgctxt "tfrmoptionstoolbarextra.ckbtoolbaricons.caption"
-msgid "Icons"
-msgstr "Значки"
-
-#: tfrmoptionstoolbarextra.ckbtoolbarstartpath.caption
-msgid "Starting paths"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption
-msgctxt "tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption"
-msgid "Paths"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.lblapplysettingsfor.caption
-msgid "Do this for files and paths for:"
-msgstr ""
-
-#: tfrmoptionstoolbarextra.lbpathtoberelativeto.caption
-msgctxt "tfrmoptionstoolbarextra.lbpathtoberelativeto.caption"
-msgid "Path to be relative to:"
-msgstr "Путь:"
-
-#: tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption
-msgctxt "tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption"
-msgid "Way to set paths when adding elements for icons, commands and starting paths:"
-msgstr ""
 
 #: tfrmoptionstoolbase.btnrelativetoolpath.hint
 msgctxt "tfrmoptionstoolbase.btnrelativetoolpath.hint"
@@ -7927,7 +7909,7 @@ msgstr "С помощью меню и внутренней команды"
 
 #: tfrmoptionstreeviewmenu.ckbfavoritetabsfromdoubleclick.caption
 msgid "With double-click on a tab (if configured for it)"
-msgstr "Двойной щелчок по вкладке"
+msgstr "Двойной щелчок по вкладке (если включено)"
 
 #: tfrmoptionstreeviewmenu.ckbshortcutselectandclose.caption
 msgid "When using the keyboard shortcut, it will exit the window returning the current choice"
@@ -7939,15 +7921,15 @@ msgstr "Щелчок мыши по выбранному в дереве и вы�
 
 #: tfrmoptionstreeviewmenu.ckbuseforcommandlinehistory.caption
 msgid "Use it for Command Line History"
-msgstr "Использовать историю командной строки"
+msgstr "История командной строки"
 
 #: tfrmoptionstreeviewmenu.ckbusefordirhistory.caption
 msgid "Use it for the Dir History"
-msgstr "Использовать историю каталогов"
+msgstr "История каталогов"
 
 #: tfrmoptionstreeviewmenu.ckbuseforviewhistory.caption
 msgid "Use it for the View History (Visited paths for active view)"
-msgstr "Использовать историю просмотра (посещённые каталоги)"
+msgstr "История просмотра (посещённые каталоги)"
 
 #: tfrmoptionstreeviewmenu.gbbehavior.caption
 msgid "Behavior regarding selection:"
@@ -7967,15 +7949,15 @@ msgstr "*ПРИМЕЧАНИЕ: Состояние таких опций, как 
 
 #: tfrmoptionstreeviewmenu.lbluseindirectoryhotlist.caption
 msgid "With Directory Hotlist:"
-msgstr "С избранными каталогами:"
+msgstr "Избранные каталоги:"
 
 #: tfrmoptionstreeviewmenu.lblusewithfavoritetabs.caption
 msgid "With Favorite Tabs:"
-msgstr "С избранными вкладками:"
+msgstr "Избранные вкладки:"
 
 #: tfrmoptionstreeviewmenu.lblusewithhistory.caption
 msgid "With History:"
-msgstr "С историей:"
+msgstr "История:"
 
 #: tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption
 msgctxt "tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption"
@@ -8507,21 +8489,6 @@ msgctxt "TFRMSETFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Запись"
 
-#: tfrmsplitter.btncancel.caption
-msgctxt "TFRMSPLITTER.BTNCANCEL.CAPTION"
-msgid "&Cancel"
-msgstr "О&тмена"
-
-#: tfrmsplitter.btnftchoice.caption
-msgctxt "TFRMSPLITTER.BTNFTCHOICE.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmsplitter.btnok.caption
-msgctxt "TFRMSPLITTER.BTNOK.CAPTION"
-msgid "&OK"
-msgstr "&ОК"
-
 #: tfrmsplitter.btnrelativeftchoice.hint
 msgctxt "tfrmsplitter.btnrelativeftchoice.hint"
 msgid "Some functions to select appropriate path"
@@ -8540,22 +8507,13 @@ msgstr "Создать файл контрольной суммы"
 msgid "1457664B - 3.5\""
 msgstr "1457664B - 3.5\""
 
-#: tfrmsplitter.grbxfile.caption
-msgctxt "TFRMSPLITTER.GRBXFILE.CAPTION"
-msgid "File name"
-msgstr "Имя файла"
-
 #: tfrmsplitter.grbxsize.caption
 msgid "Size and number of parts"
 msgstr "Размер и количество частей"
 
 #: tfrmsplitter.lbdirtarget.caption
-msgid "Directory &target"
-msgstr "&Каталог назначения"
-
-#: tfrmsplitter.lbfilesource.caption
-msgid "File &source"
-msgstr "&Исходный файл"
+msgid "Split the file to directory:"
+msgstr "Разбить файл в &каталог:"
 
 #: tfrmsplitter.lblnumberparts.caption
 msgid "&Number of parts"
@@ -8625,7 +8583,7 @@ msgstr "Версия"
 
 #: tfrmstartingsplash.lblwidgetsetver.caption
 msgid "WidgetsetVer"
-msgstr ""
+msgstr "Библиотека виджетов"
 
 #: tfrmsymlink.btncancel.caption
 msgctxt "TFRMSYMLINK.BTNCANCEL.CAPTION"
@@ -10165,7 +10123,7 @@ msgstr "Группа"
 
 #: ulng.rsfunchtime
 msgid "Change date/time"
-msgstr "Изменение даты/времени"
+msgstr "Дата/время изменения"
 
 #: ulng.rsfunclinkto
 msgid "Link to"
@@ -10829,7 +10787,7 @@ msgstr "Файл %s помечен как доступный только для
 msgid "Are you sure you want to reload the current file and lose the changes?"
 msgstr ""
 "Все внесённые изменения будут потеряны!\n"
-"Продолжить?"
+"Продолжить?\n"
 
 #: ulng.rsmsgfilesizetoobig
 msgid "The file size of \"%s\" is too big for destination file system!"
@@ -11234,7 +11192,7 @@ msgstr "Действие не может быть выполнено, так к�
 #: ulng.rsmsgpanelpreview
 msgctxt "ulng.rsmsgpanelpreview"
 msgid "Below is a preview. You may move cursor and select files to get immediately an actual look and feel of the various settings."
-msgstr "Ниже находится предварительный просмотр. Вы можете перемещать курсор и выбирать файлы, чтобы получить полное представление о выбранных настройках."
+msgstr "Предварительный просмотр, можно перемещать курсор и выбирать файлы, получив полное представление о выбранных настройках:"
 
 #: ulng.rsmsgpassword
 msgid "Password:"
@@ -12172,17 +12130,13 @@ msgctxt "ulng.rsoptionseditordirectoryhotlist"
 msgid "Directory Hotlist"
 msgstr "Избранные каталоги"
 
-#: ulng.rsoptionseditordirectoryhotlistextra
-msgid "Directory Hotlist Extra"
-msgstr ""
-
 #: ulng.rsoptionseditordraganddrop
 msgid "Drag & drop"
 msgstr "Перетаскивание"
 
 #: ulng.rsoptionseditordriveslistbutton
 msgid "Drives list button"
-msgstr "Кнопка списка дисков"
+msgstr "Kнопка списка дисков"
 
 #: ulng.rsoptionseditorfavoritetabs
 msgid "Favorite Tabs"
@@ -12319,10 +12273,6 @@ msgstr "Терминал"
 #: ulng.rsoptionseditortoolbar
 msgid "Toolbar"
 msgstr "Панель инструментов"
-
-#: ulng.rsoptionseditortoolbarextra
-msgid "Toolbar Extra"
-msgstr ""
 
 #: ulng.rsoptionseditortools
 msgctxt "ulng.rsoptionseditortools"

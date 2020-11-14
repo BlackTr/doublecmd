@@ -52,7 +52,7 @@ type
     constructor Create; virtual;
 
     function Clone: TFileProperty; virtual;
-    procedure CloneTo(FileProperty: TFileProperty); virtual;
+    procedure CloneTo({%H-}FileProperty: TFileProperty); virtual;
 
     // Text description of the property.
     // Don't know if it will be really needed.
@@ -218,6 +218,8 @@ type
 
     class function GetID: TFilePropertyType; override;
 
+    function IsNativeAttributes: Boolean;
+
     // Is the file a directory.
     function IsDirectory: Boolean; virtual;
 
@@ -303,7 +305,7 @@ type
     class function GetDescription: String; override;
     class function GetID: TFilePropertyType; override;
 
-    function Format(Formatter: IFilePropertyFormatter): String; override;
+    function Format({%H-}Formatter: IFilePropertyFormatter): String; override;
 
     property IsLinkToDirectory: Boolean read FIsLinkToDirectory write FIsLinkToDirectory;
     property IsValid: Boolean read FIsValid write FIsValid;
@@ -332,7 +334,7 @@ type
     class function GetDescription: String; override;
     class function GetID: TFilePropertyType; override;
 
-    function Format(Formatter: IFilePropertyFormatter): String; override;
+    function Format({%H-}Formatter: IFilePropertyFormatter): String; override;
 
     property Owner: Cardinal read FOwner write FOwner;
     property Group: Cardinal read FGroup write FGroup;
@@ -360,7 +362,7 @@ type
     class function GetDescription: String; override;
     class function GetID: TFilePropertyType; override;
 
-    function Format(Formatter: IFilePropertyFormatter): String; override;
+    function Format({%H-}Formatter: IFilePropertyFormatter): String; override;
 
     property Value: String read FType write FType;
 
@@ -382,7 +384,7 @@ type
     class function GetDescription: String; override;
     class function GetID: TFilePropertyType; override;
 
-    function Format(Formatter: IFilePropertyFormatter): String; override;
+    function Format({%H-}Formatter: IFilePropertyFormatter): String; override;
 
     property Value: String read FComment write FComment;
 
@@ -406,7 +408,7 @@ type
     class function GetDescription: String; override;
     class function GetID: TFilePropertyType; override;
 
-    function Format(Formatter: IFilePropertyFormatter): String; override;
+    function Format({%H-}Formatter: IFilePropertyFormatter): String; override;
 
     property Value: Variant read FValue write FValue;
     property Name: String read FName;
@@ -429,7 +431,7 @@ type
 implementation
 
 uses
-  DCOSUtils, DCFileAttributes, uDefaultFilePropertyFormatter, uDebug;
+  variants, uLng, DCOSUtils, DCFileAttributes, uDefaultFilePropertyFormatter, uDebug;
 
 resourcestring
   rsSizeDescription = 'Size';
@@ -742,6 +744,17 @@ constructor TFileAttributesProperty.Create(Attr: TFileAttrs);
 begin
   inherited Create;
   FAttributes := Attr;
+end;
+
+function TFileAttributesProperty.IsNativeAttributes: Boolean;
+begin
+{$IF DEFINED(WINDOWS)}
+  Result :=  Self is TNtfsFileAttributesProperty;
+{$ELSEIF DEFINED(UNIX)}
+  Result := Self is TUnixFileAttributesProperty;
+{$ELSE}
+  Result := False;
+{$ENDIF}
 end;
 
 class function TFileAttributesProperty.CreateOSAttributes: TFileAttributesProperty;
@@ -1113,7 +1126,13 @@ end;
 
 function TFileVariantProperty.Format(Formatter: IFilePropertyFormatter): String;
 begin
-  Result:= FValue;
+  if not VarIsBool(FValue) then
+    Result := FValue
+  else
+    if FValue then
+      result := rsSimpleWordTrue
+    else
+      result := rsSimpleWordFalse;
 end;
 
 end.

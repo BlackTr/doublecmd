@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Double Commander
-AppVerName=Double Commander 1.0.0 beta
+AppVerName=Double Commander 0.9.9 beta
 AppPublisherURL=http://doublecmd.sourceforge.net
 AppSupportURL=http://doublecmd.sourceforge.net
 AppUpdatesURL=http://doublecmd.sourceforge.net
@@ -60,6 +60,7 @@ Source: "doublecmd\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesub
 Source: "doublecmd\language\*"; DestDir: "{app}\language"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doublecmd\pixmaps\*"; DestDir: "{app}\pixmaps"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doublecmd\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "doublecmd\highlighters\*"; DestDir: "{app}\highlighters"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "doublecmd\*.dll"; DestDir: "{app}"; Flags: skipifsourcedoesntexist
 

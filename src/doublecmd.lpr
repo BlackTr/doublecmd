@@ -17,6 +17,9 @@ uses
   {$ENDIF}
   cwstring,
   clocale,
+  {$IFDEF LINUX}
+  uAppImage,
+  {$ENDIF}
   {$IFDEF LCLGTK2}
   uOverlayScrollBarFix,
   gtk2,
@@ -33,6 +36,7 @@ uses
   {$ENDIF}
   {$IFDEF LCLWIN32}
   uDClass,
+  uWin32WidgetSetFix,
   {$ENDIF}
   LCLProc,
   Classes,
@@ -48,7 +52,6 @@ uses
   fHackForm,
   fMain,
   uAccentsUtils,
-  fMkDir,
   dmHigh, dmHelpManager, dmCommonData,
   uShowMsg,
   uCryptProc,
@@ -77,6 +80,7 @@ uses
 {$ENDIF}
 
 {$IF DEFINED(MSWINDOWS)}
+{$SETPEOPTFLAGS $140}
 {$R doublecmd.manifest.rc}
 {$ENDIF}
 
@@ -154,7 +158,7 @@ begin
   if WSVersion <> EmptyStr then
     DCDebug('Widgetset library: ' + WSVersion);
   DCDebug('This program is free software released under terms of GNU GPL 2');
-  DCDebug('(C)opyright 2006-2019 Alexander Koblov (alexx2000@mail.ru)');
+  DCDebug('(C)opyright 2006-2020 Alexander Koblov (alexx2000@mail.ru)');
   DCDebug('   and contributors (see about dialog)');
 
   Application.ShowMainForm:= False;
@@ -191,7 +195,6 @@ begin
       Application.CreateForm(TdmHighl, dmHighl); // highlighters
       Application.CreateForm(TdmComData, dmComData); // common data
       Application.CreateForm(TdmHelpManager, dmHelpMgr); // help manager
-      Application.CreateForm(TfrmMkDir, frmMkDir);  // 21.05.2009 - makedir form
 
       {$IF DEFINED(LCLGTK2) AND (lcl_fullversion >= 093100)}
       // LCLGTK2 uses Application.MainForm as the clipboard widget, however our

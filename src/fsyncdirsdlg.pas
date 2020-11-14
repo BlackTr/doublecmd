@@ -30,7 +30,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   StdCtrls, ExtCtrls, Buttons, ComCtrls, Grids, Menus, ActnList, LazUTF8Classes,
   uFileView, uFileSource, uFileSourceCopyOperation, uFile, uFileSourceOperation,
-  uFileSourceOperationMessageBoxesUI, uFormCommands, uHotkeyManager;
+  uFileSourceOperationMessageBoxesUI, uFormCommands, uHotkeyManager, uClassesEx;
 
 const
   HotkeysCategory = 'Synchronize Directories';
@@ -107,6 +107,7 @@ type
     procedure btnSelDir1Click(Sender: TObject);
     procedure btnCompareClick(Sender: TObject);
     procedure btnSynchronizeClick(Sender: TObject);
+    procedure RestoreProperties(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
@@ -128,6 +129,7 @@ type
     procedure pmGridMenuPopup(Sender: TObject);
   private
     FCommands: TFormCommands;
+    FIniPropStorage: TIniPropStorageEx;
   private
     { private declarations }
     FCancel: Boolean;
@@ -197,6 +199,9 @@ uses
   uFileSourceDeleteOperation, uOSUtils, uLng, uMasks;
 
 {$R *.lfm}
+
+const
+  GRID_COLUMN_FMT = 'HeaderDG_Column%d_Width';
 
 type
 
@@ -386,7 +391,11 @@ begin
       if FileTimeDiff < 0 then
         FState := srsCopyLeft;
   end;
-  FAction := FState;
+  if FForm.chkAsymmetric.Checked and (FState = srsCopyLeft) then
+    FAction := srsDoNothing
+  else begin
+    FAction := FState;
+  end;
 end;
 
 { TfrmSyncDirsDlg }
@@ -650,14 +659,28 @@ begin
   end;
 end;
 
+procedure TfrmSyncDirsDlg.RestoreProperties(Sender: TObject);
+var
+  Index: Integer;
+begin
+  with HeaderDG.Columns do
+  begin
+    for Index := 0 to Count - 1 do
+      Items[Index].Width:= StrToIntDef(FIniPropStorage.StoredValue[Format(GRID_COLUMN_FMT, [Index])], Items[Index].Width);
+  end;
+  RecalcHeaderCols;
+end;
+
 procedure TfrmSyncDirsDlg.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
+var
+  Index: Integer;
 begin
   StopCheckContentThread;
   CloseAction := caFree;
   { settings }
   gSyncDirsSubdirs              := chkSubDirs.Checked;
-  gSyncDirsAsymmetric           := chkAsymmetric.Checked;
+  gSyncDirsAsymmetric           := chkAsymmetric.Checked and gSyncDirsAsymmetricSave;
   gSyncDirsIgnoreDate           := chkIgnoreDate.Checked;
   gSyncDirsShowFilterCopyRight  := sbCopyRight.Down;
   gSyncDirsShowFilterEqual      := sbEqual.Down;
@@ -669,6 +692,12 @@ begin
   if chkByContent.Enabled then
     gSyncDirsByContent          := chkByContent.Checked;
   glsMaskHistory.Assign(cbExtFilter.Items);
+
+  with HeaderDG.Columns do
+  begin
+    for Index := 0 to Count - 1 do
+      FIniPropStorage.StoredValue[Format(GRID_COLUMN_FMT, [Index])]:= IntToStr(Items[Index].Width);
+  end;
 end;
 
 procedure TfrmSyncDirsDlg.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -687,11 +716,18 @@ end;
 
 procedure TfrmSyncDirsDlg.FormCreate(Sender: TObject);
 var
+  Index: Integer;
   HMSync: THMForm;
 begin
   // Initialize property storage
-  InitPropStorage(Self);
-  lblProgress.Caption := rsOperWorking;
+  FIniPropStorage := InitPropStorage(Self);
+  FIniPropStorage.OnRestoreProperties:= @RestoreProperties;
+  for Index := 0 to HeaderDG.Columns.Count - 1 do
+  begin
+    FIniPropStorage.StoredValues.Add.DisplayName:= Format(GRID_COLUMN_FMT, [Index]);
+  end;
+
+  lblProgress.Caption    := rsOperWorking;
   { settings }
   chkSubDirs.Checked     := gSyncDirsSubdirs;
   chkAsymmetric.Checked  := gSyncDirsAsymmetric;
@@ -790,10 +826,23 @@ end;
 
 procedure TfrmSyncDirsDlg.MainDrawGridKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  ASelection: TGridRect;
 begin
   case Key of
     VK_SPACE:
       UpdateSelection(MainDrawGrid.Row);
+    VK_A:
+    begin
+      if (Shift = [ssModifier]) then
+      begin
+        ASelection.Top:= 0;
+        ASelection.Left:= 0;
+        ASelection.Right:= MainDrawGrid.ColCount - 1;
+        ASelection.Bottom:= MainDrawGrid.RowCount - 1;
+        MainDrawGrid.Selection:= ASelection;
+      end;
+    end;
   end;
 end;
 
@@ -974,7 +1023,7 @@ end;
 procedure TfrmSyncDirsDlg.InitVisibleItems;
 var
   i, j: Integer;
-  filter: record
+  AFilter: record
     copyLeft, copyRight, eq, neq: Boolean;
     dup, single: Boolean;
   end;
@@ -988,7 +1037,7 @@ begin
     FVisibleItems.CaseSensitive := FileNameCaseSensitive;
   end;
   { init filter }
-  with filter do
+  with AFilter do
   begin
     copyLeft := sbCopyLeft.Down;
     copyRight := sbCopyRight.Down;
@@ -1006,14 +1055,14 @@ begin
       begin
         { check filter }
         r := TFileSyncRec(Objects[j]);
-        if ((Assigned(r.FFileL) <> Assigned(r.FFileR)) and filter.single or
-           (Assigned(r.FFileL) = Assigned(r.FFileR)) and filter.dup)
+        if ((Assigned(r.FFileL) <> Assigned(r.FFileR)) and AFilter.single or
+           (Assigned(r.FFileL) = Assigned(r.FFileR)) and AFilter.dup)
            and
-           ((r.FState = srsCopyLeft) and filter.copyLeft or
-            (r.FState = srsCopyRight) and filter.copyRight or
-            (r.FState = srsDeleteRight) and filter.copyLeft or
-            (r.FState = srsEqual) and filter.eq or
-            (r.FState = srsNotEq) and filter.neq or
+           ((r.FState = srsCopyLeft) and AFilter.copyLeft or
+            (r.FState = srsCopyRight) and AFilter.copyRight or
+            (r.FState = srsDeleteRight) and AFilter.copyLeft or
+            (r.FState = srsEqual) and AFilter.eq or
+            (r.FState = srsNotEq) and AFilter.neq or
             (r.FState = srsUnknown))
         then
           FVisibleItems.AddObject(Strings[j], Objects[j]);
@@ -1404,9 +1453,9 @@ var
         NewAction:= SyncRec.FState;
       srsNotEq:
         begin
-          if SyncRec.FAction = srsCopyLeft then
+          if (SyncRec.FAction = srsCopyLeft) and Assigned(SyncRec.FFileL) then
             NewAction:= srsCopyRight
-          else if SyncRec.FAction = srsCopyRight then
+          else if (SyncRec.FAction = srsCopyRight) and Assigned(SyncRec.FFileR) then
             NewAction:= srsCopyLeft
           else
             NewAction:= SyncRec.FAction

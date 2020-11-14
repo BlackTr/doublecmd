@@ -22,6 +22,7 @@ interface
 uses
    Windows,
    ShlObj,
+   ShellApi,
    ActiveX;
 
 const
@@ -82,11 +83,15 @@ function SHGetOverlayIconIndex(const sFilePath, sFileName: String): Integer;
 function SHGetInfoTip(const sFilePath, sFileName: String): String;
 function SHFileIsLinkToFolder(const FileName: String; out LinkTarget: String): Boolean;
 
+function SHGetFolderLocation(hwnd: HWND; csidl: Longint; hToken: HANDLE; dwFlags: DWORD; var ppidl: LPITEMIDLIST): HRESULT; stdcall; external shell32 name 'SHGetFolderLocation';
+
 function PathIsUNCA(pszPath: LPCSTR): WINBOOL; stdcall; external 'shlwapi' name 'PathIsUNCA';
 function PathIsUNCW(pwszPath: LPCWSTR): WINBOOL; stdcall; external 'shlwapi' name 'PathIsUNCW';
 
 function PathFindNextComponentA(pszPath: LPCSTR): LPSTR; stdcall; external 'shlwapi' name 'PathFindNextComponentA';
 function PathFindNextComponentW(pwszPath: LPCWSTR): LPWSTR; stdcall; external 'shlwapi' name 'PathFindNextComponentW';
+
+function StrRetToBufW(pstr: PSTRRET; pidl: PItemIDList; pszBuf: LPWSTR; cchBuf: UINT): HRESULT; stdcall; external 'shlwapi.dll';
 
 procedure OleErrorUTF8(ErrorCode: HResult);
 procedure OleCheckUTF8(Result: HResult);
@@ -94,7 +99,7 @@ procedure OleCheckUTF8(Result: HResult);
 implementation
 
 uses
-  SysUtils, ShellApi, JwaShlGuid, ComObj, LazUTF8, DCOSUtils;
+  SysUtils, JwaShlGuid, ComObj, LazUTF8, DCOSUtils;
 
 function SHGetImageListFallback(iImageList: Integer; const riid: TGUID; var ImageList: HIMAGELIST): HRESULT; stdcall;
 var
@@ -189,6 +194,9 @@ begin
             begin
               // Get the overlay icon index.
               if IconOverlay.GetOverlayIconIndex(Pidl, Result) <> S_OK then
+                Result:= -1
+              // Microsoft OneDrive returns invalid zero index, ignore
+              else if (Result = 0) and (Win32MajorVersion >= 10) then
                 Result:= -1;
 
               CoTaskMemFree(Pidl);

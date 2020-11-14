@@ -37,7 +37,7 @@ interface
 uses
   SysUtils, Classes, Controls, Forms, ActnList, Menus, SynEdit,
   ComCtrls, SynEditSearch, SynEditHighlighter, uDebug, uOSForms, uShowForm, types, Graphics,
-  uFormCommands, uHotkeyManager;
+  uFormCommands, uHotkeyManager, LCLVersion, SynPluginMultiCaret;
 
 const
   HotkeysCategory = 'Editor';
@@ -164,6 +164,7 @@ type
     sOriginalText: String;
     FWaitData: TWaitData;
     FCommands: TFormCommands;
+    FMultiCaret: TSynPluginMultiCaret;
 
     property Commands: TFormCommands read FCommands implements IFormCommands;
 
@@ -253,8 +254,11 @@ begin
     if not Editor.OpenFile(sFileName) then
       Exit;
   end;
-
-  Editor.ShowOnTop;
+  if (WaitData = nil) then
+    Editor.ShowOnTop
+  else begin
+    WaitData.ShowOnTop(Editor);
+  end;
   LastEditorUsedForConfiguration := Editor;
 end;
 
@@ -321,6 +325,8 @@ begin
   HMEditor := HotMan.Register(Self, HotkeysCategory);
   HMEditor.RegisterActionList(ActListEdit);
   FCommands := TFormCommands.Create(Self, ActListEdit);
+
+  FMultiCaret := TSynPluginMultiCaret.Create(Editor);
 end;
 
 procedure TfrmEditor.LoadGlobalOptions;
@@ -882,13 +888,19 @@ end;
 procedure TfrmEditor.cm_EditCopy(const Params:array of string);
 begin
   editor.CopyToClipboard;
+{$IF DEFINED(LCLGTK2) and (LCL_FULLVERSION < 1100000)}
+  // Workaround for Lazarus bug #0021453
   ClipboardSetText(Clipboard.AsText);
+{$ENDIF}
 end;
 
 procedure TfrmEditor.cm_EditCut(const Params:array of string);
 begin
   Editor.CutToClipboard;
+{$IF DEFINED(LCLGTK2) and (LCL_FULLVERSION < 1100000)}
+  // Workaround for Lazarus bug #0021453
   ClipboardSetText(Clipboard.AsText);
+{$ENDIF}
 end;
 
 procedure TfrmEditor.cm_EditPaste(const Params:array of string);

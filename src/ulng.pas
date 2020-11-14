@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Localization core unit
 
-   Copyright (C) 2007-2019 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2007-2018 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -698,13 +698,11 @@ resourcestring
   rsOptionsEditorQuickSearch = 'Quick search/filter';
   rsOptionsEditorTerminal = 'Terminal';
   rsOptionsEditorToolbar = 'Toolbar';
-  rsOptionsEditorToolbarExtra = 'Toolbar Extra';
   rsOptionsEditorTools = 'Tools';
   rsOptionsEditorTooltips = 'Tooltips';
   rsOptionsEditorFileAssoc = 'File associations';
   rsOptionsEditorFileAssicExtra = 'File associations extra';
   rsOptionsEditorDirectoryHotlist = 'Directory Hotlist';
-  rsOptionsEditorDirectoryHotlistExtra = 'Directory Hotlist Extra';
   rsOptionsEditorFavoriteTabs = 'Favorite Tabs';
   rsOptionsEditorOptionsChanged = 'Options have changed in "%s"'+#$0A+#$0A+'Do you want to save modifications?';
   rsOptionsEditorFileSearch = 'File search';
@@ -997,7 +995,7 @@ resourcestring
    + 'of what you were doing and the following file:%s'
    + 'Press %s to continue or %s to abort the program.';
 
-function GetLanguageName(poFileName : String) : String;
+function GetLanguageName(const poFileName : String) : String;
 procedure lngLoadLng(const sFileName:String);
 procedure DoLoadLng;
 
@@ -1007,24 +1005,25 @@ uses
   Forms, Classes, SysUtils, StrUtils, GetText, Translations, uGlobs, uGlobsPaths,
   uTranslator, uDebug, uFileProcs, DCOSUtils, DCStrUtils;
 
-function GetLanguageName(poFileName : String) : String;
+function GetLanguageName(const poFileName : String) : String;
 var
-  poFile : Integer;
   sLine : String;
-  iPos1,
-  iPos2 : Integer;
+  poFile : THandle;
+  iPos1, iPos2 : Integer;
 begin
   poFile:= mbFileOpen(poFileName, fmOpenRead);
-  // find first msgid line
-  FileReadLn(poFile, sLine);
-  while Pos('msgid', sLine) = 0 do
+  if poFile <> feInvalidHandle then
+  begin
+    // find first msgid line
     FileReadLn(poFile, sLine);
-  // read msgstr line
-  FileReadLn(poFile, sLine);
-  repeat
+    while Pos('msgid', sLine) = 0 do
+      FileReadLn(poFile, sLine);
+    // read msgstr line
     FileReadLn(poFile, sLine);
-    // find language name line
-    if Pos('X-Native-Language:', sLine) <> 0 then
+    repeat
+      FileReadLn(poFile, sLine);
+      // find language name line
+      if Pos('X-Native-Language:', sLine) <> 0 then
       begin
         iPos1 := Pos(':', sLine) + 2;
         iPos2 := Pos('\n', sLine) - 1;
@@ -1032,8 +1031,9 @@ begin
         FileClose(poFile);
         Exit;
       end;
-  until Pos('msgid', sLine) = 1;
-  FileClose(poFile);
+    until Pos('msgid', sLine) = 1;
+    FileClose(poFile);
+  end;
   Result := 'Unknown';
 end;
 

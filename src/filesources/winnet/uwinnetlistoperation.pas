@@ -19,7 +19,9 @@ type
     FWinNetFileSource: IWinNetFileSource;
   private
     procedure ShareEnum;
+    procedure ShellEnum;
     procedure WorkgroupEnum;
+    function Linux: Boolean;
     function Connect: Boolean;
   public
     constructor Create(aFileSource: IFileSource; aPath: String); override;
@@ -30,7 +32,13 @@ implementation
 
 uses
   LazUTF8, uFile, Windows, JwaWinNetWk, JwaLmCons, JwaLmShare, JwaLmApiBuf,
-  StrUtils, DCStrUtils, uShowMsg, DCOSUtils, uOSUtils, uNetworkThread;
+  StrUtils, DCStrUtils, uShowMsg, DCOSUtils, uOSUtils, uNetworkThread, uMyWindows,
+  ShlObj, ComObj, uShellFolder, uShlObjAdditional;
+
+function TWinNetListOperation.Linux: Boolean;
+begin
+  Result:= CheckWin32Version(10) and StrBegins(Path, '\\wsl$\');
+end;
 
 function TWinNetListOperation.Connect: Boolean;
 var
@@ -54,7 +62,7 @@ begin
   if dwResult <> NO_ERROR then
   begin
     if dwResult = ERROR_CANCELLED then RaiseAbortOperation;
-    msgError(Thread, mbSysErrorMessage(dwResult));
+    msgError(Thread, mbWinNetErrorMessage(dwResult));
     Exit(False);
   end;
   Result:= True;
@@ -115,7 +123,7 @@ begin
     if (hEnum <> INVALID_HANDLE_VALUE) then
       dwResult := WNetCloseEnum(hEnum);
     if (dwResult <> NO_ERROR) and (dwResult <> ERROR_NO_MORE_ITEMS) then
-      msgError(Thread, mbSysErrorMessage(dwResult));
+      msgError(Thread, mbWinNetErrorMessage(dwResult));
     if Assigned(lpBuffer) then
       FreeMem(lpBuffer);
   end;
@@ -180,6 +188,35 @@ begin
     msgError(Thread, mbSysErrorMessage(dwResult));
 end;
 
+procedure TWinNetListOperation.ShellEnum;
+var
+  AFile: TFile;
+  NumIDs: LongWord = 0;
+  AFolder: IShellFolder;
+  EnumIDList: IEnumIDList;
+  DesktopFolder: IShellFolder;
+  PIDL, NetworkPIDL: PItemIDList;
+begin
+  try
+    OleCheckUTF8(SHGetDesktopFolder(DesktopFolder));
+    OleCheckUTF8(SHGetFolderLocation(0, CSIDL_NETWORK, 0, 0, {%H-}NetworkPIDL));
+    OleCheckUTF8(DesktopFolder.BindToObject(NetworkPIDL, nil, IID_IShellFolder, Pointer(AFolder)));
+    OleCheckUTF8(AFolder.EnumObjects(0, SHCONTF_FOLDERS or SHCONTF_NONFOLDERS or SHCONTF_INCLUDEHIDDEN, EnumIDList));
+
+    while EnumIDList.Next(1, PIDL, NumIDs) = S_OK do
+    begin
+      CheckOperationState;
+
+      aFile:= TWinNetFileSource.CreateFile(Path);
+      AFile.FullPath:= GetDisplayName(AFolder, PIDL, SHGDN_FORPARSING or SHGDN_FORADDRESSBAR);
+
+      FFiles.Add(AFile);
+    end;
+  except
+    on E: Exception do msgError(Thread, E.Message);
+  end;
+end;
+
 constructor TWinNetListOperation.Create(aFileSource: IFileSource; aPath: String);
 begin
   FFiles := TFiles.Create(aPath);
@@ -195,7 +232,7 @@ begin
     // Shared directory
     if not IsNetworkPath(Path) then
     begin
-      if Connect then
+      if Linux or Connect then
         inherited MainExecute;
     end
     else begin
@@ -203,6 +240,8 @@ begin
       if (IsPathAtRoot(Path) = False) and (Pos('\\', Path) = 1) then
         ShareEnum
       // Root/Domain/Workgroup
+      else if not Samba1 then
+        ShellEnum
       else
         WorkgroupEnum;
     end;

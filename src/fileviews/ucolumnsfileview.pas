@@ -42,6 +42,7 @@ type
     procedure SetGridVertLine(const AValue: Boolean);
 
   protected
+    procedure DragCanceled; override;
     procedure DoMouseMoveScroll(X, Y: Integer);
     {$IF lcl_fullversion < 1080003}
     function SelectCell(aCol, aRow: Integer): Boolean; override;
@@ -171,7 +172,7 @@ type
     procedure RedrawFiles; override;
     procedure SetActiveFile(FileIndex: PtrInt; ScrollTo: Boolean; aLastTopRowIndex: PtrInt = -1); override;
     procedure SetSorting(const NewSortings: TFileSortings); override;
-    procedure ShowRenameFileEdit(aFile: TFile); override;
+    procedure ShowRenameFileEdit(var aFile: TFile); override;
     procedure UpdateRenameFileEditPosition; override;
 
     procedure MouseScrollTimer(Sender: TObject); override;
@@ -463,7 +464,7 @@ begin
   dgPanel.ColumnsOwnDim:=ExternalDimFunction;
 end;
 
-procedure TColumnsFileView.ShowRenameFileEdit(aFile: TFile);
+procedure TColumnsFileView.ShowRenameFileEdit(var aFile: TFile);
 begin
   if FFileNameColumn <> -1 then
   begin
@@ -484,6 +485,8 @@ procedure TColumnsFileView.UpdateRenameFileEditPosition;
 var
   ARect: TRect;
 begin
+  inherited UpdateRenameFileEditPosition;
+
   ARect := dgPanel.CellRect(FFileNameColumn, dgPanel.Row);
   Dec(ARect.Top, 2);
   Inc(ARect.Bottom, 2);
@@ -493,6 +496,9 @@ begin
 
   if Succ(FFileNameColumn) = FExtensionColumn then
     Inc(ARect.Right, dgPanel.ColWidths[FExtensionColumn]);
+
+  if gInplaceRenameButton and (ARect.Right + edtRename.ButtonWidth < dgPanel.ClientWidth) then
+    Inc(ARect.Right, edtRename.ButtonWidth);
 
   edtRename.SetBounds(ARect.Left, ARect.Top, ARect.Right - ARect.Left, ARect.Bottom - ARect.Top);
 end;
@@ -1201,9 +1207,7 @@ begin
 
   DoubleBuffered := True;
   Align := alClient;
-{$if lcl_fullversion >= 1080004}
-  AllowOutboundEvents := False;
-{$endif}
+
   Options := [goFixedVertLine, goFixedHorzLine, goTabs, goRowSelect, goColSizing,
               goThumbTracking, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook];
 
@@ -1309,9 +1313,16 @@ begin
     begin
       // First reduce number of rows so that the 0'th row, which will be changed
       // to not-fixed, won't be counted as a row having a file.
-      if RowCount > 0 then
+      if RowCount > 1 then
+      begin
         RowCount := RowCount - 1;
-      FixedRows := 0;
+        FixedRows := 0;
+      end
+      else
+      begin
+        FixedRows := 0;
+        RowCount := 0;
+      end;
     end;
   end;
 
@@ -1983,12 +1994,16 @@ begin
   FMouseDownY := Y;
   ColumnsView.FMainControlMouseDown := True;
 
+  AllowOutboundEvents := False;
   inherited MouseDown(Button, Shift, X, Y);
+  AllowOutboundEvents := True;
 end;
 
 procedure TDrawGridEx.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
+  AllowOutboundEvents := False;
   inherited MouseMove(Shift, X, Y);
+  AllowOutboundEvents := True;
   if ColumnsView.IsMouseSelecting then DoMouseMoveScroll(X, Y);
 end;
 
@@ -2086,6 +2101,11 @@ function TDrawGridEx.IsRowVisible(aRow: Integer): Boolean;
 begin
   with GCache.FullVisibleGrid do
     Result:= (Top<=aRow)and(aRow<=Bottom);
+end;
+
+procedure TDrawGridEx.DragCanceled;
+begin
+  fGridState:= gsNormal;
 end;
 
 procedure TDrawGridEx.DoMouseMoveScroll(X, Y: Integer);

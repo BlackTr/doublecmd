@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Push some useful functions to Lua
 
-   Copyright (C) 2016-2018 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2016-2019 Alexander Koblov (alexx2000@mail.ru)
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,8 @@ implementation
 uses
   Forms, Dialogs, Clipbrd, LazUTF8, LCLVersion, DCOSUtils,
   DCConvertEncoding, fMain, uFormCommands, uOSUtils, uGlobs, uLog,
-  uClipboard, uShowMsg, uLuaStd, uFindEx, uConvEncoding;
+  uClipboard, uShowMsg, uLuaStd, uFindEx, uConvEncoding, uFileProcs,
+  uFilePanelSelect;
 
 procedure luaPushSearchRec(L : Plua_State; Rec: PSearchRecEx);
 begin
@@ -68,9 +69,10 @@ begin
     luaPushSearchRec(L, Rec);
   end
   else begin
-    Result:= 1;
-    Dispose(Rec);
+    FindCloseEx(Rec^);
     lua_pushnil(L);
+    Dispose(Rec);
+    Result:= 1;
   end;
 end;
 
@@ -131,6 +133,42 @@ function luaDirectoryExists(L : Plua_State) : Integer; cdecl;
 begin
   Result:= 1;
   lua_pushboolean(L, mbDirectoryExists(lua_tostring(L, 1)));
+end;
+
+function luaCreateDirectory(L : Plua_State) : Integer; cdecl;
+begin
+  Result:= 1;
+  lua_pushboolean(L, mbForceDirectory(lua_tostring(L, 1)));
+end;
+
+function luaExtractFilePath(L : Plua_State) : Integer; cdecl;
+begin
+  Result:= 1;
+  lua_pushstring(L, ExtractFilePath(lua_tostring(L, 1)));
+end;
+
+function luaExtractFileDrive(L : Plua_State) : Integer; cdecl;
+begin
+  Result:= 1;
+  lua_pushstring(L, ExtractFileDrive(lua_tostring(L, 1)));
+end;
+
+function luaExtractFileName(L : Plua_State) : Integer; cdecl;
+begin
+  Result:= 1;
+  lua_pushstring(L, ExtractFileName(lua_tostring(L, 1)));
+end;
+
+function luaExtractFileExt(L : Plua_State) : Integer; cdecl;
+begin
+  Result:= 1;
+  lua_pushstring(L, ExtractFileExt(lua_tostring(L, 1)));
+end;
+
+function luaExtractFileDir(L : Plua_State) : Integer; cdecl;
+begin
+  Result:= 1;
+  lua_pushstring(L, ExtractFileDir(lua_tostring(L, 1)));
 end;
 
 function luaPos(L : Plua_State) : Integer; cdecl;
@@ -334,6 +372,17 @@ begin
   lua_pushboolean(L, Res = cfrSuccess);
 end;
 
+function luaCurrentPanel(L : Plua_State) : Integer; cdecl;
+var
+  Count: Integer;
+begin
+  Result:= 1;
+  Count:= lua_gettop(L);
+  lua_pushinteger(L, Integer(frmMain.SelectedPanel));
+  if (Count > 0) then
+    frmMain.SetActiveFrame(TFilePanelSelect(lua_tointeger(L, 1)));
+end;
+
 procedure luaP_register(L : Plua_State; n : PChar; f : lua_CFunction);
 begin
   lua_pushcfunction(L, f);
@@ -357,6 +406,14 @@ begin
     luaP_register(L, 'FileGetAttr', @luaFileGetAttr);
     luaP_register(L, 'GetTickCount', @luaGetTickCount);
     luaP_register(L, 'DirectoryExists', @luaDirectoryExists);
+    luaP_register(L, 'CreateDirectory', @luaCreateDirectory);
+
+    luaP_register(L, 'ExtractFileExt', @luaExtractFileExt);
+    luaP_register(L, 'ExtractFileDir', @luaExtractFileDir);
+    luaP_register(L, 'ExtractFilePath', @luaExtractFilePath);
+    luaP_register(L, 'ExtractFileName', @luaExtractFileName);
+    luaP_register(L, 'ExtractFileDrive', @luaExtractFileDrive);
+
     luaC_register(L, 'PathDelim', PathDelim);
   lua_setglobal(L, 'SysUtils');
 
@@ -386,6 +443,7 @@ begin
 
   lua_newtable(L);
     luaP_register(L, 'LogWrite', @luaLogWrite);
+    luaP_register(L, 'CurrentPanel', @luaCurrentPanel);
     luaP_register(L, 'ExecuteCommand', @luaExecuteCommand);
   lua_setglobal(L, 'DC');
 
@@ -397,12 +455,20 @@ var
   APath: String;
 begin
   lua_getglobal(L, 'package');
+    // Set package.path
     lua_getfield(L, -1, 'path');
       APath := lua_tostring(L, -1);
-      APath := APath + ';' + Path + '?.lua';
+      APath := StringReplace(APath, '.' + PathDelim, Path, []);
     lua_pop(L, 1);
     lua_pushstring(L, PAnsiChar(APath));
     lua_setfield(L, -2, 'path');
+    // Set package.cpath
+    lua_getfield(L, -1, 'cpath');
+      APath := lua_tostring(L, -1);
+      APath := StringReplace(APath, '.' + PathDelim, Path, []);
+    lua_pop(L, 1);
+    lua_pushstring(L, PAnsiChar(APath));
+    lua_setfield(L, -2, 'cpath');
   lua_pop(L, 1);
 end;
 
@@ -442,6 +508,7 @@ begin
   begin
     luaL_openlibs(L);
     RegisterPackages(L);
+    SetPackagePath(L, ExtractFilePath(Script));
 
     // Load script from file
     Status := luaL_loadfile(L, PAnsiChar(Script));

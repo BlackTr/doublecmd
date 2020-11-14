@@ -31,6 +31,7 @@ type
     procedure InitializeWnd; override;
     function MouseOnGrid(X, Y: LongInt): Boolean;
     procedure DoOnResize; override;
+    procedure DragCanceled; override;
     procedure KeyDown(var Key : Word; Shift : TShiftState); override;
     procedure MouseDown(Button: TMouseButton; Shift:TShiftState; X,Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -131,7 +132,7 @@ begin
   else
     begin
       if gDirBrackets and (AFile.IsDirectory or AFile.IsLinkToDirectory) then
-        S:= '..]'
+        S:= '..' + gFolderPostfix
       else begin
         S:= '...';
       end;
@@ -173,6 +174,11 @@ begin
   CalculateColRowCount;
   CalculateColumnWidth;
   inherited DoOnResize;
+end;
+
+procedure TFileViewGrid.DragCanceled;
+begin
+  fGridState:= gsNormal;
 end;
 
 procedure TFileViewGrid.KeyDown(var Key: Word; Shift: TShiftState);
@@ -750,7 +756,8 @@ var
   AFile: TFile;
   AFileName: String;
 begin
-  if (FSelectedCount > 0) then
+  if not Assigned(FAllDisplayFiles) or (FAllDisplayFiles.Count = 0)
+     or (FSelectedCount > 0) then
     lblDetails.Caption:= EmptyStr
   else
     begin
