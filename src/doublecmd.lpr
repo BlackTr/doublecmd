@@ -4,14 +4,14 @@ program doublecmd;
 
 {.$APPTYPE GUI}
 uses
-  {$IFDEF DARWIN}
-  uAppleMagnifiedModeFix,
-  {$ENDIF}
   {$IF DEFINED(WIN64) AND (FPC_FULLVERSION < 30000)}
   uExceptionHandlerFix,
   {$ENDIF}
   {$IFDEF UNIX}
   cthreads,
+  {$IFDEF DARWIN}
+  uAppleMagnifiedModeFix,
+  {$ENDIF}
   {$IFNDEF HEAPTRC}
   cmem,
   {$ENDIF}
@@ -122,7 +122,7 @@ begin
   // see http://bugs.freepascal.org/view.php?id=22044
   Application.BidiMode:= bdLeftToRight;
 
-  Application.Title:= 'Double Commander';
+  Application.Title:='Double Commander';
   Application.Initialize;
   uDCVersion.InitializeVersionInfo;
   // Initializing keyboard module on GTK needs GTKProc.InitKeyboardTables

@@ -5,6 +5,7 @@ doublecmd
 *.lps
 doublecmd.res
 units/i386-darwin-carbon
+units/i386-darwin-cocoa
 install/doublecmd.app
 install/darwin/lib
 install/darwin/release
@@ -18,3 +19,8 @@ components/*/lib
 plugins/wcx/zip/zip.app/Contents/MacOS
 libunrar.dylib
 fpc.cfg
+doublecmd.xml
+history.xml
+session.ini
+shortcuts.scf
+wfx.ini
