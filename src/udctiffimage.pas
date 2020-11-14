@@ -26,7 +26,7 @@ uses
 class function TTiffImage.GetReaderClass: TFPCustomImageReaderClass;
 begin
   //Result:= TFPReaderTiff;
-  Result:=Inherited GetReaderClass();
+  Result:=Inherited;
 end;
 
 initialization

@@ -428,6 +428,8 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelLeft(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function DoMouseWheelRight(Shift: TShiftState; MousePos: TPoint): Boolean; override;
 {$if lcl_fullversion >= 1070000}
     procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy; const AXProportion, AYProportion: Double); override;
 {$endif}
@@ -2425,14 +2427,30 @@ function TViewerControl.DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): 
 begin
   Result := inherited;
   if not Result then
-    Result := Scroll(Mouse.WheelScrollLines);
+    // Mouse.WheelScrollLines default is 3, for touchpad it's - dangereous speed:)
+    // TODO: check source of wheel?
+    Result := Scroll(1);
 end;
 
 function TViewerControl.DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := inherited;
   if not Result then
-    Result := Scroll(-Mouse.WheelScrollLines);
+  Result := Scroll(-1);    //Mouse.WheelScrollLines
+end;
+
+function TViewerControl.DoMouseWheelLeft(Shift: TShiftState; MousePos: TPoint): Boolean;
+begin
+  Result := inherited;
+  if not Result then
+    Result := HScroll(-1); // TODO: settings?
+end;
+
+function TViewerControl.DoMouseWheelRight(Shift: TShiftState; MousePos: TPoint): Boolean;
+begin
+  Result := inherited;
+  if not Result then
+    Result := HScroll(1);
 end;
 
 {$if lcl_fullversion >= 1070000}

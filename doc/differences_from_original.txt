@@ -1,0 +1,16 @@
+﻿Tools/envs used to build this version:
+fpc: 3.2.0
+lazarus: 2.0.10
+osx: 10.14.6
+
+[*] - UPDATED/FIXED
+[+] - ADDED
+[-] - REMOVED
+
+differnces from original:
+
+0.9.9
+[*] Srartup of dc on osx: removed old tiff reader
+[*] Speed of vertical scroll in the Viewer
+[+] Horizontal scroll in the Viewer
+[+] Copy path(s) in the find dialog
