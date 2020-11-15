@@ -4,8 +4,7 @@ doublecmd
 *.compiled
 *.lps
 doublecmd.res
-units/i386-darwin-carbon
-units/i386-darwin-cocoa
+units/*
 install/doublecmd.app
 install/darwin/lib
 install/darwin/release
