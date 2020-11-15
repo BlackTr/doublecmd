@@ -19,7 +19,6 @@
       <Icon Value="0"/>
     </General>
     <i18n>
-      <EnableI18N Value="True"/>
       <OutDir Value="..\language"/>
     </i18n>
     <VersionInfo>
