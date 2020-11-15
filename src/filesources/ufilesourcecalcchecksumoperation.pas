@@ -230,7 +230,7 @@ end;
 
 procedure TFileSourceCalcChecksumOperation.DoReloadFileSources;
 begin
-  if OneFile AND OpenFileAfterOperationCompleted then ShowViewerByGlob(TargetMask);
+  if OneFile AND OpenFileAfterOperationCompleted then ShowViewerByGlob(TargetMask, nil);
 end;
 
 

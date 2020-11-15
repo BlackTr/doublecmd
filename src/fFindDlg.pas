@@ -1610,7 +1610,7 @@ begin
       if (lsFoundedFiles.Items.Objects[lsFoundedFiles.ItemIndex] <> nil) then
         msgError(rsMsgErrNotSupported)
       else
-        ShowViewerByGlob(lsFoundedFiles.Items[lsFoundedFiles.ItemIndex]);
+        ShowViewerByGlob(lsFoundedFiles.Items[lsFoundedFiles.ItemIndex], Self);
     end;
 end;
 
@@ -2319,7 +2319,7 @@ begin
     for i := 0 to lsFoundedFiles.Items.Count - 1 do
       if lsFoundedFiles.Selected[i] then
         sl.Add(lsFoundedFiles.Items[i]);
-    ShowViewer(sl);
+    ShowViewer(sl, Self);
   finally
     sl.Free;
   end;

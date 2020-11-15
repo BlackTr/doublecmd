@@ -908,7 +908,7 @@ begin
     else if Sender = MenuItemViewRight then begin
       f := sr.FFileR;
     end;
-    if Assigned(f) then ShowViewerByGlob(f.FullPath);
+    if Assigned(f) then ShowViewerByGlob(f.FullPath, Self);
   end;
 end;
 

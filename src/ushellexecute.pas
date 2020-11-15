@@ -1038,7 +1038,7 @@ begin
     //10. If our end-job is to VIEW a file via what's configured as viewer, let's do it.
     if Pos('{!VIEWER}', sCmd) > 0 then
     begin
-      uShowForm.ShowViewerByGlob(RemoveQuotation(sParams));
+      uShowForm.ShowViewerByGlob(RemoveQuotation(sParams), nil);
       Result := True;
       Exit;
     end;
@@ -1049,7 +1049,7 @@ begin
       sl := TStringList.Create;
       try
         sl.Add(RemoveQuotation(sParams));
-        fViewer.ShowViewer(sl);
+        fViewer.ShowViewer(sl, nil);
         Result := True;
       finally
         FreeAndNil(sl);

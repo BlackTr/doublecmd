@@ -197,7 +197,7 @@ end;
 { TfrmOptionsMisc.btnViewConfigFileClick }
 procedure TfrmOptionsMisc.btnViewConfigFileClick(Sender: TObject);
 begin
-  ShowViewerByGlob(mbExpandFileName(fneTCConfigFilename.FileName));
+  ShowViewerByGlob(mbExpandFileName(fneTCConfigFilename.FileName), nil);
 end;
 
 { TfrmOptionsMisc.btnOutputPathForToolbarClick }

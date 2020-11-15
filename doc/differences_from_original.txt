@@ -14,3 +14,4 @@ differnces from original:
 [-] Auto select from quick search
 [+] Horizontal scroll in the Viewer
 [+] Copy path(s) in the find dialog
+[+] Focus on the parent window after Viewer closed

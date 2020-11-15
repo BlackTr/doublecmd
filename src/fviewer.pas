@@ -357,6 +357,7 @@ type
     procedure WMSetFocus(var Message: TLMSetFocus); message LM_SETFOCUS;
 
   public
+    ParentFrm: TForm;
     constructor Create(TheOwner: TComponent; aWaitData: TWaitData; aQuickView: Boolean = False); overload;
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -424,7 +425,7 @@ type
 
   end;
 
-procedure ShowViewer(const FilesToView:TStringList; WaitData: TWaitData = nil);
+procedure ShowViewer(const FilesToView:TStringList; ParentForm: TForm; WaitData: TWaitData = nil);
 
 implementation
 
@@ -472,12 +473,13 @@ type
     class procedure Finish(var Thread: TThread);
   end;
 
-procedure ShowViewer(const FilesToView: TStringList; WaitData: TWaitData);
+procedure ShowViewer(const FilesToView: TStringList; ParentForm: TForm; WaitData: TWaitData);
 var
   Viewer: TfrmViewer;
 begin
   //DCDebug('ShowViewer - Using Internal');
   Viewer := TfrmViewer.Create(Application, WaitData);
+  Viewer.ParentFrm := ParentForm;
   Viewer.FileList.Assign(FilesToView);// Make a copy of the list
   Viewer.DrawPreview.RowCount:= Viewer.FileList.Count;
   Viewer.actMoveFile.Enabled := FilesToView.Count > 1;
@@ -1675,6 +1677,8 @@ end;
 procedure TfrmViewer.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   TThumbThread.Finish(FThread);
+  if (ParentFrm <> nil) then
+    ParentFrm.BringToFront;
 end;
 
 procedure TfrmViewer.TimerViewerTimer(Sender: TObject);

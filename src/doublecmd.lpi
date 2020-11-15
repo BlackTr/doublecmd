@@ -1053,6 +1053,7 @@ end;"/>
       <Unit110>
         <Filename Value="filesources\ufilesourcecalcchecksumoperation.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uFileSourceCalcChecksumOperation"/>
       </Unit110>
       <Unit111>
         <Filename Value="filesources\ufilesourcecalcstatisticsoperation.pas"/>

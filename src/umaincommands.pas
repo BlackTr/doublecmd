@@ -496,7 +496,7 @@ begin
 
         // if aFileList has files then view it
         if aFileList.Count > 0 then
-          ShowViewerByGlobList(aFileList, aFileSource);
+          ShowViewerByGlobList(aFileList, aFileSource, frmMain);
       except
         on e: EInvalidCommandLine do
           MessageDlg(rsToolErrorOpeningViewer,
@@ -1865,7 +1865,7 @@ begin
 
       // if sl has files then view it
       if sl.Count > 0 then
-        ShowViewerByGlobList(sl, aFileSource);
+        ShowViewerByGlobList(sl, aFileSource, frmMain);
     except
       on e: EInvalidCommandLine do
         MessageDlg(rsToolErrorOpeningViewer,
@@ -4228,7 +4228,7 @@ end;
 
 procedure TMainCommands.cm_ViewLogFile(const Params: array of string);
 begin
-  ShowViewerByGlob(GetActualLogFilename);
+  ShowViewerByGlob(GetActualLogFilename, frmMain);
 end;
 
 procedure TMainCommands.cm_ClearLogFile(const Params: array of string);

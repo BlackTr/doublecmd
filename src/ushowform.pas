@@ -102,9 +102,11 @@ procedure ShowEditorByGlob(WaitData: TEditorWaitData); overload;
 procedure ShowDifferByGlob(const LeftName, RightName: String);
 procedure ShowDifferByGlobList(const CompareList: TStringList; WaitData: TWaitData; Modal: Boolean = False);
 
-procedure ShowViewerByGlob(const sFileName: String);
+procedure ShowViewerByGlob(const sFileName: String;
+                          const ParentForm: TForm);
 procedure ShowViewerByGlobList(const FilesToView: TStringList;
-                               const aFileSource: IFileSource);
+                               const aFileSource: IFileSource;
+                               const ParentForm: TForm);
 
 implementation
 
@@ -237,7 +239,8 @@ begin
   end;
 end;
 
-procedure ShowViewerByGlob(const sFileName: String);
+procedure ShowViewerByGlob(const sFileName: String;
+                                 const ParentForm: TForm);
 var
   sl:TStringList;
 begin
@@ -257,7 +260,7 @@ begin
     sl:=TStringList.Create;
     try
       sl.Add(sFileName);
-      ShowViewer(sl);
+      ShowViewer(sl, ParentForm);
     finally
       FreeAndNil(sl);
     end;
@@ -297,7 +300,8 @@ begin
 end;
 
 procedure ShowViewerByGlobList(const FilesToView : TStringList;
-                               const aFileSource: IFileSource);
+                               const aFileSource: IFileSource;
+                               const ParentForm: TForm);
 var
   I : Integer;
   WaitThread : TViewerWaitThread;
@@ -320,9 +324,9 @@ begin
   end // gUseExtView
   else begin
     if aFileSource.IsClass(TTempFileSystemFileSource) then
-      ShowViewer(FilesToView, TViewerWaitData.Create(aFileSource))
+      ShowViewer(FilesToView, ParentForm, TViewerWaitData.Create(aFileSource))
     else
-      ShowViewer(FilesToView);
+      ShowViewer(FilesToView, ParentForm);
   end;
 end;
 
