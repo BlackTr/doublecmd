@@ -26,6 +26,7 @@ object frmQuickSearch: TfrmQuickSearch
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
+    AutoSelect = False
   end
   object tglFilter: TToggleBox
     AnchorSideTop.Control = edtSearch
