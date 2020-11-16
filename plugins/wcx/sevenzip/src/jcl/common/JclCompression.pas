@@ -6567,7 +6567,10 @@ begin
     // kpidCharacts: ;
     // kpidVa: ;
     // kpidId: ;
-    // kpidShortName: ;
+    kpidShortName:
+      begin
+        Value.vt := VT_EMPTY;
+      end;
     // kpidCreatorApp: ;
     // kpidSectorSize: ;
     kpidPosixAttrib:
@@ -6582,6 +6585,11 @@ begin
     // kpidLocalName: ;
     // kpidProvider: ;
     // kpidUserDefined: ;
+    kpidIsAltStream:
+      begin
+        Value.vt := VT_BOOL;
+        Value.bool := False;
+      end;
   else
     Value.vt := VT_EMPTY;
     Result := S_FALSE;
@@ -6591,6 +6599,7 @@ end;
 function TJclSevenzipUpdateCallback.GetStream(Index: Cardinal;
   out InStream: ISequentialInStream): HRESULT;
 begin
+  Result := E_FAIL;
   FLastStream := Index;
   repeat
     try
@@ -6601,7 +6610,12 @@ begin
       begin
         case MessageBox(0, PAnsiChar(E.Message), nil, MB_ABORTRETRYIGNORE or MB_ICONERROR) of
           IDABORT: Exit(E_ABORT);
-          IDIGNORE: Exit(S_FALSE);
+          IDIGNORE:
+            begin
+              FArchive.Items[Index].OperationSuccess := osNoOperation;
+              FLastStream := MAXDWORD;
+              Exit(S_FALSE);
+            end;
         end;
       end;
     end;
@@ -6664,17 +6678,20 @@ end;
 function TJclSevenzipUpdateCallback.SetOperationResult(
   OperationResult: Integer): HRESULT;
 begin
-  case OperationResult of
-    kOK:
-      FArchive.Items[FLastStream].OperationSuccess := osOK;
-    kUnSupportedMethod:
-      FArchive.Items[FLastStream].OperationSuccess := osUnsupportedMethod;
-    kDataError:
-      FArchive.Items[FLastStream].OperationSuccess := osDataError;
-    kCRCError:
-      FArchive.Items[FLastStream].OperationSuccess := osCRCError;
-  else
-    FArchive.Items[FLastStream].OperationSuccess := osUnknownError;
+  if FLastStream < MAXDWORD then
+  begin
+    case OperationResult of
+      kOK:
+        FArchive.Items[FLastStream].OperationSuccess := osOK;
+      kUnSupportedMethod:
+        FArchive.Items[FLastStream].OperationSuccess := osUnsupportedMethod;
+      kDataError:
+        FArchive.Items[FLastStream].OperationSuccess := osDataError;
+      kCRCError:
+        FArchive.Items[FLastStream].OperationSuccess := osCRCError;
+    else
+      FArchive.Items[FLastStream].OperationSuccess := osUnknownError;
+    end;
   end;
 
   Result := S_OK;

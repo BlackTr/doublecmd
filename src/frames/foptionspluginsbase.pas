@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Plugins options page
 
-   Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2019 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,9 +15,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit fOptionsPluginsBase;
@@ -58,7 +57,7 @@ type
     procedure stgPluginsDragDrop(Sender, {%H-}Source: TObject; X, Y: integer);
     procedure stgPluginsGetCellHint(Sender: TObject; ACol, ARow: integer; var HintText: string);
     procedure stgPluginsShowHint(Sender: TObject; HintInfo: PHintInfo);
-    function GetPluginFilenameToSave(const Filename: string): string;
+    procedure ActualAddPlugin({%H-}sPluginFilename: string); virtual;
   private
     FPluginType: TPluginType;
   protected
@@ -72,6 +71,8 @@ type
     class function GetIconIndex: integer; override;
     function IsSignatureComputedFromAllWindowComponents: boolean; override;
   end;
+
+  function GetPluginFilenameToSave(const Filename: string): string;
 
 implementation
 
@@ -105,6 +106,12 @@ end;
 
 { TfrmOptionsPluginsBase.stgPluginsOnSelection}
 procedure TfrmOptionsPluginsBase.stgPluginsOnSelection(Sender: TObject; aCol, aRow: integer);
+begin
+  //empty
+end;
+
+{ TfrmOptionsPluginsBase.ActualAddPlugin }
+procedure TfrmOptionsPluginsBase.ActualAddPlugin(sPluginFilename: string);
 begin
   //empty
 end;
@@ -219,7 +226,7 @@ begin
 end;
 
 { GetPluginFilenameToSave }
-function TfrmOptionsPluginsBase.GetPluginFilenameToSave(const Filename: string): string;
+function GetPluginFilenameToSave(const Filename: string): string;
 var
   sMaybeBasePath, SubWorkingPath, MaybeSubstitionPossible: string;
 begin
@@ -240,3 +247,4 @@ begin
 end;
 
 end.
+

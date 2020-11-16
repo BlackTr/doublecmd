@@ -16,6 +16,7 @@ uses
 type
 
   // Statistics are the same for CopyIn and CopyOut operations.
+  PFileSourceCopyOperationStatistics = ^TFileSourceCopyOperationStatistics;
   TFileSourceCopyOperationStatistics = record
     CurrentFileFrom: String;
     CurrentFileTo: String;
@@ -49,6 +50,7 @@ type
 
   protected
     FCopyAttributesOptions: TCopyAttributesOptions;
+    FSymLinkOption: TFileSourceOperationOptionSymLink;
     FFileExistsOption: TFileSourceOperationOptionFileExists;
     FDirExistsOption: TFileSourceOperationOptionDirectoryExists;
 
@@ -90,6 +92,7 @@ type
     property TargetFileSource: IFileSource read FTargetFileSource;
 
     property RenameMask: String read FRenameMask write FRenameMask;
+    property SymLinkOption: TFileSourceOperationOptionSymLink read FSymLinkOption write FSymLinkOption;
     property FileExistsOption: TFileSourceOperationOptionFileExists read FFileExistsOption write FFileExistsOption;
     property CopyAttributesOptions: TCopyAttributesOptions read FCopyAttributesOptions write FCopyAttributesOptions;
     property DirExistsOption: TFileSourceOperationOptionDirectoryExists read FDirExistsOption write FDirExistsOption;

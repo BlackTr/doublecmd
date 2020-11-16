@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains UTF-8 versions of Find(First, Next, Close) functions
 
-    Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2020 Alexander Koblov (alexx2000@mail.ru)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,16 @@
 
 unit uFindEx;
 
+{$macro on}
 {$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 
 uses
   SysUtils, DCBasicTypes
   {$IFDEF UNIX}
-  , BaseUnix, uMasks
+  , BaseUnix, DCUnix, uMasks
   {$ENDIF}
   {$IFDEF MSWINDOWS}
   , Windows
@@ -41,16 +43,16 @@ uses
 
 const
   fffPortable = $80000000;
+  fffElevated = $40000000;
 
 type
 {$IFDEF UNIX}
-  TUnixFindData = record
+  TUnixFindHandle = record
     DirPtr: PDir;      //en> directory pointer for reading directory
     FindPath: String;  //en> file name path
     Mask: TMask;       //en> object that will check mask
-    StatRec: Stat;     //en> Unix stat record
   end;
-  PUnixFindData = ^TUnixFindData;
+  PUnixFindHandle = ^TUnixFindHandle;
 {$ENDIF}
 
   PSearchRecEx = ^TSearchRecEx;
@@ -60,14 +62,17 @@ type
     Attr : TFileAttrs;
     Name : String;
     Flags : UInt32;
-{$ifdef unix}
-    FindHandle : Pointer;
-{$else unix}
+{$IF DEFINED(MSWINDOWS)}
     FindHandle : THandle;
-{$endif unix}
-{$if defined(Win32) or defined(WinCE) or defined(Win64)}
     FindData : Windows.TWin32FindDataW;
-{$endif}
+    property PlatformTime: TFileTime read FindData.ftCreationTime;
+    property LastAccessTime: TFileTime read FindData.ftLastAccessTime;
+{$ELSE}
+    FindHandle : Pointer;
+    FindData : BaseUnix.Stat;
+    property PlatformTime: TUnixTime read FindData.st_ctime;
+    property LastAccessTime: TUnixTime read FindData.st_atime;
+{$ENDIF}
   end;
 
 function FindFirstEx(const Path: String; Flags: UInt32; out SearchRec: TSearchRecEx): Integer;
@@ -82,13 +87,14 @@ uses
   , DCWindows, DCDateTimeUtils, uMyWindows
   {$ENDIF}
   {$IFDEF UNIX}
-  , Unix, DCOSUtils, DCFileAttributes, DCConvertEncoding, uMyUnix
+  , InitC, Unix, DCOSUtils, DCFileAttributes, DCConvertEncoding
   {$ENDIF};
 
 {$IF DEFINED(LINUX)}
-  function fpOpenDir(dirname: PAnsiChar): pDir; cdecl; external libc name 'opendir';
-  function fpReadDir(var dirp: TDir): pDirent; cdecl; external libc name 'readdir64';
-  function fpCloseDir(var dirp: TDir): cInt; cdecl; external libc name 'closedir';
+  {$define fpgeterrno:= fpgetCerrno}
+  function fpOpenDir(dirname: PAnsiChar): pDir; cdecl; external clib name 'opendir';
+  function fpReadDir(var dirp: TDir): pDirent; cdecl; external clib name 'readdir64';
+  function fpCloseDir(var dirp: TDir): cInt; cdecl; external clib name 'closedir';
 {$ENDIF}
 
 function mbFindMatchingFile(var SearchRec: TSearchRecEx): Integer;
@@ -110,17 +116,23 @@ begin
 end;
 {$ELSE}
 var
-  UnixFindData: PUnixFindData absolute SearchRec.FindHandle;
+  UnixFindHandle: PUnixFindHandle absolute SearchRec.FindHandle;
 begin
   Result:= -1;
-  if UnixFindData = nil then Exit;
-  if (UnixFindData^.Mask = nil) or UnixFindData^.Mask.Matches(SearchRec.Name) then
+  if UnixFindHandle = nil then Exit;
+  if (UnixFindHandle^.Mask = nil) or UnixFindHandle^.Mask.Matches(SearchRec.Name) then
   begin
-    if fpLStat(UTF8ToSys(UnixFindData^.FindPath + SearchRec.Name), @UnixFindData^.StatRec) >= 0 then
+    if fpLStat(UTF8ToSys(UnixFindHandle^.FindPath + SearchRec.Name), @SearchRec.FindData) >= 0 then
     begin
-      with UnixFindData^.StatRec do
+      with SearchRec.FindData do
       begin
-        SearchRec.Size:= Int64(st_size);
+        // On Unix a size for directory entry on filesystem is returned in StatInfo.
+        // We don't want to use it.
+        if fpS_ISDIR(st_mode) then
+          SearchRec.Size:= 0
+        else begin
+          SearchRec.Size:= Int64(st_size);
+        end;
         SearchRec.Time:= DCBasicTypes.TFileTime(st_mtime);
         if (SearchRec.Flags and fffPortable = 0) then
           SearchRec.Attr:= DCBasicTypes.TFileAttrs(st_mode)
@@ -138,10 +150,21 @@ function FindFirstEx(const Path: String; Flags: UInt32; out SearchRec: TSearchRe
 {$IFDEF MSWINDOWS}
 var
   wsPath: UnicodeString;
+  fInfoLevelId: FINDEX_INFO_LEVELS;
 begin
   SearchRec.Flags:= Flags;
   wsPath:= UTF16LongName(Path);
-  SearchRec.FindHandle:= FindFirstFileW(PWideChar(wsPath), SearchRec.FindData);
+  if CheckWin32Version(6, 1) then
+  begin
+    fInfoLevelId:= FindExInfoBasic;
+    Flags:= FIND_FIRST_EX_LARGE_FETCH;
+  end
+  else begin
+    Flags:= 0;
+    fInfoLevelId:= FindExInfoStandard;
+  end;
+  SearchRec.FindHandle:= FindFirstFileExW(PWideChar(wsPath), fInfoLevelId,
+                                          @SearchRec.FindData, FindExSearchNameMatch, nil, Flags);
 
   if SearchRec.FindHandle = INVALID_HANDLE_VALUE then
     Result:= GetLastError
@@ -151,15 +174,15 @@ begin
 end;
 {$ELSE}
 var
-  UnixFindData: PUnixFindData;
+  UnixFindHandle: PUnixFindHandle;
 begin
-  New(UnixFindData);
+  New(UnixFindHandle);
 
   SearchRec.Flags:= Flags;
-  SearchRec.FindHandle:= UnixFindData;
-  FillChar(UnixFindData^, SizeOf(TUnixFindData), 0);
+  SearchRec.FindHandle:= UnixFindHandle;
+  FillChar(UnixFindHandle^, SizeOf(TUnixFindHandle), 0);
 
-  with UnixFindData^ do
+  with UnixFindHandle^ do
   begin
     FindPath:= ExtractFileDir(Path);
     if FindPath = '' then begin
@@ -187,6 +210,7 @@ begin
     end;
 
     DirPtr:= fpOpenDir(PAnsiChar(CeUtf8ToSys(FindPath)));
+    if (DirPtr = nil) then Exit(fpgeterrno);
   end;
   Result:= FindNextEx(SearchRec);
 end;
@@ -204,12 +228,12 @@ end;
 {$ELSE}
 var
   PtrDirEnt: pDirent;
-  UnixFindData: PUnixFindData absolute SearchRec.FindHandle;
+  UnixFindHandle: PUnixFindHandle absolute SearchRec.FindHandle;
 begin
   Result:= -1;
-  if UnixFindData = nil then Exit;
-  if UnixFindData^.DirPtr = nil then Exit;
-  PtrDirEnt:= fpReadDir(UnixFindData^.DirPtr^);
+  if UnixFindHandle = nil then Exit;
+  if UnixFindHandle^.DirPtr = nil then Exit;
+  PtrDirEnt:= fpReadDir(UnixFindHandle^.DirPtr^);
   while PtrDirEnt <> nil do
   begin
     SearchRec.Name:= CeSysToUtf8(PtrDirEnt^.d_name);
@@ -217,7 +241,7 @@ begin
     if Result = 0 then // if found then exit
       Exit
     else // else read next
-      PtrDirEnt:= fpReadDir(UnixFindData^.DirPtr^);
+      PtrDirEnt:= fpReadDir(UnixFindHandle^.DirPtr^);
   end;
 end;
 {$ENDIF}
@@ -230,14 +254,14 @@ begin
 end;
 {$ELSE}
 var
-  UnixFindData: PUnixFindData absolute SearchRec.FindHandle;
+  UnixFindHandle: PUnixFindHandle absolute SearchRec.FindHandle;
 begin
-  if UnixFindData = nil then Exit;
-  if UnixFindData^.DirPtr <> nil then
-    fpCloseDir(UnixFindData^.DirPtr^);
-  if Assigned(UnixFindData^.Mask) then
-    UnixFindData^.Mask.Free;
-  Dispose(UnixFindData);
+  if UnixFindHandle = nil then Exit;
+  if UnixFindHandle^.DirPtr <> nil then
+    fpCloseDir(UnixFindHandle^.DirPtr^);
+  if Assigned(UnixFindHandle^.Mask) then
+    UnixFindHandle^.Mask.Free;
+  Dispose(UnixFindHandle);
   SearchRec.FindHandle:= nil;
 end;
 {$ENDIF}

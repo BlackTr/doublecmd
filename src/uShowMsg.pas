@@ -4,21 +4,20 @@
    -------------------------------------------------------------------------
    Implementing of Showing messages with localization
 
-   Copyright (C) 2007-2018 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2007-2020 Alexander Koblov (alexx2000@mail.ru)
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+   This library is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+   You should have received a copy of the GNU General Public License
+   along with this library. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {
@@ -47,14 +46,14 @@ type
   TMyMsgResult=(mmrOK, mmrNo, mmrYes, mmrCancel, mmrNone,
                 mmrAppend, mmrResume, mmrCopyInto, mmrCopyIntoAll,
                 mmrOverwrite, mmrOverwriteAll, mmrOverwriteOlder,
-                mmrOverwriteSmaller, mmrOverwriteLarger, mmrAutoRenameSource, mmrRenameSource,
+                mmrOverwriteSmaller, mmrOverwriteLarger, mmrAutoRenameSource, mmrAutoRenameTarget, mmrRenameSource,
                 mmrSkip, mmrSkipAll, mmrIgnore, mmrIgnoreAll, mmrAll, mmrRetry, mmrAbort, mmrRetryAdmin,
                 mmrUnlock);
 
   TMyMsgButton=(msmbOK, msmbNo, msmbYes, msmbCancel, msmbNone,
                 msmbAppend, msmbResume, msmbCopyInto, msmbCopyIntoAll,
                 msmbOverwrite, msmbOverwriteAll, msmbOverwriteOlder,
-                msmbOverwriteSmaller, msmbOverwriteLarger, msmbAutoRenameSource, msmbRenameSource,
+                msmbOverwriteSmaller, msmbOverwriteLarger, msmbAutoRenameSource, msmbAutoRenameTarget, msmbRenameSource,
                 msmbSkip, msmbSkipAll, msmbIgnore, msmbIgnoreAll, msmbAll, msmbRetry, msmbAbort, msmbRetryAdmin,
                 msmbUnlock,
                 // Actions, they do not close the form and therefore have no corresponding result value:
@@ -95,10 +94,10 @@ type
     function ShowInputQuery(const ACaption, APrompt: String; MaskInput: Boolean; var Value: String) : Boolean;
   end;
 
-function msgYesNo(const sMsg: String): Boolean; overload;
+function msgYesNo(const sMsg: String; ButDefault: TMyMsgButton = msmbYes): Boolean; overload;
 function msgYesNo(Thread: TThread; const sMsg: String): Boolean; overload;
 
-function msgYesNoCancel(const sMsg: String): TMyMsgResult; overload;
+function msgYesNoCancel(const sMsg: String; ButDefault: TMyMsgButton = msmbYes):TMyMsgResult; overload;
 function msgYesNoCancel(Thread: TThread; const sMsg: String): TMyMsgResult; overload;
 
 procedure msgOK(const sMsg: String); overload;
@@ -236,12 +235,20 @@ end;
 
 procedure SetMsgBoxParams(var frmMsg: TfrmMsg; const sMsg: String;
                           const Buttons: array of TMyMsgButton; ButDefault, ButEscape: TMyMsgButton);
+
+  procedure FormShowEvent(Self, Sender: TCustomForm);
+  begin
+    if (Self.Tag <> 0) and (TObject(Self.Tag) is TButton) then
+      SendMessage(TButton(Self.Tag).Handle, $160C, 0, 1);
+  end;
+
 const
   cButtonCount = 8;
   cButtonSpace = 8;
 var
   iIndex: Integer;
   iCount: Integer;
+  Handler: TMethod;
   MenuItem: TMenuItem;
   CaptionWidth: Integer;
   More: Boolean = False;
@@ -291,10 +298,21 @@ begin
       Caption:= cLngButton[Buttons[iIndex]];
       Parent:= frmMsg.pnlButtons;
       Constraints.MinWidth:= MinButtonWidth;
+
       if Buttons[iIndex] >= Low(TMyMsgActionButton) then
         Tag:= -2-iIndex
       else
         Tag:= iIndex;
+
+      if Buttons[iIndex] = msmbRetryAdmin then
+      begin
+        Handler.Data:= frmMsg;
+        frmMsg.Tag:= GetHashCode;
+        Handler.Code:= @FormShowEvent;
+        frmMsg.OnShow:= TNotifyEvent(Handler);
+        Constraints.MinWidth:= MinButtonWidth + GetSystemMetrics(49);
+      end;
+
       OnClick:= frmMsg.ButtonClick;
       OnMouseUp:= frmMsg.MouseUpEvent;
       if Buttons[iIndex] = ButDefault then
@@ -421,9 +439,9 @@ begin
                        msmbAppend, msmbOverwrite, msmbOverwriteAll],msmbOK, msmbNO);
 end;
 
-function msgYesNo(const sMsg: String):Boolean;
+function msgYesNo(const sMsg: String; ButDefault: TMyMsgButton = msmbYes):Boolean;
 begin
-  Result:= MsgBox(nil, sMsg,[msmbYes, msmbNo], msmbYes, msmbNo )= mmrYes;
+  Result:= MsgBox(nil, sMsg,[msmbYes, msmbNo], ButDefault, msmbNo )= mmrYes;
 end;
 
 function msgYesNo(Thread: TThread; const sMsg: String): Boolean;
@@ -431,9 +449,9 @@ begin
   Result:= MsgBox(Thread, sMsg,[msmbYes, msmbNo], msmbYes, msmbNo )= mmrYes;
 end;
 
-function msgYesNoCancel(const sMsg: String):TMyMsgResult;
+function msgYesNoCancel(const sMsg: String; ButDefault: TMyMsgButton = msmbYes):TMyMsgResult;
 begin
-  Result:= MsgBox(sMsg,[msmbYes, msmbNo, msmbCancel], msmbYes, msmbCancel);
+  Result:= MsgBox(sMsg,[msmbYes, msmbNo, msmbCancel], ButDefault, msmbCancel);
 end;
 
 function msgYesNoCancel(Thread: TThread; const sMsg: String): TMyMsgResult;
@@ -838,6 +856,7 @@ begin
   cLngButton[msmbOverwriteSmaller] := rsDlgButtonOverwriteSmaller;
   cLngButton[msmbOverwriteLarger]  := rsDlgButtonOverwriteLarger;
   cLngButton[msmbAutoRenameSource] := rsDlgButtonAutoRenameSource;
+  cLngButton[msmbAutoRenameTarget] := rsDlgButtonAutoRenameTarget;
   cLngButton[msmbRenameSource]     := rsDlgButtonRename;
   cLngButton[msmbSkip]             := rsDlgButtonSkip;
   cLngButton[msmbSkipAll]          := rsDlgButtonSkipAll;

@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  ISAAC, uFileSystemFileSource, uHash, uGlobs, uDCUtils;
+  ISAAC, DCOSUtils, uFileSystemFileSource, uHash, uGlobs, uDCUtils;
 
 const
   cSize = 1024 * 1024 * 256;
@@ -78,7 +78,6 @@ procedure TBenchmarkOperation.MainExecute;
 var
   ASize: Int64;
   AHash: String;
-  ACount: Integer;
   ARandom: isaac_ctx;
   ABufferSize: Integer;
   Context: THashContext;
@@ -94,7 +93,7 @@ begin
   FStatistics.TotalFiles := (Length(HashName) - 1);
   FStatistics.TotalBytes:= ASize * FStatistics.TotalFiles;
 
-  for Index := Low(THashAlgorithm) to High(THashAlgorithm) do
+  for Index := Low(THashAlgorithm) to Pred(High(THashAlgorithm)) do
   begin
     if Index = HASH_SFV then Continue;
 
@@ -107,7 +106,7 @@ begin
 
     UpdateStatistics(FStatistics);
 
-    AStart:= GetTickCount64;
+    AStart:= GetTickCountEx;
     HashInit(Context, Index);
 
     while FStatistics.CurrentFileDoneBytes < ASize do
@@ -126,7 +125,7 @@ begin
     end;
 
     HashFinal(Context, AHash);
-    AFinish:= GetTickCount64 - AStart;
+    AFinish:= GetTickCountEx - AStart;
 
     Inc(FStatistics.DoneFiles);
     UpdateStatistics(FStatistics);

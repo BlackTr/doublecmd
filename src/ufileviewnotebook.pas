@@ -74,7 +74,7 @@ type
 
   protected
     procedure PaintWindow(DC: HDC); override;
-{$IF DEFINED(MSWINDOWS)}
+{$IF DEFINED(LCLWIN32)}
     procedure RealSetText(const AValue: TCaption); override;
 {$ENDIF}
     procedure WMEraseBkgnd(var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
@@ -117,9 +117,6 @@ type
     function GetFileViewOnPage(Index: Integer): TFileView;
     function GetPage(Index: Integer): TFileViewPage; reintroduce;
 
-    procedure DragOverEvent(Sender, Source: TObject; X, Y: Integer; State: TDragState; var Accept: Boolean);
-    procedure DragDropEvent(Sender, Source: TObject; X, Y: Integer);
-
   protected
     procedure DoChange; override;
     function GetPageClass: TCustomPageClass; override;
@@ -131,7 +128,7 @@ type
   public
     constructor Create(ParentControl: TWinControl;
                        NotebookSide: TFilePanelSelect); reintroduce;
-{$IFDEF MSWINDOWS}
+{$IFDEF LCLWIN32}
     {en
        Removes the rectangle of the pages contents from erasing background to reduce flickering.
        This is not needed on non-Windows because EraseBackground is not used there.
@@ -151,6 +148,10 @@ type
     procedure ActivateNextTab;
     procedure ActivateTabByIndex(Index: Integer);
     function IndexOfPageAt(P: TPoint): Integer; override;
+
+    procedure DragDrop(Source: TObject; X,Y: Integer); override;
+    procedure DragOver(Source: TObject; X,Y: Integer; State: TDragState;
+                       var Accept: Boolean); override;
 
     property ActivePage: TFileViewPage read GetActivePage;
     property ActiveView: TFileView read GetActiveView;
@@ -177,9 +178,11 @@ uses
   uArchiveFileSource
   {$IF DEFINED(LCLGTK2)}
   , Glib2, Gtk2
+  {$ELSEIF DEFINED(LCLWIN32)}
+  , Win32Proc
   {$ENDIF}
   {$IF DEFINED(MSWINDOWS)}
-  , Win32Proc, Windows, Messages
+  , Windows, Messages
   {$ENDIF}
   ;
 
@@ -207,7 +210,7 @@ begin
   inherited Create(TheOwner);
 end;
 
-{$IF DEFINED(MSWINDOWS)}
+{$IF DEFINED(LCLWIN32)}
 procedure TFileViewPage.RealSetText(const AValue: TCaption);
 begin
   inherited RealSetText(AValue);
@@ -411,9 +414,6 @@ begin
   // not where pages contents start (after applying TCM_ADJUSTRECT).
   //DoubleBuffered := True;
   {$ENDIF}
-
-  OnDragOver := @DragOverEvent;
-  OnDragDrop := @DragDropEvent;
 end;
 
 function TFileViewNotebook.GetActivePage: TFileViewPage;
@@ -649,21 +649,22 @@ begin
   FStartDrag := False;
 end;
 
-procedure TFileViewNotebook.DragOverEvent(Sender, Source: TObject; X, Y: Integer; State: TDragState; var Accept: Boolean);
+procedure TFileViewNotebook.DragOver(Source: TObject; X,Y: Integer; State: TDragState; var Accept: Boolean);
 var
   ATabIndex: Integer;
 begin
-  if (Source is TFileViewNotebook) and (Sender is TFileViewNotebook) then
+  if (Source is TFileViewNotebook) then
   begin
     ATabIndex := IndexOfPageAt(Classes.Point(X, Y));
-    Accept := (Source <> Sender) or
+    Accept := (Source <> Self) or
               ((ATabIndex <> -1) and (ATabIndex <> FDraggedPageIndex));
   end
-  else
-    Accept := False;
+  else begin
+    inherited DragOver(Source, X, Y, State, Accept);
+  end;
 end;
 
-{$IFDEF MSWINDOWS}
+{$IFDEF LCLWIN32}
 procedure TFileViewNotebook.EraseBackground(DC: HDC);
 var
   ARect: TRect;
@@ -699,18 +700,18 @@ begin
 end;
 {$ENDIF}
 
-procedure TFileViewNotebook.DragDropEvent(Sender, Source: TObject; X, Y: Integer);
+procedure TFileViewNotebook.DragDrop(Source: TObject; X,Y: Integer);
 var
-  SourceNotebook: TFileViewNotebook;
   ATabIndex: Integer;
+  SourceNotebook: TFileViewNotebook;
   ANewPage, DraggedPage: TFileViewPage;
 begin
-  if (Source is TFileViewNotebook) and (Sender is TFileViewNotebook) then
+  if (Source is TFileViewNotebook) then
   begin
     SourceNotebook := TFileViewNotebook(Source);
     ATabIndex := IndexOfPageAt(Classes.Point(X, Y));
 
-    if Source = Sender then
+    if Source = Self then
     begin
       // Move within the same panel.
       if ATabIndex <> -1 then
@@ -735,6 +736,9 @@ begin
         SourceNotebook.RemovePage(DraggedPage);
       end;
     end;
+  end
+  else begin
+    inherited DragDrop(Source, X, Y);
   end;
 end;
 

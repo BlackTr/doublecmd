@@ -6,15 +6,15 @@ unit uWcxArchiveCopyInOperation;
 interface
 
 uses
-  Classes, SysUtils, StringHashList, WcxPlugin, uLog, uGlobs,
+  Classes, SysUtils, DCStringHashListUtf8, WcxPlugin, uLog, uGlobs,
   uFileSourceCopyOperation,
   uFileSource,
   uFileSourceOperation,
   uFile,
   uWcxModule,
   uWcxArchiveFileSource,
+  uArchiveCopyOperation,
   uFileSourceOperationUI,
-  uArchiveCopyInOperation,
   uFileSourceOperationOptions,
   uFileSourceOperationOptionsUI;
 
@@ -26,7 +26,7 @@ type
 
   private
     FWcxArchiveFileSource: IWcxArchiveFileSource;
-    FFileList: TStringHashList;
+    FFileList: TStringHashListUtf8;
 
     {en
       Convert TFiles into a string separated with #0 (format used by WCX).
@@ -72,7 +72,7 @@ implementation
 
 uses
   LazUTF8, FileUtil, StrUtils, DCStrUtils, uLng, uShowMsg, fWcxArchiveCopyOperationOptions,
-  uFileSystemFileSource, DCOSUtils, uTarWriter,
+  uFileSystemFileSource, DCOSUtils, uTarWriter, uClassesEx,
   DCConvertEncoding, DCDateTimeUtils, uArchiveFileSourceUtil;
 
 // ----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ begin
 
   FNeedsConnection:= (FWcxArchiveFileSource.WcxModule.BackgroundFlags and BACKGROUND_PACK = 0);
 
-  FFileList:= TStringHashList.Create(True);
+  FFileList:= TStringHashListUtf8.Create(True);
 
   // Get initialized statistics; then we change only what is needed.
   FStatistics := RetrieveStatistics;
@@ -183,8 +183,15 @@ begin
 end;
 
 destructor TWcxArchiveCopyInOperation.Destroy;
+var
+  Index: Integer;
 begin
   inherited Destroy;
+
+  for Index:= 0 to FFileList.Count - 1 do
+  begin
+    TObject(FFileList.List[Index]^.Data).Free;
+  end;
 
   FreeAndNil(FFileList);
   FreeAndNil(FFullFilesTree);
@@ -192,8 +199,9 @@ end;
 
 procedure TWcxArchiveCopyInOperation.Initialize;
 var
-  Item: TObject;
   Index: Integer;
+  Item: TObjectEx;
+  AFileList: TList;
 begin
   // Is plugin allow multiple Operations?
   if FNeedsConnection then
@@ -210,11 +218,16 @@ begin
   // Need to check file existence
   if FFileExistsOption <> fsoofeOverwrite then
   begin
-    // Populate archive file list
-    for Index:= 0 to FWcxArchiveFileSource.ArchiveFileList.Count - 1 do
-    begin
-      Item:= FWcxArchiveFileSource.ArchiveFileList[Index];
-      FFileList.Add(UTF8LowerCase(TWcxHeader(Item).FileName), Item);
+    AFileList:= FWcxArchiveFileSource.ArchiveFileList.LockList;
+    try
+      // Populate archive file list
+      for Index:= 0 to AFileList.Count - 1 do
+      begin
+        Item:= TObjectEx(AFileList[Index]).Clone;
+        FFileList.Add(UTF8LowerCase(TWcxHeader(Item).FileName), Item);
+      end;
+    finally
+      FWcxArchiveFileSource.ArchiveFileList.UnlockList;
     end;
   end;
 end;

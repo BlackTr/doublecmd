@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Localization core unit
 
-   Copyright (C) 2007-2018 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2007-2020 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -98,6 +98,7 @@ resourcestring
   rsMsgInvalidPathLong = 'Path %s contains forbidden characters.';
   rsMsgSelectOnlyCheckSumFiles = 'Please select only checksum files!';
   rsMsgPresetAlreadyExists = 'Preset "%s" already exists. Overwrite?';
+  rsMsgPresetConfigDelete = 'Are you sure you want to delete preset "%s"?';
   rsMsgVolumeSizeEnter = 'Please enter the volume size:';
   rsFilterAnyFiles = 'Any files';
   rsFilterDCToolTipFiles = 'DC Tooltip files';
@@ -109,6 +110,8 @@ resourcestring
   rsFilterLegacyTabFiles = 'Legacy DC .tab files';
   rsFilterDirectoryHotListFiles = 'Directory Hotlist files';
   rsFilterArchiverConfigFiles = 'Archiver config files';
+  rsFilterPluginFiles = 'Plugin files';
+  rsFilterLibraries = 'Library files';
 
   // Archiver section.
   rsMsgArchiverCustomParams = 'Additional parameters for archiver command-line:';
@@ -142,6 +145,18 @@ resourcestring
   rsOptArchiverUseAnsi = 'Use ANSI encoding';
   rsOptArchiverUseUTF8 = 'Use UTF8 encoding';
   rsOptArchiveConfigureSaveToChange = 'To change current editing archive configuration, either APPLY or DELETE current editing one';
+
+  // Font
+  rsFontUsageMain = 'Main &Font';
+  rsFontUsageEditor = '&Editor Font';
+  rsFontUsageViewer = '&Viewer Font';
+  rsFontUsageViewerBook = 'Viewer&Book Font';
+  rsFontUsageLog = '&Log Font';
+  rsFontUsageConsole = '&Console Font';
+  rsFontUsagePathEdit = 'Path Font';
+  rsFontUsageFunctionButtons = 'Function Buttons Font';
+  rsFontUsageSearchResults = 'Search Results Font';
+  rsFontUsageTreeViewMenu = 'Tree View Menu Font';
 
   // Tooltip section
   rsOptTooltipConfigureSaveToChange = 'To change file type tooltip configuration, either APPLY or DELETE current editing one';
@@ -395,6 +410,7 @@ resourcestring
   rsDlgButtonOverwriteSmaller = 'Overwrite All S&maller';
   rsDlgButtonOverwriteLarger = 'Overwrite All &Larger';
   rsDlgButtonAutoRenameSource = 'A&uto-rename source files';
+  rsDlgButtonAutoRenameTarget = 'A&uto-rename target files';
   rsDlgButtonSkip = '&Skip';
   rsDlgButtonSkipAll = 'S&kip All';
   rsDlgButtonIgnore = 'Ig&nore';
@@ -631,12 +647,67 @@ resourcestring
   rsSplitErrSplitFile = 'Unable to split the file!';
   rsSplitMsgManyParts = 'The number of parts is more than 100! Continue?';
   rsSplitPreDefinedSizes = 'Automatic;1457664B - 3.5" High Density 1.44M;1213952B - 5.25" High Density 1.2M;730112B - 3.5" Double Density 720K;362496B - 5.25" Double Density 360K;98078KB - ZIP 100MB;650MB - CD 650MB;700MB - CD 700MB;4482MB - DVD+R';
-  // MultiRename dialog
+
+  // Select duplicate files dialog
+  rsSelectDuplicateMethod = 'Newest;Oldest;Largest;Smallest;First in group;Last in group';
+
+  // Multi-Rename Tool dialog
+  rsMulRenLastPreset = '[The last used]';
   rsMulRenWarningDuplicate = 'Warning, duplicate names!';
   rsMulRenAutoRename = 'Do auto-rename to "name (1).ext", "name (2).ext" etc.?';
   rsMulRenWrongLinesNumber = 'File contains wrong number of lines: %d, should be %d!';
   rsMulRenFileNameStyleList = 'No change;UPPERCASE;lowercase;First char uppercase;' +
                               'First Char Of Every Word Uppercase;';
+  rsMulRenLaunchBehaviorOptions = 'Last masks under [Last One] preset;Last preset;New fresh masks';
+  rsMulRenSaveModifiedPreset = '"%s" preset has been modified.'+#$0A+'Do you want to save it now?';
+  rsMulRenSortingPresets = 'Sorting presets';
+  rsMulRenDefineVariableName = 'Define variable name';
+  rsMulRenDefineVariableValue = 'Define variable value';
+  rsMulRenEnterNameForVar = 'Enter variable name';
+  rsMulRenEnterValueForVar = 'Enter value for variable "%s"';
+  rsMulRenExitModifiedPresetOptions = 'Ignore, just save as the [Last One];Prompt user to confirm if we save it;Save automatically';
+  rsMulRenDefaultPresetName = 'Preset name';
+  rsMulRenPromptForSavedPresetName = 'Save preset as';
+  rsMulRenPromptNewPresetName = 'Enter new preset name';
+  rsMulRenPromptNewNameExists = 'Preset name already exists. Overwrite?';
+  rsMulRenLogStart = 'Multi-Rename Tool';
+
+  rsMulRenMaskName = 'Name';
+  rsMulRenMaskCharAtPosX = 'Character at position x';
+  rsMulRenMaskCharAtPosXtoY = 'Characters from position x to y';
+  rsMulRenMaskFullName = 'Complete filename with path and extension';
+  rsMulRenMaskFullNameCharAtPosXtoY = 'Complete filename, char from pos x to y';
+  rsMulRenMaskParent = 'Parent folder(s)';
+  rsMulRenMaskExtension = 'Extension';
+  rsMulRenMaskCounter = 'Counter';
+  rsMulRenMaskGUID = 'GUID';
+  rsMulRenMaskVarOnTheFly = 'Variable on the fly';
+  rsMulRenMaskYear2Digits = 'Year (2 digits)';
+  rsMulRenMaskYear4Digits = 'Year (4 digits)';
+  rsMulRenMaskMonth = 'Month';
+  rsMulRenMaskMonth2Digits = 'Month (2 digits)';
+  rsMulRenMaskMonthAbrev = 'Month name (short, e.g., "jan")';
+  rsMulRenMaskMonthComplete = 'Month name (long, e.g., "january")';
+  rsMulRenMaskDay = 'Day';
+  rsMulRenMaskDay2Digits = 'Day (2 digits)';
+  rsMulRenMaskDOWAbrev = 'Day of the week (short, e.g., "mon")';
+  rsMulRenMaskDOWComplete = 'Day of the week (long, e.g., "monday")';
+  rsMulRenMaskCompleteDate = 'Complete date';
+  rsMulRenMaskHour = 'Hour';
+  rsMulRenMaskHour2Digits = 'Hour (2 digits)';
+  rsMulRenMaskMin = 'Minute';
+  rsMulRenMaskMin2Digits = 'Minute (2 digits)';
+  rsMulRenMaskSec = 'Second';
+  rsMulRenMaskSec2Digits = 'Second (2 digits)';
+  rsMulRenMaskCompleteTime = 'Complete time';
+
+  rsMulRenFilename = 'Name';
+  rsMulRenExtension = 'Extension';
+  rsMulRenCounter = 'Counter';
+  rsMulRenDate = 'Date';
+  rsMulRenTime = 'Time';
+  rsMulRenPlugins = 'Plugins';
+
   // CheckSumCalcVerify dialog
   rsCheckSumVerifyTitle = 'Verify checksum';
   rsCheckSumVerifyText = 'Enter checksum and select algorithm:';
@@ -698,14 +769,18 @@ resourcestring
   rsOptionsEditorQuickSearch = 'Quick search/filter';
   rsOptionsEditorTerminal = 'Terminal';
   rsOptionsEditorToolbar = 'Toolbar';
+  rsOptionsEditorToolbarExtra = 'Toolbar Extra';
+  rsOptionsEditorToolbarMiddle = 'Toolbar Middle';
   rsOptionsEditorTools = 'Tools';
   rsOptionsEditorTooltips = 'Tooltips';
   rsOptionsEditorFileAssoc = 'File associations';
   rsOptionsEditorFileAssicExtra = 'File associations extra';
   rsOptionsEditorDirectoryHotlist = 'Directory Hotlist';
+  rsOptionsEditorDirectoryHotlistExtra = 'Directory Hotlist Extra';
   rsOptionsEditorFavoriteTabs = 'Favorite Tabs';
   rsOptionsEditorOptionsChanged = 'Options have changed in "%s"'+#$0A+#$0A+'Do you want to save modifications?';
   rsOptionsEditorFileSearch = 'File search';
+  rsOptionsEditorMultiRename = 'Multi-Rename Tool';
   //-------------------------------
   rsOptConfigSortOrder = 'Classic, legacy order;Alphabetic order (but language still first)';
   rsOptConfigTreeState = 'Full expand;Full collapse';
@@ -757,6 +832,7 @@ resourcestring
   rsHotkeyCategoryCopyMoveDialog = 'Copy/Move Dialog';
   rsHotkeyCategorySyncDirs = 'Synchronize Directories';
   rsHotkeyCategoryEditCommentDialog = 'Edit Comment Dialog';
+  rsHotkeyCategoryMultiRename = 'Multi-Rename Tool';
   rsHotkeySortOrder = 'By command name;By shortcut key (grouped);By shortcut key (one per row)';
   rsHotKeyNoSCEnter='No shortcut with "ENTER"';
   rsHotKeyFileSaveModified = '"%s" setup has been modified.'+#$0A+'Do you want to save it now?';
@@ -785,6 +861,7 @@ resourcestring
   rsSimpleWordError = 'Error';
   rsSimpleWordSuccessExcla = 'Success!';
   rsSimpleWordFailedExcla = 'Failed!';
+  rsSimpleWordVariable = 'Variable';
 
   // Plugins
   rsOptPluginsActive = 'Active';
@@ -800,7 +877,7 @@ resourcestring
   rsOptPluginSortOnlyWhenByExtension = 'Sorting WCX plugins is only possible when showing plugins by extension!';
   rsPluginFilenameStyleList = 'With complete absolute path;Path relative to %COMMANDER_PATH%;Relative to the following';  
   //-------------------------------
-  rsOptSortMethod = 'Alphabetical, considering accents;Natural sorting: alphabetical and numbers';
+  rsOptSortMethod = 'Alphabetical, considering accents;Alphabetical with special characters sort;Natural sorting: alphabetical and numbers;Natural with special characters sort';
   rsOptSortCaseSens = 'not case sensitive;according to locale settings (aAbBcC);first upper then lower case (ABCabc)';
   rsOptSortFolderMode = 'sort by name and show first;sort like files and show first;sort like files';
   rsOptNewFilesPosition = 'at the top of the file list;after directories (if directories are sorted before files);at sorted position;at the bottom of the file list';
@@ -833,11 +910,13 @@ resourcestring
 
   rsVarOnlyFilename = 'Only filename';
   rsVarPath = 'Path, without ending delimiter';
+  rsVarLastDirOfPath = 'Last directory of file''s path';
   rsVarFullPath = 'Complete filename (path+filename)';
   rsVarFilenameNoExt = 'Just filename, no extension';
   rsVarOnlyExtension = 'Only file extension';
   rsVarRelativePathAndFilename = 'Filename with relative path';
   rsVarCurrentPath = 'Path of panel';
+  rsVarLastDirCurrentPath = 'Last directory of panel''s path';
   rsVarListFilename = 'Temporary filename of list of filenames';
   rsVarListFullFilename = 'Temporary filename of list of complete filenames (path+filename)';
   rsVarListRelativeFilename = 'Temporary filename of list of filenames with relative path';
@@ -955,8 +1034,6 @@ resourcestring
   rsOperWorking = 'Working'; // Generic description for unknown operation
 
   //TreeViewMenu
-  rsStrAccents = 'á;â;à;å;ã;ä;ç;é;ê;è;ë;í;î;ì;ï;ñ;ó;ô;ò;ø;õ;ö;ú;û;ù;ü;ÿ;Á;Â;À;Å;Ã;Ä;Ç;É;Ê;È;Ë;Í;Í;Ì;Ï;Ñ;Ó;Ô;Ø;Õ;Ö;ß;Ú;Û;Ù;Ü;Ÿ;¿;¡;œ;æ;Æ;Œ';
-  rsStrAccentsStripped = 'a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;E;E;I;I;I;I;N;O;O;O;O;O;B;U;U;U;U;Y;?;!;oe;ae;AE;OE';
   rsOptionsEditorTreeViewMenu = 'Tree View Menu';
   rsOptionsEditorTreeViewMenuColors = 'Tree View Menu Colors';
   rsStrPreviewSearchingLetters = 'OU';
@@ -988,6 +1065,10 @@ resourcestring
   msgTryToLocateCRCFile = 'This file cannot be found and could help to validate final combination of files:'+#$0A+'%s'+#$0A+#$0A+'Could you make it available and press "OK" when ready,'+#$0A+'or press "CANCEL" to continue without it?';
 
   rsMsgInvalidHexNumber = 'Invalid hexadecimal number: "%s"';
+
+  //LUA and script related messages
+  rsMsgScriptCantFindLibrary = 'ERROR: Problem loading Lua library file "%s"';
+  rsMsgWantToConfigureLibraryLocation = 'Do you want to configure Lua library location?';
 
   // Unhandled error.
   rsUnhandledExceptionMessage =

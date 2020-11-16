@@ -367,7 +367,7 @@ begin
   if not IsLoadingFileList then
   begin
 
-    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size<MAX_FONT_SIZE_MAIN) then
+    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size < gFonts[dcfMain].MaxValue) then
     begin
       gFonts[dcfMain].Size:=gFonts[dcfMain].Size+1;
       frmMain.FrameLeft.UpdateView;
@@ -398,7 +398,7 @@ begin
   if not IsLoadingFileList then
   begin
 
-    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size>MIN_FONT_SIZE_MAIN) then
+    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size > gFonts[dcfMain].MinValue) then
     begin
       gFonts[dcfMain].Size:=gFonts[dcfMain].Size-1;
       frmMain.FrameLeft.UpdateView;
@@ -780,6 +780,11 @@ begin
   if ColSet.Items.IndexOf(AName) >= 0 then
   begin
     ActiveColm:= AName;
+    if Assigned(ActiveColmSlave) then
+    begin
+      isSlave:= False;
+      FreeAndNil(ActiveColmSlave);
+    end;
     UpdateColumnsView;
     RedrawFiles;
   end;
@@ -795,6 +800,11 @@ begin
   else
     begin
       ActiveColm:=ColSet.Items[(Sender as TMenuItem).Tag];
+      if Assigned(ActiveColmSlave) then
+      begin
+        isSlave:= False;
+        FreeAndNil(ActiveColmSlave);
+      end;
       UpdateColumnsView;
       RedrawFiles;
     end;
@@ -878,13 +888,13 @@ begin
     inherited CloneTo(FileView);
 
     if FileView is TColumnsFileView then
-    with FileView as TColumnsFileView do
+    with TColumnsFileView(FileView) do
     begin
       FColumnsSortDirections := Self.FColumnsSortDirections;
 
       ActiveColm := Self.ActiveColm;
-      ActiveColmSlave := nil;    // set to nil because only used in preview?
-      isSlave := Self.isSlave;
+      ActiveColmSlave := nil;
+      isSlave := False;
     end;
   end;
 end;
@@ -929,16 +939,20 @@ begin
 end;
 
 procedure TColumnsFileView.DisplayFileListChanged;
+var
+  ScrollTo: Boolean;
 begin
+  ScrollTo := IsActiveFileVisible;
+
   // Update grid row count.
   SetRowCount(FFiles.Count);
   SetFilesDisplayItems;
   RedrawFiles;
 
-  if SetActiveFileNow(RequestedActiveFile, FLastTopRowIndex) then
+  if SetActiveFileNow(RequestedActiveFile, True, FLastTopRowIndex) then
     RequestedActiveFile := ''
   // Requested file was not found, restore position to last active file.
-  else if not SetActiveFileNow(LastActiveFile, FLastTopRowIndex) then
+  else if not SetActiveFileNow(LastActiveFile, ScrollTo, FLastTopRowIndex) then
   // Make sure at least that the previously active file is still visible after displaying file list.
     MakeActiveVisible;
 
@@ -1534,7 +1548,7 @@ var
           //------------------------------------------------------
           if IsCursor OR (IsCursorInactive AND ColumnsSet.GetColumnUseInactiveSelColor(ACol)) then
             begin
-              TextColor := InvertColor(ColumnsSet.GetColumnCursorText(ACol));
+              TextColor := InvertColor(ColorToRGB(ColumnsSet.GetColumnCursorText(ACol)));
             end
           else
             begin

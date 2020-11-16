@@ -4,11 +4,12 @@
 
 unit KASComp;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
   KASToolBar, KASProgressBar, KASPathEdit, KASToolItems, KASComboBox, 
-  KASCDEdit, LazarusPackageIntf;
+  KASCDEdit, KASStatusBar, KASToolPanel, LazarusPackageIntf;
 
 implementation
 
@@ -19,6 +20,8 @@ begin
   RegisterUnit('KASPathEdit', @KASPathEdit.Register);
   RegisterUnit('KASComboBox', @KASComboBox.Register);
   RegisterUnit('KASCDEdit', @KASCDEdit.Register);
+  RegisterUnit('KASStatusBar', @KASStatusBar.Register);
+  RegisterUnit('KASToolPanel', @KASToolPanel.Register);
 end;
 
 initialization

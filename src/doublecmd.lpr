@@ -4,6 +4,12 @@ program doublecmd;
 
 {.$APPTYPE GUI}
 uses
+  {$IFDEF MSWINDOWS}
+  uElevation,
+  {$IFDEF LCLQT5}
+  uDarkStyle,
+  {$ENDIF}
+  {$ENDIF}
   {$IFDEF DARWIN}
   uAppleMagnifiedModeFix,
   {$ENDIF}
@@ -17,6 +23,7 @@ uses
   {$ENDIF}
   cwstring,
   clocale,
+  uElevation,
   {$IFDEF LINUX}
   uAppImage,
   {$ENDIF}
@@ -122,12 +129,16 @@ begin
   // see http://bugs.freepascal.org/view.php?id=22044
   Application.BidiMode:= bdLeftToRight;
 
-  Application.Title:= 'Double Commander';
+  Application.Title:='Double Commander';
   Application.Initialize;
   uDCVersion.InitializeVersionInfo;
   // Initializing keyboard module on GTK needs GTKProc.InitKeyboardTables
   // which is called by Application.Initialize.
   uKeyboard.InitializeKeyboard;
+
+{$IF DEFINED(MSWINDOWS) and DEFINED(LCLQT5)}
+  ApplyDarkStyle;
+{$ENDIF}
 
   // Use only current directory separator
   AllowDirectorySeparators:= [DirectorySeparator];
@@ -158,7 +169,7 @@ begin
   if WSVersion <> EmptyStr then
     DCDebug('Widgetset library: ' + WSVersion);
   DCDebug('This program is free software released under terms of GNU GPL 2');
-  DCDebug('(C)opyright 2006-2020 Alexander Koblov (alexx2000@mail.ru)');
+  DCDebug('(C)opyright 2006-2019 Alexander Koblov (alexx2000@mail.ru)');
   DCDebug('   and contributors (see about dialog)');
 
   Application.ShowMainForm:= False;
@@ -176,7 +187,6 @@ begin
   LoadInMemoryOurAccentLookupTableList; // Used for conversion of string to remove accents.
   LoadPaths; // before loading config
   LoadWindowsSpecialDir; // Load the list with special path. *Must* be located AFTER "LoadPaths" and BEFORE "InitGlobs"
-  LoadVariableMenuSupport; //Load support for the popup menu with variable
 
   if InitGlobs then
     //-- NOTE: before, only IsInstanceAllowed was called, and all the magic on creation

@@ -2,7 +2,7 @@
    Double Commander
    -------------------------------------------------------------------------
    Licence  : GNU GPL v 2.0
-   Copyright (C) 2006-2018 Alexander Koblov (Alexx2000@mail.ru)
+   Copyright (C) 2006-2020 Alexander Koblov (Alexx2000@mail.ru)
 
    Main Dialog window
 
@@ -43,7 +43,7 @@ uses
   ufavoritetabs, Graphics, Forms, Menus, Controls, StdCtrls, ExtCtrls, ActnList,
   Buttons, SysUtils, Classes, SynEdit, LCLType, ComCtrls, LResources,
   KASToolBar, KASComboBox, uCmdBox, uFilePanelSelect, uBriefFileView,
-  uFileView, uFileSource, uFileViewNotebook, uFile, LCLVersion,
+  uFileView, uFileSource, uFileViewNotebook, uFile, LCLVersion, KASToolPanel,
   uOperationsManager, uFileSourceOperation, uDrivesList, uTerminal, DCClassesUtf8,
   DCXmlConfig, uDrive, uDriveWatcher, uDCVersion, uMainCommands, uFormCommands,
   uOperationsPanel, KASToolItems, uKASToolItemsExtended, uCmdLineParams, uOSForms
@@ -85,6 +85,10 @@ type
     actChangeDirToParent: TAction;
     actEditPath: TAction;
     actHorizontalFilePanels: TAction;
+    actGoToFirstEntry: TAction;
+    actGoToLastEntry: TAction;
+    actGoToNextEntry: TAction;
+    actGoToPrevEntry: TAction;
     actGoToFirstFile: TAction;
     actGoToLastFile: TAction;
     actCompareDirectories: TAction;
@@ -95,6 +99,7 @@ type
     actChangeDirToHome: TAction;
     actCopyFileDetailsToClip: TAction;
     actFlatView: TAction;
+    actFlatViewSel: TAction;
     actConfigDirHotList: TAction;
     actCopyPathOfFilesToClip: TAction;
     actCopyPathNoSepOfFilesToClip: TAction;
@@ -275,9 +280,9 @@ type
     miNetworkConnect: TMenuItem;
     mnuNetwork: TMenuItem;
     pnlDskLeft: TPanel;
-    pnlDiskLeftInner: TPanel;
+    pnlDiskLeftInner: TKASToolPanel;
     pnlDskRight: TPanel;
-    pnlDiskRightInner: TPanel;
+    pnlDiskRightInner: TKASToolPanel;
     Timer: TTimer;
     PanelAllProgress: TPanel;
     pbxRightDrive: TPaintBox;
@@ -365,6 +370,7 @@ type
     pnlCmdLine: TPanel;
     MainSplitter: TPanel;
     MainToolBar: TKASToolBar;
+    MiddleToolBar: TKASToolBar;
     mnuOpenVFSList: TMenuItem;
     mnuExtractFiles: TMenuItem;
     pmContextMenu: TPopupMenu;
@@ -397,7 +403,7 @@ type
     tbEdit: TMenuItem;
     mnuMain: TMainMenu;
     pnlNotebooks: TPanel;
-    pnlDisk: TPanel;
+    pnlDisk: TKASToolPanel;
     mnuHelp: TMenuItem;
     mnuHelpAbout: TMenuItem;
     mnuShow: TMenuItem;
@@ -549,8 +555,10 @@ type
       {%H-}MousePos: TPoint; var {%H-}Handled: Boolean);
     procedure btnF8MouseDown(Sender: TObject; Button: TMouseButton;
       {%H-}Shift: TShiftState; X, Y: Integer);
+    procedure dskToolButtonMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure FormKeyUp( Sender: TObject; var {%H-}Key: Word; Shift: TShiftState) ;
-    function MainToolBarToolItemShortcutsHint(ToolItem: TKASNormalItem): String;
+    function MainToolBarToolItemShortcutsHint(Sender: TObject; ToolItem: TKASNormalItem): String;
     procedure mnuAllOperStartClick(Sender: TObject);
     procedure mnuAllOperStopClick(Sender: TObject);
     procedure mnuAllOperPauseClick(Sender: TObject);
@@ -563,8 +571,6 @@ type
     procedure btnDriveMouseUp(Sender: TObject; Button: TMouseButton; {%H-}Shift: TShiftState; X, Y: Integer);
     procedure ConsoleSplitterCanResize(Sender: TObject; var NewSize: Integer;
       var {%H-}Accept: Boolean);
-    procedure dskLeftResize(Sender: TObject);
-    procedure dskRightResize(Sender: TObject);
     procedure dskLeftRightToolButtonDragDrop(Sender, {%H-}Source: TObject; {%H-}X, {%H-}Y: Integer);
     procedure dskToolButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure lblAllProgressPctClick(Sender: TObject);
@@ -626,6 +632,9 @@ type
     procedure nbPageChanged(Sender: TObject);
     procedure nbPageMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure NotebookDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure NotebookDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
     procedure NotebookCloseTabClicked(Sender: TObject);
     procedure pmDropMenuClose(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -663,7 +672,7 @@ type
     procedure tbPasteClick(Sender: TObject);
     procedure AllProgressOnUpdateTimer(Sender: TObject);
     procedure OnCmdBoxInput(ACmdBox: TCmdBox; AInput: String);
-{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+{$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
   private
     QEventHook: QObject_hookH;
     function QObjectEventFilter(Sender: QObjectH; Event: QEventH): Boolean; cdecl;
@@ -750,7 +759,7 @@ type
     procedure ConvertToolbarBarConfig(BarFileName: String);
     procedure ConvertIniToolbarItem(Loader: TKASToolBarIniLoader; var Item: TKASToolItem; const Shortcut: String);
     procedure CreateDefaultToolbar;
-    procedure EditToolbarButton(Button: TKASToolButton);
+    procedure EditToolbarButton(Toolbar: TKASToolBar; Button: TKASToolButton);
     procedure ToolbarExecuteCommand(ToolItem: TKASToolItem);
     procedure ToolbarExecuteProgram(ToolItem: TKASToolItem);
     procedure LeftDriveBarExecuteDrive(ToolItem: TKASToolItem);
@@ -760,10 +769,8 @@ type
   protected
     procedure CreateWnd; override;
     procedure DoFirstShow; override;
-{$if lcl_fullversion >= 1070000}
     procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
                             const AXProportion, AYProportion: Double); override;
-{$endif}
 
     procedure WMMove(var Message: TLMMove); message LM_MOVE;
     procedure WMSize(var message: TLMSize); message LM_Size;
@@ -844,8 +851,10 @@ type
     procedure LoadTabsCommandLine(Params: TCommandLineParams);
     procedure LoadWindowState;
     procedure SaveWindowState;
-    procedure LoadMainToolbar;
-    procedure SaveMainToolBar;
+
+    procedure LoadToolbar(AToolBar: TKASToolBar);
+    procedure SaveToolBar(AToolBar: TKASToolBar);
+
     procedure ShowLogWindow(Data: PtrInt);
     function  IsCommandLineVisible: Boolean;
     procedure ShowCommandLine(AFocus: Boolean);
@@ -898,7 +907,8 @@ uses
   uShellExecute, fSymLink, fHardLink, uExceptions, uUniqueInstance, Clipbrd, ShellCtrls,
   uFileSourceOperationOptionsUI, uDebug, uHotkeyManager, uFileSourceUtil, uTempFileSystemFileSource,
   Laz2_XMLRead, DCOSUtils, DCStrUtils, fOptions, fOptionsFrame, fOptionsToolbar, uClassesEx,
-  uHotDir, uFileSorting, DCBasicTypes, foptionsDirectoryHotlist, uConnectionManager
+  uHotDir, uFileSorting, DCBasicTypes, foptionsDirectoryHotlist, uConnectionManager,
+  fOptionsToolbarBase, fOptionsToolbarMiddle
   {$IFDEF COLUMNSFILEVIEW_VTV}
   , uColumnsFileViewVtv
   {$ELSE}
@@ -917,7 +927,7 @@ var
   LastActiveWindow: TCustomForm = nil;
 {$ENDIF}
 
-{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+{$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
 var
   CloseQueryResult: Boolean = False;
 {$ENDIF}
@@ -941,6 +951,16 @@ var
       (ACaption: ''; ACommand: 'cm_RunTerm'),
       (ACaption: ''; ACommand: 'cm_Exit'));
 
+type
+
+  { TShellTreeView }
+
+  TShellTreeView = class(ShellCtrls.TShellTreeView)
+  protected
+    function CanExpand(Node: TTreeNode): Boolean; override;
+    function ShellTreeViewSort(Node1, Node2: TTreeNode): Integer;
+  end;
+
 function HistoryIndexesToTag(aFileSourceIndex, aPathIndex: Integer): Longint;
 begin
   Result := (aFileSourceIndex << 16) or aPathIndex;
@@ -951,6 +971,21 @@ begin
   aFileSourceIndex := aTag >> 16;
   aPathIndex := aTag and ((1<<16) - 1);
 end;
+
+{ TShellTreeView }
+
+function TShellTreeView.CanExpand(Node: TTreeNode): Boolean;
+begin
+  Result:= inherited CanExpand(Node);
+  if Result then Node.CustomSort(@ShellTreeViewSort);
+end;
+
+function TShellTreeView.ShellTreeViewSort(Node1, Node2: TTreeNode): Integer;
+begin
+  Result:= CompareStrings(Node1.Text, Node2.Text, gSortNatural, gSortSpecial, gSortCaseSensitivity);
+end;
+
+{ TfrmMain }
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 
@@ -968,6 +1003,8 @@ procedure TfrmMain.FormCreate(Sender: TObject);
     Result.OnMouseUp := @nbPageMouseUp;
     Result.OnChange := @nbPageChanged;
     Result.OnDblClick := @pnlLeftRightDblClick;
+    Result.OnDragOver:= @NotebookDragOver;
+    Result.OnDragDrop:= @NotebookDragDrop;
   end;
   function GenerateTitle():String;
   var 
@@ -1070,6 +1107,9 @@ begin
   MainToolBar.AddToolItemExecutor(TKASCommandItem, @ToolbarExecuteCommand);
   MainToolBar.AddToolItemExecutor(TKASProgramItem, @ToolbarExecuteProgram);
 
+  MiddleToolBar.AddToolItemExecutor(TKASCommandItem, @ToolbarExecuteCommand);
+  MiddleToolBar.AddToolItemExecutor(TKASProgramItem, @ToolbarExecuteProgram);
+
   // Use the same tooltips for some left and right panel butttons.
   btnRightDirectoryHotlist.Hint := btnLeftDirectoryHotlist.Hint;
   btnRightHome.Hint := btnLeftHome.Hint;
@@ -1089,10 +1129,10 @@ begin
   LoadTabs;
 
   // Must be after LoadTabs
-  TDriveWatcher.Initialize(Handle);
+  TDriveWatcher.Initialize(GetWindowHandle(Self));
   TDriveWatcher.AddObserver(@OnDriveWatcherEvent);
 
-{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+{$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
   // Fixes bug - [0000033] "DC cancels shutdown in KDE"
   // http://doublecmd.sourceforge.net/mantisbt/view.php?id=33
   QEventHook:= QObject_hook_create(TQtWidget(Self.Handle).Widget);
@@ -1129,7 +1169,7 @@ end;
 procedure TfrmMain.btnF3MouseWheelDown(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
 begin
-  if (ssCtrl in Shift) and (gFonts[dcfFunctionButtons].Size > MIN_FONT_SIZE_FUNCTION_BUTTONS) then
+  if (ssCtrl in Shift) and (gFonts[dcfFunctionButtons].Size > gFonts[dcfFunctionButtons].MinValue) then
   begin
     Dec(gFonts[dcfFunctionButtons].Size);
     UpdateGUIFunctionKeys;
@@ -1139,7 +1179,7 @@ end;
 procedure TfrmMain.btnF3MouseWheelUp(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
 begin
-  if (ssCtrl in Shift) and (gFonts[dcfFunctionButtons].Size < MAX_FONT_SIZE_FUNCTION_BUTTONS) then
+  if (ssCtrl in Shift) and (gFonts[dcfFunctionButtons].Size < gFonts[dcfFunctionButtons].MaxValue) then
   begin
     Inc(gFonts[dcfFunctionButtons].Size);
     UpdateGUIFunctionKeys;
@@ -1155,6 +1195,32 @@ begin
   begin
     Point := (Sender as TControl).ClientToScreen(Classes.Point(X, Y));
     ShowTrashContextMenu(Self, Point.X, Point.Y, nil);
+  end;
+end;
+
+procedure TfrmMain.dskToolButtonMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  ANotebook: TFileViewNotebook;
+begin
+  if Button = mbMiddle then
+  begin
+    if Sender is TKASToolButton then
+    begin
+      if TKASToolButton(Sender).ToolBar = dskLeft then
+      begin
+        ANotebook:= nbLeft;
+      end
+      else if gDriveBar2 then
+      begin
+        ANotebook:= nbRight;
+      end
+      else begin
+        ANotebook:= ActiveNotebook;
+      end;
+      Commands.DoNewTab(ANotebook);
+      TKASToolButton(Sender).Click;
+    end;
   end;
 end;
 
@@ -1256,7 +1322,7 @@ begin
       ToolBarLoader := TKASToolBarIniLoader.Create(Commands.Commands);
       try
         ToolBarLoader.Load(BarFileName, MainToolBar, nil, @ConvertIniToolbarItem);
-        SaveMainToolBar;
+        SaveToolBar(MainToolBar);
         SaveGlobs; // Save toolbar and hotkeys
         mbRenameFile(BarFileName, BarFileName + '.obsolete');
       finally
@@ -1264,18 +1330,6 @@ begin
       end;
     end;
   end;
-end;
-
-procedure TfrmMain.dskLeftResize(Sender: TObject);
-begin
-  pnlDskLeft.ClientHeight := dskLeft.Height + pnlDskLeft.BevelWidth * 2;
-  pnlDiskLeftInner.ClientHeight := dskLeft.Height + pnlDiskLeftInner.BevelWidth * 2;
-end;
-
-procedure TfrmMain.dskRightResize(Sender: TObject);
-begin
-  pnlDskRight.ClientHeight := dskRight.Height + pnlDskRight.BevelWidth * 2;
-  pnlDiskRightInner.ClientHeight := dskRight.Height + pnlDiskRightInner.BevelWidth * 2;
 end;
 
 procedure TfrmMain.dskRightToolButtonClick(Sender: TObject);
@@ -1326,20 +1380,27 @@ begin
   btnDriveMouseUp(Sender, Button, Shift, X, Y);
 end;
 
-procedure TfrmMain.EditToolbarButton(Button: TKASToolButton);
+procedure TfrmMain.EditToolbarButton(Toolbar: TKASToolBar;
+  Button: TKASToolButton);
 var
   Editor: TOptionsEditor;
   Options: IOptionsDialog;
+  EditorClass: TOptionsEditorClass;
 begin
-  Options := ShowOptions(TfrmOptionsToolbar);
+  if ToolBar = MainToolBar then
+    EditorClass := TfrmOptionsToolbar
+  else begin
+    EditorClass := TfrmOptionsToolbarMiddle;
+  end;
+  Options := ShowOptions(EditorClass);
   Application.ProcessMessages;
-  Editor := Options.GetEditor(TfrmOptionsToolbar);
+  Editor := Options.GetEditor(EditorClass);
   if Assigned(Button) then
   begin
-    (Editor as TfrmOptionsToolbar).SelectButton(Button.Tag);
+    (Editor as TfrmOptionsToolbarBase).SelectButton(Button.Tag);
   end;
   Application.ProcessMessages;
-  if Editor.CanFocus then  Editor.SetFocus;
+  if Editor.CanFocus then Editor.SetFocus;
 end;
 
 procedure TfrmMain.lblAllProgressPctClick(Sender: TObject);
@@ -1353,10 +1414,12 @@ var
   SelectedFiles: TFiles = nil;
   Param: string;
   ToolItem: TKASToolItem;
+  Toolbar: TKASToolBar;
 begin
+  Toolbar:= (Sender as TKASToolButton).ToolBar;
   if (ssShift in GetKeyShiftState) then
     // Button was moved.
-    SaveMainToolBar
+    SaveToolBar(Toolbar)
   else
     if Sender is TKASToolButton and not Draging then
       begin
@@ -1396,7 +1459,9 @@ var
   aFile: TFile;
   tmp: Integer;
   ToolItem: TKASProgramItem;
+  Toolbar: TKASToolBar;
 begin
+  Toolbar:= (Sender as TKASToolButton).ToolBar;
   if (ssShift in GetKeyShiftState) then
     begin
       if not (Source is TKASToolButton) and not Draging then
@@ -1411,7 +1476,7 @@ begin
                 ToolItem.Icon := aFile.FullPath;
                 ToolItem.Hint := ExtractOnlyFileName(aFile.Name);
                 // ToolItem.Text := ExtractOnlyFileName(aFile.Name);
-                MainToolBar.InsertButton(Sender as TKASToolButton, ToolItem);
+                Toolbar.InsertButton(Sender as TKASToolButton, ToolItem);
 
                 NumberOfMoveButton := (Sender as TSpeedButton).Tag;
                 NumberOfNewMoveButton := (Sender as TSpeedButton).Tag-1;
@@ -1431,11 +1496,11 @@ begin
         begin
           Draging := True;
           if Source is TSpeedButton then
-            MainToolBar.MoveButton((Source as TSpeedButton).Tag, (Sender as TSpeedButton).Tag)
+            Toolbar.MoveButton((Source as TSpeedButton).Tag, (Sender as TSpeedButton).Tag)
           else
             begin
               tmp:= (Sender as TSpeedButton).Tag;
-              MainToolBar.MoveButton(NumberOfNewMoveButton, (Sender as TSpeedButton).Tag);
+              Toolbar.MoveButton(NumberOfNewMoveButton, (Sender as TSpeedButton).Tag);
               NumberOfNewMoveButton := tmp;
             end;
           NumberOfMoveButton := (Sender as TSpeedButton).Tag;
@@ -1476,9 +1541,13 @@ begin
     MainToolBarMouseUp(Sender, Button, Shift, X, Y);
 end;
 
-function TfrmMain.MainToolBarToolItemShortcutsHint(ToolItem: TKASNormalItem): String;
+function TfrmMain.MainToolBarToolItemShortcutsHint(Sender: TObject;
+  ToolItem: TKASNormalItem): String;
 begin
-  Result := ShortcutsToText(TfrmOptionsToolbar.GetShortcuts(ToolItem));
+  if Sender = MainToolBar then
+    Result := ShortcutsToText(TfrmOptionsToolbar.GetShortcuts(ToolItem))
+  else
+    Result := ShortcutsToText(TfrmOptionsToolbarMiddle.GetShortcuts(ToolItem));
 end;
 
 procedure TfrmMain.miLogMenuClick(Sender: TObject);
@@ -1589,7 +1658,7 @@ begin
 
   FreeAndNil(DrivesList);
 
-{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+{$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
   QObject_hook_destroy(QEventHook);
 {$ENDIF}
 
@@ -1606,7 +1675,7 @@ begin
   end
   else
     CanClose := True;
-{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+{$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
   CloseQueryResult:= CanClose;
 {$ENDIF}
 end;
@@ -1940,9 +2009,10 @@ end;
 procedure TfrmMain.MainSplitterMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 var
-  APoint: TPoint;
   Rect: TRect;
   sHint: String;
+  Delta: Integer;
+  APoint: TPoint;
   Moved: Boolean = False;
 begin
   if MainSplitterLeftMouseBtnDown then
@@ -1973,9 +2043,14 @@ begin
 
       // calculate percent
       if not gHorizontalFilePanels then
-        FMainSplitterPos:= MainSplitter.Left * 100 / (pnlNotebooks.Width-MainSplitter.Width)
-      else
-        FMainSplitterPos:= MainSplitter.Top * 100 / (pnlNotebooks.Height-MainSplitter.Height);
+      begin
+        Delta:= IfThen(MiddleToolBar.Visible, MiddleToolBar.Width);
+        FMainSplitterPos:= MainSplitter.Left * 100 / (pnlNotebooks.Width-MainSplitter.Width - Delta);
+      end
+      else begin
+        Delta:= IfThen(MiddleToolBar.Visible, MiddleToolBar.Height);
+        FMainSplitterPos:= MainSplitter.Top * 100 / (pnlNotebooks.Height-MainSplitter.Height - Delta);
+      end;
 
       // generate hint text
       sHint:= FloatToStrF(FMainSplitterPos, ffFixed, 15, 1) + '%';
@@ -2070,26 +2145,27 @@ procedure TfrmMain.MainToolBarDragDrop(Sender, Source: TObject; X, Y: Integer);
 var
   aFile: TFile;
   ToolItem: TKASProgramItem;
+  Toolbar: TKASToolBar absolute Sender;
 begin
-  if not (Source is TSpeedButton) and not Draging and (ssShift in GetKeyShiftState) then
-    begin
-      aFile := ActiveFrame.CloneActiveFile;
-      try
-        if Assigned(aFile) and aFile.IsNameValid then
-        begin
-          ToolItem := TKASProgramItem.Create;
-          ToolItem.Command := aFile.FullPath;
-          ToolItem.StartPath := aFile.Path;
-          ToolItem.Hint := ExtractOnlyFileName(aFile.Name);
-          // ToolItem.Text := ExtractOnlyFileName(aFile.Name);
-          ToolItem.Icon := aFile.FullPath;
-          MainToolBar.AddButton(ToolItem);
-        end;
-      finally
-        FreeAndNil(aFile);
+  if not (Source is TSpeedButton) and not Draging then
+  begin
+    aFile := ActiveFrame.CloneActiveFile;
+    try
+      if Assigned(aFile) and aFile.IsNameValid then
+      begin
+        ToolItem := TKASProgramItem.Create;
+        ToolItem.Command := GetToolbarFilenameToSave(tpmeCommand, aFile.FullPath);
+        ToolItem.StartPath := GetToolbarFilenameToSave(tpmeStartingPath, aFile.Path);
+        ToolItem.Hint := ExtractOnlyFileName(aFile.Name);
+        // ToolItem.Text := ExtractOnlyFileName(aFile.Name);
+        ToolItem.Icon := GetToolbarFilenameToSave(tpmeIcon, aFile.FullPath);
+        Toolbar.AddButton(ToolItem);
       end;
+    finally
+      FreeAndNil(aFile);
     end;
-  SaveMainToolBar;
+  end;
+  SaveToolBar(Toolbar);
   Draging := False;
 end;
 
@@ -2098,16 +2174,16 @@ procedure TfrmMain.MainToolBarDragOver(Sender, Source: TObject; X, Y: Integer;
 var
   aFile: TFile;
 begin
-  if (ssShift in GetKeyShiftState) and not (Source is TSpeedButton) then
-    begin
-      aFile := ActiveFrame.CloneActiveFile;
-      try
-        Accept := Assigned(aFile) and aFile.IsNameValid;
-      finally
-        FreeAndNil(aFile);
-      end;
-    end
-  else  Accept := false;
+  if (Source is TSpeedButton) then
+    Accept := False
+  else begin
+    aFile := ActiveFrame.CloneActiveFile;
+    try
+      Accept := Assigned(aFile) and aFile.IsNameValid;
+    finally
+      FreeAndNil(aFile);
+    end;
+  end;
 end;
 
 function TfrmMain.MainToolBarLoadButtonGlyph(ToolItem: TKASToolItem;
@@ -2130,6 +2206,7 @@ end;
 
 procedure TfrmMain.tbDeleteClick(Sender: TObject);
 var
+  Toolbar: TKASToolBar;
   Button: TKASToolButton;
 begin
   Button := TKASToolButton(pmToolBar.Tag);
@@ -2137,8 +2214,9 @@ begin
   begin
     if msgYesNo(Format(rsMsgDelSel, [Button.Hint])) then
     begin
-       MainToolBar.RemoveButton(Button);
-       SaveMainToolBar;
+       Toolbar:= Button.ToolBar;
+       ToolBar.RemoveButton(Button);
+       SaveToolBar(Toolbar);
     end;
   end;
 end;
@@ -2176,9 +2254,14 @@ begin
         Point.Y := Y;
         Point := (Sender as TControl).ClientToScreen(Point);
         if Sender is TKASToolButton then
-          pmToolBar.Tag := PtrInt(Sender)
-        else
+        begin
+          pmToolBar.Tag := PtrInt(Sender);
+          pmToolBar.PopupComponent := TKASToolButton(Sender).ToolBar;
+        end
+        else begin
           pmToolBar.Tag := 0;
+          pmToolBar.PopupComponent := TComponent(Sender);
+        end;
         pmToolBar.PopUp(Point.X, Point.Y);
       end;
   end;
@@ -2438,6 +2521,58 @@ begin
   end;
 end;
 
+procedure TfrmMain.NotebookDragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+  ATabIndex: Integer;
+  TargetPath: String;
+  SourceFiles: TFiles;
+  TargetFileSource: IFileSource;
+  ANotebook: TFileViewNotebook absolute Sender;
+begin
+  if (Source is TWinControl) and (TWinControl(Source).Parent is TFileView) then
+  begin
+    ATabIndex := ANotebook.IndexOfPageAt(Classes.Point(X, Y));
+    if (ATabIndex > -1) then
+    begin
+      SourceFiles := ActiveFrame.CloneSelectedOrActiveFiles;
+      try
+        begin
+          TargetPath := ANotebook.View[ATabIndex].CurrentPath;
+          TargetFileSource := ANotebook.View[ATabIndex].FileSource;
+          case GetDropEffectByKeyAndMouse(GetKeyShiftState, mbLeft) of
+            DropCopyEffect:
+              Self.CopyFiles(ActiveFrame.FileSource, TargetFileSource, SourceFiles, TargetPath, gShowDialogOnDragDrop);
+            DropMoveEffect:
+              Self.MoveFiles(ActiveFrame.FileSource, TargetFileSource, SourceFiles, TargetPath, gShowDialogOnDragDrop);
+          end;
+        end;
+      finally
+        SourceFiles.Free;
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmMain.NotebookDragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+var
+  ATabIndex: Integer;
+  APage: TFileViewPage;
+  ANotebook: TFileViewNotebook absolute Sender;
+begin
+  Accept := False;
+  if (Source is TWinControl) and (TWinControl(Source).Parent is TFileView) then
+  begin
+    ATabIndex := ANotebook.IndexOfPageAt(Classes.Point(X, Y));
+    if (ATabIndex > -1) then
+    begin
+      APage:= ANotebook.Page[ATabIndex];
+      Accept := (APage.FileView <> TWinControl(Source).Parent) and
+                ((APage.LockState = tlsNormal) or (APage.LockPath = APage.FileView.CurrentPath));
+    end;
+  end;
+end;
+
 procedure TfrmMain.NotebookCloseTabClicked(Sender: TObject);
 begin
   with (Sender As TFileViewPage) do
@@ -2643,6 +2778,10 @@ begin
   inherited Create(TheOwner);
   FCommands := TMainCommands.Create(Self, actionLst);
 
+  if Assigned(Application.Icon) then begin
+    MainTrayIcon.Icon.Assign(Application.Icon);
+  end;
+
   Screen.Cursors[crArrowCopy] := LoadCursorFromLazarusResource('ArrowCopy');
   Screen.Cursors[crArrowMove] := LoadCursorFromLazarusResource('ArrowMove');
   Screen.Cursors[crArrowLink] := LoadCursorFromLazarusResource('ArrowLink');
@@ -2752,7 +2891,10 @@ begin
 end;
 
 procedure TfrmMain.CreateDefaultToolbar;
-  procedure AddCommand(Command: String);
+var
+  AToolbar: TKASToolBar;
+
+  procedure AddCommand(const Command: String);
   var
     CommandItem: TKASCommandItem;
   begin
@@ -2760,20 +2902,27 @@ procedure TfrmMain.CreateDefaultToolbar;
     CommandItem.Icon := UTF8LowerCase(Command);
     CommandItem.Command := Command;
     // Leave CommandItem.Hint empty. It will be loaded at startup based on language.
-    MainToolBar.AddButton(CommandItem);
+    AToolbar.AddButton(CommandItem);
   end;
-  procedure AddSeparator;
+
+  procedure AddSeparator(Style: Boolean = False);
+  var
+    SeparatorItem: TKASSeparatorItem;
   begin
-    MainToolBar.AddButton(TKASSeparatorItem.Create);
+    SeparatorItem:= TKASSeparatorItem.Create;
+    SeparatorItem.Style:= Style;
+    AToolbar.AddButton(SeparatorItem);
   end;
+
 var
   MainToolBarNode: TXmlNode;
 begin
   if MainToolBar.ButtonCount = 0 then
   begin
-    MainToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/MainToolbar', False);
+    MainToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/' + MainToolBar.Name, False);
     if not Assigned(MainToolBarNode) then
     begin
+      AToolbar := MainToolBar;
       AddCommand('cm_Refresh');
       AddCommand('cm_RunTerm');
       AddCommand('cm_Options');
@@ -2798,7 +2947,23 @@ begin
       AddCommand('cm_MultiRename');
       AddCommand('cm_SyncDirs');
       AddCommand('cm_CopyFullNamesToClip');
-      SaveMainToolBar;
+      SaveToolBar(MainToolBar);
+    end;
+  end;
+  if MiddleToolBar.ButtonCount = 0 then
+  begin
+    MainToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/' + MiddleToolBar.Name, False);
+    if not Assigned(MainToolBarNode) then
+    begin
+      AToolbar := MiddleToolBar;
+      AddCommand('cm_View');
+      AddCommand('cm_Edit');
+      AddCommand('cm_Copy');
+      AddCommand('cm_Rename');
+      AddSeparator(True);
+      AddCommand('cm_PackFiles');
+      AddCommand('cm_MakeDir');
+      SaveToolBar(MiddleToolBar);
     end;
   end;
 end;
@@ -3034,7 +3199,7 @@ begin
   if bUseTreeViewMenu then
   begin
     if not bUsePanel then
-      iWantedHeight := ((frmMain.ActiveFrame.ClientToScreen(Classes.Point(0, 0)).y + frmMain.ActiveFrame.Height) - p.y)
+      iWantedHeight := 0
     else
     begin
       iWantedWidth := frmMain.ActiveFrame.Width;
@@ -3247,7 +3412,7 @@ begin
        ((not (SourceFiles[0].IsDirectory or SourceFiles[0].IsLinkToDirectory)) or
         (TargetPath = ''))
     then
-      sDestination := TargetPath + SourceFiles[0].Name
+      sDestination := TargetPath + ReplaceInvalidChars(SourceFiles[0].Name)
     else
       sDestination := TargetPath + '*.*';
 
@@ -3299,7 +3464,7 @@ begin
       if Assigned(OperationClass) then
         OperationOptionsUIClass := OperationClass.GetOptionsUIClass;
 
-      CopyDialog := TfrmCopyDlg.Create(Application, cmdtCopy, FileSource, OperationOptionsUIClass);
+      CopyDialog := TfrmCopyDlg.Create(Self, cmdtCopy, FileSource, OperationOptionsUIClass);
       CopyDialog.edtDst.Text := sDestination;
       CopyDialog.edtDst.ReadOnly := OperationTemp;
       CopyDialog.lblCopySrc.Caption := GetFileDlgStr(rsMsgCpSel, rsMsgCpFlDr, SourceFiles);
@@ -3478,7 +3643,7 @@ begin
 
     if bShowDialog then
     begin
-      MoveDialog := TfrmCopyDlg.Create(Application, cmdtMove, SourceFileSource,
+      MoveDialog := TfrmCopyDlg.Create(Self, cmdtMove, SourceFileSource,
         SourceFileSource.GetOperationClass(fsoMove).GetOptionsUIClass);
       MoveDialog.edtDst.Text := sDestination;
       MoveDialog.lblCopySrc.Caption := GetFileDlgStr(rsMsgRenSel, rsMsgRenFlDr, SourceFiles);
@@ -3743,7 +3908,6 @@ begin
   end;
 end;
 
-{$if lcl_fullversion >= 1070000}
 procedure TfrmMain.DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
   const AXProportion, AYProportion: Double);
 begin
@@ -3759,7 +3923,6 @@ begin
     end;
   end;
 end;
-{$endif}
 
 procedure TfrmMain.FormKeyUp( Sender: TObject; var Key: Word;
   Shift: TShiftState) ;
@@ -3886,7 +4049,10 @@ end;
 procedure TfrmMain.pnlLeftResize(Sender: TObject);
 begin
   if gDriveBar1 and gDriveBar2 and not gHorizontalFilePanels then
-    pnlDskLeft.Width := pnlNotebooks.Width - pnlRight.Width;
+  begin
+    pnlDskLeft.Constraints.MinWidth:= pnlLeft.Width;
+    pnlDskLeft.Constraints.MaxWidth:= pnlLeft.Width;
+  end;
 
   // Put splitter after left panel.
   if not gHorizontalFilePanels then
@@ -3958,26 +4124,48 @@ begin
 end;
 
 procedure TfrmMain.pnlNotebooksResize(Sender: TObject);
+var
+  Delta: Integer;
 begin
   if not FResizingFilePanels then
   begin
     FResizingFilePanels := True;
     if not gHorizontalFilePanels then
-      pnlLeft.Width := Round(Double(pnlNotebooks.Width - MainSplitter.Width) * FMainSplitterPos / 100.0)
-    else
-      pnlLeft.Height := Round(Double(pnlNotebooks.Height - MainSplitter.Height) * FMainSplitterPos / 100.0);
+    begin
+      pnlLeft.BorderSpacing.Bottom:= 0;
+      Delta:= IfThen(MiddleToolBar.Visible, MiddleToolBar.Width);
+      pnlLeft.BorderSpacing.Right:= 4 - (pnlNotebooks.Width - Delta) mod 2;
+      pnlLeft.Width := Round(Double(pnlNotebooks.Width - pnlLeft.BorderSpacing.Right - Delta) * FMainSplitterPos / 100.0);
+    end
+    else begin
+      pnlLeft.BorderSpacing.Right:= 0;
+      Delta:= IfThen(MiddleToolBar.Visible, MiddleToolBar.Height);
+      pnlLeft.BorderSpacing.Bottom:= 4 - (pnlNotebooks.Height - Delta) mod 2;
+      pnlLeft.Height := Round(Double(pnlNotebooks.Height - pnlLeft.BorderSpacing.Bottom - Delta) * FMainSplitterPos / 100.0);
+    end;
     FResizingFilePanels := False;
   end;
 end;
 
 procedure TfrmMain.pnlRightResize(Sender: TObject);
+var
+  AWidth: Integer;
 begin
   if gDriveBar1 and not gHorizontalFilePanels then
   begin
     if gDriveBar2 then
-      pnlDskRight.Width := pnlRight.Width + 1
-    else
-      pnlDskRight.Width := pnlNotebooks.Width - 2;
+      AWidth := pnlRight.Width + 1
+    else begin
+      AWidth := pnlNotebooks.Width - 2;
+    end;
+    pnlDskRight.Constraints.MinWidth := AWidth;
+    pnlDskRight.Constraints.MaxWidth := AWidth;
+  end
+  else if gHorizontalFilePanels and not gDriveBar2 then
+  begin
+    AWidth := pnlNotebooks.Width - 2;
+    pnlDskRight.Constraints.MinWidth := AWidth;
+    pnlDskRight.Constraints.MaxWidth := AWidth;
   end;
 end;
 
@@ -4218,8 +4406,9 @@ begin
     begin
       ReadOnly := True;
       RightClickSelect := True;
-      FileSortType := fstFoldersFirst;
+      FileSortType := fstNone;
       PopulateWithBaseFiles;
+      CustomSort(@ShellTreeViewSort);
 
       Images := TImageList.Create(Self);
       Images.Width := gIconsSize;
@@ -4696,9 +4885,9 @@ begin
         cmdConsole.CaretType:= cartSubBar;
         cmdConsole.OnInput:= @OnCmdBoxInput;
         ShowScrollBar(cmdConsole.Handle, SB_Horz, False);
-        FontOptionsToFont(gFonts[dcfConsole], cmdConsole.Font);
         cmdConsole.Hint:= Format(fmtCommandPath, [GetComputerNetName]);
       end;
+      FontOptionsToFont(gFonts[dcfConsole], cmdConsole.Font); //We set the font here because if we're coming back from configuration the font in options, we'll later pass here to affect that font if ever displayed.
       if gCmdLine then
       begin
         cmdConsole.Tag := 0;
@@ -4872,6 +5061,8 @@ begin
       pnlLeft.BorderSpacing.Right  := 0;
       pnlLeft.BorderSpacing.Bottom := 3;
       MainSplitter.Cursor := crVSplit;
+      MiddleToolBar.Align:= alTop;
+      MiddleToolBar.Top:= pnlLeft.Height + 1;
     end
     else
     begin
@@ -4879,7 +5070,18 @@ begin
       pnlLeft.BorderSpacing.Right  := 3;
       pnlLeft.BorderSpacing.Bottom := 0;
       MainSplitter.Cursor := crHSplit;
+      MiddleToolBar.Align:= alLeft;
+      MiddleToolBar.Left:= pnlLeft.Width + 1;
     end;
+
+    (* Middle Tool Bar *)
+    MiddleToolbar.Visible:= gMiddleToolBar;
+    MiddleToolbar.Flat:= gMiddleToolBarFlat;
+    MiddleToolbar.GlyphSize:= gMiddleToolBarIconSize;
+    MiddleToolbar.ShowCaptions:= gMiddleToolBarShowCaptions;
+    MiddleToolbar.SetButtonSize(gMiddleToolBarButtonSize, gMiddleToolBarButtonSize);
+    LoadToolbar(MiddleToolBar);
+
     pnlLeftResize(pnlLeft);
     pnlNotebooksResize(pnlNotebooks);
 
@@ -4895,6 +5097,8 @@ begin
       dskRight.Parent := pnlDskRight;
     end;
 
+    pnlRightResize(pnlRight);
+
     dskLeft.GlyphSize:= gDiskIconsSize;
     dskRight.GlyphSize:= gDiskIconsSize;
     dskLeft.ButtonHeight:= gDiskIconsSize + 6;
@@ -4906,6 +5110,12 @@ begin
     pnlDskRight.Visible := gDriveBar1 and (not gHorizontalFilePanels or not gDriveBar2);
     pnlDisk.Visible := pnlDskLeft.Visible or pnlDskRight.Visible;
 
+    if gHorizontalFilePanels and gDriveBar1 and gDriveBar2 then
+    begin
+      pnlLeftTools.Top := pnlDiskLeftInner.Height + 1;
+      pnlRightTools.Top := pnlDiskRightInner.Height + 1;
+    end;
+
     // Create disk panels after assigning parent.
     UpdateDiskCount; // Update list of showed drives
     (*/ Disk Panels *)
@@ -4915,14 +5125,13 @@ begin
     (*Main menu*)
     Commands.DoShowMainMenu(gMainMenu);
 
-    (*Tool Bar*)
+    (*Main Tool Bar*)
     MainToolBar.Visible:= gButtonBar;
     MainToolBar.Flat:= gToolBarFlat;
     MainToolBar.GlyphSize:= gToolBarIconSize;
+    MainToolBar.ShowCaptions:= gToolBarShowCaptions;
     MainToolBar.SetButtonSize(gToolBarButtonSize, gToolBarButtonSize);
-    MainToolBar.ChangePath:= gpExePath;
-    MainToolBar.EnvVar:= '%commander_path%';
-    LoadMainToolbar;
+    LoadToolbar(MainToolBar);
 
     btnLeftDrive.Visible := gDrivesListButton;
     btnLeftDrive.Flat := gInterfaceFlat;
@@ -5142,10 +5351,12 @@ var
   Serializer: TKASToolBarSerializer = nil;
   Stream: TStringStream = nil;
   Button: TKASToolButton;
+  Toolbar: TKASToolBar;
 begin
   Button := TKASToolButton(pmToolBar.Tag);
   if Assigned(Button) then
   try
+    Toolbar := Button.ToolBar;
     ToolItem := Button.ToolItem;
 
     // Create a copy so that ID of the button is different.
@@ -5162,9 +5373,9 @@ begin
     Clipboard.SetFormat(PredefinedClipboardFormat(pcfText), Stream);
 
     if Sender = tbCut then
-      MainToolBar.RemoveButton(Button);
+      Toolbar.RemoveButton(Button);
 
-    SaveMainToolBar;
+    SaveToolBar(Toolbar);
   finally
     ItemClone.Free;
     Serializer.Free;
@@ -5174,7 +5385,7 @@ end;
 
 procedure TfrmMain.tbEditClick(Sender: TObject);
 begin
-  EditToolbarButton(TKASToolButton(pmToolBar.Tag));
+  EditToolbarButton(TKASToolBar(pmToolBar.PopupComponent), TKASToolButton(pmToolBar.Tag));
 end;
 
 procedure TfrmMain.OnUniqueInstanceMessage(Sender: TObject; Params: TCommandLineParams);
@@ -5193,11 +5404,13 @@ var
   Stream: TStringStream = nil;
   Pasted: Boolean = False;
   Button: TKASToolButton;
+  Toolbar: TKASToolBar;
 begin
   Stream := TStringStream.Create('');
   if Clipboard.GetFormat(PredefinedClipboardFormat(pcfText), Stream) then
   try
     Button := TKASToolButton(pmToolBar.Tag);
+    Toolbar := TKASToolBar(pmToolBar.PopupComponent);
 
     // Cut any trailing zeros.
     while Stream.DataString[Length(Stream.DataString)] = #0 do
@@ -5218,8 +5431,8 @@ begin
         ProgramItem.Icon      := Data[3];
         ProgramItem.Hint      := Data[4];
         ProgramItem.StartPath := Data[5];
-        MainToolBar.InsertButton(Button, ProgramItem);
-        SaveMainToolBar;
+        Toolbar.InsertButton(Button, ProgramItem);
+        SaveToolBar(Toolbar);
         Pasted := True;
       end;
     end
@@ -5230,8 +5443,8 @@ begin
       Loader := TKASToolBarExtendedLoader.Create(Commands.Commands);
       try
         ToolItem := Serializer.Deserialize(Stream, Loader);
-        MainToolBar.InsertButton(Button, ToolItem);
-        SaveMainToolBar;
+        Toolbar.InsertButton(Button, ToolItem);
+        SaveToolBar(Toolbar);
         Pasted := True;
       except
         on EXMLReadError do;
@@ -5606,31 +5819,31 @@ begin
   end;
 end;
 
-procedure TfrmMain.LoadMainToolbar;
+procedure TfrmMain.LoadToolbar(AToolBar: TKASToolBar);
 var
   ToolBarLoader: TKASToolBarExtendedLoader;
   ToolBarNode: TXmlNode;
 begin
-  MainToolBar.BeginUpdate;
+  AToolBar.BeginUpdate;
   ToolBarLoader := TKASToolBarExtendedLoader.Create(Commands.Commands);
   try
-    MainToolBar.Clear;
-    ToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/MainToolbar', False);
+    AToolBar.Clear;
+    ToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/' + AToolBar.Name, False);
     if Assigned(ToolBarNode) then
-      MainToolBar.LoadConfiguration(gConfig, ToolBarNode, ToolBarLoader, tocl_FlushCurrentToolbarContent);
+      AToolBar.LoadConfiguration(gConfig, ToolBarNode, ToolBarLoader, tocl_FlushCurrentToolbarContent);
   finally
     ToolBarLoader.Free;
-    MainToolBar.EndUpdate;
+    AToolBar.EndUpdate;
   end;
 end;
 
-procedure TfrmMain.SaveMainToolBar;
+procedure TfrmMain.SaveToolBar(AToolBar: TKASToolBar);
 var
   ToolBarNode: TXmlNode;
 begin
-  ToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/MainToolbar', True);
+  ToolBarNode := gConfig.FindNode(gConfig.RootNode, 'Toolbars/' + AToolBar.Name, True);
   gConfig.ClearNode(ToolBarNode);
-  MainToolBar.SaveConfiguration(gConfig, ToolBarNode);
+  AToolBar.SaveConfiguration(gConfig, ToolBarNode);
 end;
 
 procedure TfrmMain.ShowLogWindow(Data: PtrInt);
@@ -5659,7 +5872,7 @@ begin
 
     if gSaveWindowState then SaveWindowState;
 
-    if gButtonBar then SaveMainToolBar;
+    if gButtonBar then SaveToolBar(MainToolBar);
 
     SaveGlobs; // Should be last, writes configuration file
   except
@@ -5826,7 +6039,7 @@ begin
     if pnlKeys.Controls[I] is TSpeedButton then
     begin
       AButton:= TSpeedButton(pnlKeys.Controls[I]);
-      AButton.Font.Size := gFonts[dcfFunctionButtons].Size;
+      FontOptionsToFont(gFonts[dcfFunctionButtons], AButton.Font);
       H:= Max(H, AButton.Canvas.TextHeight(AButton.Caption));
     end;
   end;
@@ -6303,7 +6516,7 @@ begin
   Cancel := not CanClose;
 end;
 
-{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+{$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
 function TfrmMain.QObjectEventFilter(Sender: QObjectH; Event: QEventH): Boolean; cdecl;
 begin
   Result:= False;

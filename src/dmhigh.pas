@@ -5,7 +5,7 @@ unit dmHigh;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, SynEdit, StringHashList, LCLVersion,
+  Classes, SysUtils, Forms, Controls, SynEdit, DCStringHashListUtf8, LCLVersion,
   SynEditHighlighter, SynHighlighterPas, SynHighlighterCPP, SynHighlighterJava,
   SynHighlighterHTML, SynHighlighterXML, SynHighlighterLFM,
   SynHighlighterUNIXShellScript, SynHighlighterPHP, SynHighlighterTeX,
@@ -56,7 +56,7 @@ type
     procedure ImportFromOldFormat;
   public
     SynHighlighterList: TStringList;
-    SynHighlighterHashList: TStringHashList;
+    SynHighlighterHashList: TStringHashListUtf8;
     SynPlainTextHighlighter: TSynPlainTextHighlighter;
     function GetSampleSource(Highlighter: TSynCustomHighlighter): string;
   public
@@ -74,6 +74,7 @@ type
   TSynCustomHighlighterHelper = class helper for TSynCustomHighlighter
   public
     function LanguageName: String;
+    function Other: Boolean;
   end;
 
   TSynHighlighterAttrFeature =
@@ -127,6 +128,14 @@ begin
     Result:= Self.GetLanguageName;
 end;
 
+function TSynCustomHighlighterHelper.Other: Boolean;
+begin
+  if Self is TSynUniSyn then
+    Result:= TSynUniSyn(Self).Info.General.Other
+  else
+    Result:= False;
+end;
+
 { TSynPlainTextHighlighter }
 
 class function TSynPlainTextHighlighter.GetLanguageName: string;
@@ -146,7 +155,7 @@ var
 begin
   TSynLuaSyn.Create(Self).Tag:= 1;
   SynHighlighterList:= TStringList.Create;
-  SynHighlighterHashList:= TStringHashList.Create(True);
+  SynHighlighterHashList:= TStringHashListUtf8.Create(True);
 {$PUSH}{$HINTS OFF}{$WARNINGS OFF}
   SynPlainTextHighlighter:= TSynPlainTextHighlighter.Create(Self);
 {$POP}
