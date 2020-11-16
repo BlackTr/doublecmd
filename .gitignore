@@ -18,3 +18,8 @@ components/*/lib
 plugins/wcx/zip/zip.app/Contents/MacOS
 libunrar.dylib
 fpc.cfg
+doublecmd.xml
+history.xml
+session.ini
+shortcuts.scf
+wfx.ini
