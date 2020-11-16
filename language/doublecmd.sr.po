@@ -20,6 +20,10 @@ msgstr ""
 msgid "Comparing... %d%% (ESC to cancel)"
 msgstr "Упоређујем... %d%% (ЕСЦ за отказивање)"
 
+#: fsyncdirsdlg.rsdeleteleft
+msgid "Left: Delete %d file(s)"
+msgstr ""
+
 #: fsyncdirsdlg.rsdeleteright
 msgid "Right: Delete %d file(s)"
 msgstr ""
@@ -29,11 +33,15 @@ msgid "Files found: %d  (Identical: %d, Different: %d, Unique left: %d, Unique r
 msgstr "Пронађено је датотека: %d (истоветних: %d, различитих: %d, јединствених лево: %d, јединствених десно: %d)"
 
 #: fsyncdirsdlg.rslefttorightcopy
-msgid "Left to Right: Copy %d files, total size: %d bytes"
+#, fuzzy,badformat
+#| msgid "Left to Right: Copy %d files, total size: %d bytes"
+msgid "Left to Right: Copy %d files, total size: %s (%s)"
 msgstr "Са лева на десно: Умножи %d датотека, укупне величине %d бајта"
 
 #: fsyncdirsdlg.rsrighttoleftcopy
-msgid "Right to Left: Copy %d files, total size: %d bytes"
+#, fuzzy,badformat
+#| msgid "Right to Left: Copy %d files, total size: %d bytes"
+msgid "Right to Left: Copy %d files, total size: %s (%s)"
 msgstr "Са десна на лево: Умножи %d датотека, укупне величине %d бајта"
 
 #: tfilesystemcopymoveoperationoptionsui.btnsearchtemplate.hint
@@ -75,6 +83,7 @@ msgid "E&xclude empty directories"
 msgstr "И&зузми празне фасцикле"
 
 #: tfilesystemcopymoveoperationoptionsui.cbfollowlinks.caption
+msgctxt "tfilesystemcopymoveoperationoptionsui.cbfollowlinks.caption"
 msgid "Fo&llow links"
 msgstr "С&леди везе"
 
@@ -95,6 +104,7 @@ msgid "Use file template"
 msgstr "Користи образац датотеке"
 
 #: tfilesystemcopymoveoperationoptionsui.lbldirectoryexists.caption
+msgctxt "tfilesystemcopymoveoperationoptionsui.lbldirectoryexists.caption"
 msgid "When dir&ectory exists"
 msgstr "Када &фасцикла постоји"
 
@@ -708,56 +718,6 @@ msgctxt "TFRMDIFFER.CAPTION"
 msgid "Compare files"
 msgstr "Упореди датотеке"
 
-#: tfrmdiffer.midivider1.caption
-msgctxt "TFRMDIFFER.MIDIVIDER1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider10.caption
-msgctxt "TFRMDIFFER.MIDIVIDER10.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider2.caption
-msgctxt "TFRMDIFFER.MIDIVIDER2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider3.caption
-msgctxt "TFRMDIFFER.MIDIVIDER3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider4.caption
-msgctxt "TFRMDIFFER.MIDIVIDER4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider5.caption
-msgctxt "TFRMDIFFER.MIDIVIDER5.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider6.caption
-msgctxt "TFRMDIFFER.MIDIVIDER6.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider7.caption
-msgctxt "TFRMDIFFER.MIDIVIDER7.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider8.caption
-msgctxt "TFRMDIFFER.MIDIVIDER8.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider9.caption
-msgctxt "TFRMDIFFER.MIDIVIDER9.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmdiffer.miencodingleft.caption
 msgid "&Left"
 msgstr "&Лево"
@@ -765,16 +725,6 @@ msgstr "&Лево"
 #: tfrmdiffer.miencodingright.caption
 msgid "&Right"
 msgstr "&Десно"
-
-#: tfrmdiffer.miseparator1.caption
-msgctxt "TFRMDIFFER.MISEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.miseparator2.caption
-msgctxt "TFRMDIFFER.MISEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmdiffer.mnuactions.caption
 msgid "&Actions"
@@ -1325,11 +1275,6 @@ msgctxt "TFRMFILEPROPERTIES.LBLATTRTEXTSTR.CAPTION"
 msgid "Text:"
 msgstr "Текст:"
 
-#: tfrmfileproperties.lblcontains.caption
-msgctxt "TFRMFILEPROPERTIES.LBLCONTAINS.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblcontainsstr.caption
 msgid "Contains:"
 msgstr "Садржи:"
@@ -1358,11 +1303,6 @@ msgctxt "TFRMFILEPROPERTIES.LBLFILESTR.CAPTION"
 msgid "File name"
 msgstr "Име датотеке"
 
-#: tfrmfileproperties.lblfolder.caption
-msgctxt "TFRMFILEPROPERTIES.LBLFOLDER.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblfolderstr.caption
 msgctxt "tfrmfileproperties.lblfolderstr.caption"
 msgid "Path:"
@@ -1373,28 +1313,13 @@ msgctxt "TFRMFILEPROPERTIES.LBLGROUPSTR.CAPTION"
 msgid "&Group"
 msgstr "&Удружење"
 
-#: tfrmfileproperties.lbllastaccess.caption
-msgctxt "TFRMFILEPROPERTIES.LBLLASTACCESS.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lbllastaccessstr.caption
 msgid "Last access:"
 msgstr "Последњи приступ:"
 
-#: tfrmfileproperties.lbllastmodif.caption
-msgctxt "TFRMFILEPROPERTIES.LBLLASTMODIF.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lbllastmodifstr.caption
 msgid "Last modification:"
 msgstr "Последња измена:"
-
-#: tfrmfileproperties.lbllaststchange.caption
-msgctxt "TFRMFILEPROPERTIES.LBLLASTSTCHANGE.CAPTION"
-msgid "???"
-msgstr "???"
 
 #: tfrmfileproperties.lbllaststchangestr.caption
 msgid "Last status change:"
@@ -1415,29 +1340,14 @@ msgctxt "TFRMFILEPROPERTIES.LBLREAD.CAPTION"
 msgid "Read"
 msgstr "Читање"
 
-#: tfrmfileproperties.lblsize.caption
-msgctxt "TFRMFILEPROPERTIES.LBLSIZE.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblsizestr.caption
 msgctxt "TFRMFILEPROPERTIES.LBLSIZESTR.CAPTION"
 msgid "Size:"
 msgstr "Величина:"
 
-#: tfrmfileproperties.lblsymlink.caption
-msgctxt "TFRMFILEPROPERTIES.LBLSYMLINK.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblsymlinkstr.caption
 msgid "Symlink to:"
 msgstr "Веза ка:"
-
-#: tfrmfileproperties.lbltype.caption
-msgctxt "TFRMFILEPROPERTIES.LBLTYPE.CAPTION"
-msgid "???"
-msgstr "???"
 
 #: tfrmfileproperties.lbltypestr.caption
 msgid "Type:"
@@ -1713,11 +1623,11 @@ msgid "Re&place by"
 msgstr "Замени& са"
 
 #: tfrmfinddlg.cbselectedfiles.caption
-msgid "Selected directories and &files"
+msgid "Selected directories and files"
 msgstr "Означеним фасциклама и &датотекама"
 
 #: tfrmfinddlg.cbtextregexp.caption
-msgid "Regular &expression"
+msgid "Reg&ular expression"
 msgstr "&Регуларни израз"
 
 #: tfrmfinddlg.cbtimefrom.caption
@@ -1732,8 +1642,29 @@ msgstr "До вре&мена:"
 msgid "&Use search plugin:"
 msgstr "&Користи прикључак за претрагу:"
 
+#: tfrmfinddlg.chkduplicatecontent.caption
+msgid "same content"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicatehash.caption
+msgid "same hash"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicatename.caption
+msgid "same name"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicates.caption
+msgid "Find du&plicate files:"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicatesize.caption
+msgid "same size"
+msgstr ""
+
 #: tfrmfinddlg.chkhex.caption
-msgid "Hexadecimal"
+msgctxt "tfrmfinddlg.chkhex.caption"
+msgid "Hexadeci&mal"
 msgstr ""
 
 #: tfrmfinddlg.cmbexcludedirectories.hint
@@ -1747,6 +1678,28 @@ msgstr "Унесите имена датотека које би требало 
 #: tfrmfinddlg.cmbfindfilemask.hint
 msgid "Enter files names separated with \";\""
 msgstr "Унесите имена датотека раздвојена знаком „;“"
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[0].text
+#, fuzzy
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[0].text"
+msgid "Plugin"
+msgstr "Прикључак"
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[1].text
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[1].text"
+msgid "Field"
+msgstr ""
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[2].text
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[2].text"
+msgid "Operator"
+msgstr ""
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[3].text
+#, fuzzy
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[3].text"
+msgid "Value"
+msgstr "Вредност"
 
 #: tfrmfinddlg.gbdirectories.caption
 msgctxt "TFRMFINDDLG.GBDIRECTORIES.CAPTION"
@@ -1881,6 +1834,35 @@ msgstr "Пронађи"
 msgid "C&ase sensitive"
 msgstr "О&сетљиво на величину слова"
 
+#: tfrmfindview.chkhex.caption
+msgctxt "tfrmfindview.chkhex.caption"
+msgid "Hexadecimal"
+msgstr ""
+
+#: tfrmgioauthdialog.lbldomain.caption
+msgid "Domain:"
+msgstr ""
+
+#: tfrmgioauthdialog.lblpassword.caption
+#, fuzzy
+msgctxt "tfrmgioauthdialog.lblpassword.caption"
+msgid "Password:"
+msgstr "Лозинка:"
+
+#: tfrmgioauthdialog.lblusername.caption
+#, fuzzy
+msgctxt "tfrmgioauthdialog.lblusername.caption"
+msgid "User name:"
+msgstr "Корисничко име:"
+
+#: tfrmgioauthdialog.rbanonymous.caption
+msgid "Connect anonymously"
+msgstr ""
+
+#: tfrmgioauthdialog.rbconnetas.caption
+msgid "Connect as user:"
+msgstr ""
+
 #: tfrmhardlink.btncancel.caption
 msgctxt "TFRMHARDLINK.BTNCANCEL.CAPTION"
 msgid "&Cancel"
@@ -2006,6 +1988,10 @@ msgstr "Додај путању и име датотеке у наредбену
 #: tfrmmain.actaddpathtocmdline.caption
 msgid "Copy path to command line"
 msgstr "Умножи путању у наредбену линију"
+
+#: tfrmmain.actaddplugin.caption
+msgid "Add Plugin"
+msgstr ""
 
 #: tfrmmain.actbenchmark.caption
 msgid "&Benchmark"
@@ -2305,6 +2291,10 @@ msgstr "Подели& датотеку..."
 msgid "&Flat view"
 msgstr "&Раван приказ"
 
+#: tfrmmain.actflatviewsel.caption
+msgid "&Flat view, only selected"
+msgstr ""
+
 #: tfrmmain.actfocuscmdline.caption
 msgid "Focus command line"
 msgstr "Жижа на наредбену линију"
@@ -2325,13 +2315,29 @@ msgstr ""
 msgid "Switch between current file list and tree view (if enabled)"
 msgstr ""
 
+#: tfrmmain.actgotofirstentry.caption
+msgid "Place cursor on first folder or file"
+msgstr ""
+
 #: tfrmmain.actgotofirstfile.caption
 msgid "Place cursor on first file in list"
 msgstr "Постави показивач на прву датотеку списка"
 
+#: tfrmmain.actgotolastentry.caption
+msgid "Place cursor on last folder or file"
+msgstr ""
+
 #: tfrmmain.actgotolastfile.caption
 msgid "Place cursor on last file in list"
 msgstr "Постави показивач на последњу датотеку списка"
+
+#: tfrmmain.actgotonextentry.caption
+msgid "Place cursor on next folder or file"
+msgstr ""
+
+#: tfrmmain.actgotopreventry.caption
+msgid "Place cursor on previous folder or file"
+msgstr ""
 
 #: tfrmmain.acthardlink.caption
 msgctxt "TFRMMAIN.ACTHARDLINK.CAPTION"
@@ -2459,7 +2465,7 @@ msgid "Minimize window"
 msgstr "Умањи прозор"
 
 #: tfrmmain.actmultirename.caption
-msgid "Multi &Rename Tool"
+msgid "Multi-&Rename Tool"
 msgstr "Прибор за масовно &преименовање"
 
 #: tfrmmain.actnetworkconnect.caption
@@ -3014,6 +3020,7 @@ msgid "Create link..."
 msgstr "Стварање везе..."
 
 #: tfrmmain.milogclear.caption
+msgctxt "tfrmmain.milogclear.caption"
 msgid "Clear"
 msgstr "Очисти"
 
@@ -3389,59 +3396,221 @@ msgstr "Ширина"
 msgid "456456465465465"
 msgstr ""
 
-#: tfrmmultirename.btnclose.caption
-msgctxt "TFRMMULTIRENAME.BTNCLOSE.CAPTION"
+#: tfrmmultirename.actanyextmask.caption
+msgctxt "tfrmmultirename.actanyextmask.caption"
+msgid "Extension"
+msgstr "Наставак"
+
+#: tfrmmultirename.actanynamemask.caption
+msgctxt "tfrmmultirename.actanynamemask.caption"
+msgid "Filename"
+msgstr ""
+
+#: tfrmmultirename.actclearextmask.caption
+msgctxt "tfrmmultirename.actclearextmask.caption"
+msgid "Clear"
+msgstr "Очисти"
+
+#: tfrmmultirename.actclearnamemask.caption
+msgctxt "tfrmmultirename.actclearnamemask.caption"
+msgid "Clear"
+msgstr "Очисти"
+
+#: tfrmmultirename.actclose.caption
+msgctxt "tfrmmultirename.actclose.caption"
 msgid "&Close"
 msgstr "Затвори&"
 
-#: tfrmmultirename.btndeletepreset.caption
-msgctxt "TFRMMULTIRENAME.BTNDELETEPRESET.CAPTION"
-msgid "&Delete"
-msgstr "Избриши&"
+#: tfrmmultirename.actconfig.caption
+msgid "Confi&guration"
+msgstr "Поставке"
 
-#: tfrmmultirename.btnedit.caption
-#, fuzzy
-msgctxt "tfrmmultirename.btnedit.caption"
-msgid "&Edit"
+#: tfrmmultirename.actctrextmask.caption
+msgctxt "tfrmmultirename.actctrextmask.caption"
+msgid "Counter"
+msgstr "Бројач"
+
+#: tfrmmultirename.actctrnamemask.caption
+msgctxt "tfrmmultirename.actctrnamemask.caption"
+msgid "Counter"
+msgstr "Бројач"
+
+#: tfrmmultirename.actdateextmask.caption
+msgctxt "tfrmmultirename.actdateextmask.caption"
+msgid "Date"
+msgstr "Датум"
+
+#: tfrmmultirename.actdatenamemask.caption
+msgctxt "tfrmmultirename.actdatenamemask.caption"
+msgid "Date"
+msgstr "Датум"
+
+#: tfrmmultirename.actdeletepreset.caption
+msgctxt "tfrmmultirename.actdeletepreset.caption"
+msgid "Delete"
+msgstr "Избриши"
+
+#: tfrmmultirename.actdropdownpresetlist.caption
+msgid "Drop Down Presets List"
+msgstr ""
+
+#: tfrmmultirename.acteditnames.caption
+msgid "Edit Names..."
+msgstr ""
+
+#: tfrmmultirename.acteditnewnames.caption
+msgid "Edit Current New Names..."
+msgstr ""
+
+#: tfrmmultirename.actextextmask.caption
+msgctxt "tfrmmultirename.actextextmask.caption"
+msgid "Extension"
+msgstr "Наставак"
+
+#: tfrmmultirename.actextnamemask.caption
+msgctxt "tfrmmultirename.actextnamemask.caption"
+msgid "Extension"
+msgstr "Наставак"
+
+#: tfrmmultirename.actinvokeeditor.caption
+msgctxt "tfrmmultirename.actinvokeeditor.caption"
+msgid "Edit&or"
 msgstr "Уреди&"
 
-#: tfrmmultirename.btnextmenu.caption
-msgctxt "TFRMMULTIRENAME.BTNEXTMENU.CAPTION"
-msgid "..."
-msgstr "..."
+#: tfrmmultirename.actinvokerelativepath.caption
+msgid "Invoke Relative Path Menu"
+msgstr ""
 
-#: tfrmmultirename.btnloadpreset.caption
-msgid "&Load"
-msgstr "Учитај&"
+#: tfrmmultirename.actloadlastpreset.caption
+msgid "Load Last Preset"
+msgstr ""
 
-#: tfrmmultirename.btnnamemenu.caption
-msgctxt "TFRMMULTIRENAME.BTNNAMEMENU.CAPTION"
-msgid "..."
-msgstr "..."
+#: tfrmmultirename.actloadnamesfromfile.caption
+msgid "Load Names from File..."
+msgstr ""
 
-#: tfrmmultirename.btnrename.caption
-msgctxt "tfrmmultirename.btnrename.caption"
+#: tfrmmultirename.actloadpreset.caption
+msgid "Load Preset by Name or Index"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset1.caption
+msgid "Load Preset 1"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset2.caption
+msgid "Load Preset 2"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset3.caption
+msgid "Load Preset 3"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset4.caption
+msgid "Load Preset 4"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset5.caption
+msgid "Load Preset 5"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset6.caption
+msgid "Load Preset 6"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset7.caption
+msgid "Load Preset 7"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset8.caption
+msgid "Load Preset 8"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset9.caption
+msgid "Load Preset 9"
+msgstr ""
+
+#: tfrmmultirename.actnameextmask.caption
+msgctxt "tfrmmultirename.actnameextmask.caption"
+msgid "Filename"
+msgstr ""
+
+#: tfrmmultirename.actnamenamemask.caption
+msgctxt "tfrmmultirename.actnamenamemask.caption"
+msgid "Filename"
+msgstr ""
+
+#: tfrmmultirename.actplgnextmask.caption
+msgctxt "tfrmmultirename.actplgnextmask.caption"
+msgid "Plugins"
+msgstr "Прикљуци"
+
+#: tfrmmultirename.actplgnnamemask.caption
+msgctxt "tfrmmultirename.actplgnnamemask.caption"
+msgid "Plugins"
+msgstr "Прикљуци"
+
+#: tfrmmultirename.actrename.caption
+msgctxt "tfrmmultirename.actrename.caption"
 msgid "&Rename"
 msgstr "Пре&именуј"
 
-#: tfrmmultirename.btnrestore.caption
-msgid "Reset &all"
-msgstr "Поништи све&"
+#: tfrmmultirename.actrenamepreset.caption
+msgctxt "tfrmmultirename.actrenamepreset.caption"
+msgid "Rename"
+msgstr "Преименуј"
 
-#: tfrmmultirename.btnsavepreset.caption
-msgctxt "TFRMMULTIRENAME.BTNSAVEPRESET.CAPTION"
-msgid "&Save"
-msgstr "Сачувај&"
+#: tfrmmultirename.actresetall.caption
+msgctxt "tfrmmultirename.actresetall.caption"
+msgid "Reset &All"
+msgstr "Поништи све"
+
+#: tfrmmultirename.actsavepreset.caption
+msgctxt "tfrmmultirename.actsavepreset.caption"
+msgid "Save"
+msgstr "Сачувај"
+
+#: tfrmmultirename.actsavepresetas.caption
+msgctxt "tfrmmultirename.actsavepresetas.caption"
+msgid "Save As..."
+msgstr "Сачувај као..."
+
+#: tfrmmultirename.actshowpresetsmenu.caption
+msgid "Show Preset Menu"
+msgstr ""
+
+#: tfrmmultirename.actsortpresets.caption
+msgid "Sort"
+msgstr "Разврставање"
+
+#: tfrmmultirename.acttimeextmask.caption
+msgctxt "tfrmmultirename.acttimeextmask.caption"
+msgid "Time"
+msgstr "Време"
+
+#: tfrmmultirename.acttimenamemask.caption
+msgctxt "tfrmmultirename.acttimenamemask.caption"
+msgid "Time"
+msgstr "Време"
+
+#: tfrmmultirename.actviewrenamelogfile.caption
+msgid "View Rename Log File"
+msgstr ""
 
 #: tfrmmultirename.caption
 msgctxt "TFRMMULTIRENAME.CAPTION"
-msgid "MultiRename"
+msgid "Multi-Rename Tool"
 msgstr "Вишеструко преименовање"
 
 #: tfrmmultirename.cblog.caption
+#, fuzzy
+#| msgid "Ena&ble"
 msgctxt "TFRMMULTIRENAME.CBLOG.CAPTION"
-msgid "Ena&ble"
+msgid "&Log result"
 msgstr "Омогући&"
+
+#: tfrmmultirename.cblogappend.caption
+msgid "Append"
+msgstr ""
 
 #: tfrmmultirename.cbregexp.caption
 msgctxt "TFRMMULTIRENAME.CBREGEXP.CAPTION"
@@ -3466,21 +3635,14 @@ msgctxt "TFRMMULTIRENAME.EDPOC.TEXT"
 msgid "1"
 msgstr "1"
 
-#: tfrmmultirename.extension.caption
-msgid "[E] Extension"
-msgstr "[E] наставак"
-
 #: tfrmmultirename.gbcounter.caption
+msgctxt "tfrmmultirename.gbcounter.caption"
 msgid "Counter"
 msgstr "Бројач"
 
 #: tfrmmultirename.gbfindreplace.caption
 msgid "Find && Replace"
 msgstr "Нађи и замени"
-
-#: tfrmmultirename.gblog.caption
-msgid "Log Result"
-msgstr "Излази дневника"
 
 #: tfrmmultirename.gbmaska.caption
 msgid "Mask"
@@ -3519,143 +3681,15 @@ msgctxt "TFRMMULTIRENAME.LBWIDTH.CAPTION"
 msgid "&Width"
 msgstr "Ширина&"
 
-#: tfrmmultirename.micounter.caption
-msgid "[C] Counter"
-msgstr "[C] Бројач"
+#: tfrmmultirename.miactions.caption
+msgctxt "tfrmmultirename.miactions.caption"
+msgid "Actions"
+msgstr "Радње"
 
-#: tfrmmultirename.miday.caption
-msgid "[D] Day"
-msgstr "[D] дан"
-
-#: tfrmmultirename.miday1.caption
-msgid "[DD] Day (2 digits)"
-msgstr "[DD] дан (2 цифре)"
-
-#: tfrmmultirename.miday2.caption
-msgid "[DDD] Day of the week (short, e.g., \"mon\")"
-msgstr "[DDD] дан у недељи (кратко, нпр. „пон“)"
-
-#: tfrmmultirename.miday3.caption
-msgid "[DDDD] Day of the week (long, e.g., \"monday\")"
-msgstr "[DDD] дан у недељи (потпуно, нпр. „понедељак“)"
-
-#: tfrmmultirename.miextensionx.caption
-msgid "[Ex] Character at position x"
-msgstr "[Ex] знак на положају x"
-
-#: tfrmmultirename.miextensionxx.caption
-msgid "[Ex:y] Characters from position x to y"
-msgstr "[Ex:y] знаци од положаја x до положаја y"
-
-#: tfrmmultirename.mihour.caption
-msgid "[h] Hour"
-msgstr "[h] час"
-
-#: tfrmmultirename.mihour1.caption
-msgid "[hh] Hour (2 digits)"
-msgstr "[hh] Час (2 знака)"
-
-#: tfrmmultirename.miminute.caption
-msgid "[n] Minute"
-msgstr "[n] Минут"
-
-#: tfrmmultirename.miminute1.caption
-msgid "[nn] Minute (2 digits)"
-msgstr "[nn] Минут (2 знака)"
-
-#: tfrmmultirename.mimonth.caption
-msgid "[M] Month"
-msgstr "[M] Месец"
-
-#: tfrmmultirename.mimonth1.caption
-msgid "[MM] Month (2 digits)"
-msgstr "[MM] Месец (2 знака)"
-
-#: tfrmmultirename.mimonth2.caption
-msgid "[MMM] Month name (short, e.g., \"jan\")"
-msgstr "[MMM] Име месеца (кратко, нпр., „јан“)"
-
-#: tfrmmultirename.mimonth3.caption
-msgid "[MMMM] Month name (long, e.g., \"january\")"
-msgstr "[MMMM] Име месеца (пуно, нпр., „јануар“)"
-
-#: tfrmmultirename.miname.caption
-msgid "[N] Name"
-msgstr "[N] Име"
-
-#: tfrmmultirename.minamex.caption
-msgid "[Nx] Character at position x"
-msgstr "[Nx] знак на положају x"
-
-#: tfrmmultirename.minamexx.caption
-msgid "[Nx:y] Characters from position x to y"
-msgstr "[Nx:y] знаци од положаја x до положаја y"
-
-#: tfrmmultirename.minext.caption
-msgid "Time..."
-msgstr "Време..."
-
-#: tfrmmultirename.minextextension.caption
-msgid "Extension..."
-msgstr "Наставак..."
-
-#: tfrmmultirename.minextname.caption
-msgid "Name..."
-msgstr "Име..."
-
-#: tfrmmultirename.miplugin.caption
-msgctxt "TFRMMULTIRENAME.MIPLUGIN.CAPTION"
-msgid "Plugin"
-msgstr "Прикључак"
-
-#: tfrmmultirename.misecond.caption
-msgid "[s] Second"
-msgstr "[s] Секунд"
-
-#: tfrmmultirename.misecond1.caption
-msgid "[ss] Second (2 digits)"
-msgstr "[ss] Секунд (2 знака)"
-
-#: tfrmmultirename.miyear.caption
-msgid "[Y] Year (2 digits)"
-msgstr "[Y] Година (2 знака)"
-
-#: tfrmmultirename.miyear1.caption
-msgid "[YYYY] Year (4 digits)"
-msgstr "[YYYY] Година (4 знака)"
-
-#: tfrmmultirename.mnueditnames.caption
-msgid "Edit names..."
-msgstr ""
-
-#: tfrmmultirename.mnuloadfromfile.caption
-msgid "Load names from file..."
-msgstr ""
-
-#: tfrmmultirename.n1.caption
-msgctxt "TFRMMULTIRENAME.N1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n2.caption
-msgctxt "TFRMMULTIRENAME.N2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n3.caption
-msgctxt "TFRMMULTIRENAME.N3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n4.caption
-msgctxt "TFRMMULTIRENAME.N4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n5.caption
-msgctxt "TFRMMULTIRENAME.N5.CAPTION"
-msgid "-"
-msgstr "-"
+#: tfrmmultirename.mieditor.caption
+msgctxt "tfrmmultirename.mieditor.caption"
+msgid "Editor"
+msgstr "Уреди&"
 
 #: tfrmmultirename.stringgrid.columns[0].title.caption
 msgctxt "TFRMMULTIRENAME.STRINGGRID.COLUMNS[0].TITLE.CAPTION"
@@ -4386,11 +4420,6 @@ msgstr ">>"
 msgid "Go to set default"
 msgstr ""
 
-#: tfrmoptionscustomcolumns.btngotosetdefault.hint
-msgctxt "tfrmoptionscustomcolumns.btngotosetdefault.hint"
-msgid "Reset to default"
-msgstr ""
-
 #: tfrmoptionscustomcolumns.btninactivecursorcolor.caption
 #, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btninactivecursorcolor.caption"
@@ -4648,7 +4677,7 @@ msgstr "Позадина 2:"
 #: tfrmoptionscustomcolumns.lblconfigcolumns.caption
 #, fuzzy
 #| msgid "Con&figure columns for file system:"
-msgid "Con&figure columns view:"
+msgid "&Columns view:"
 msgstr "Подеси ступце за систем датотека:"
 
 #: tfrmoptionscustomcolumns.lblcurrentcolumn.caption
@@ -4666,6 +4695,10 @@ msgstr "Боја показивача:"
 msgctxt "tfrmoptionscustomcolumns.lblcursortext.caption"
 msgid "Cursor Text:"
 msgstr "Показивач текста:"
+
+#: tfrmoptionscustomcolumns.lblfilesystem.caption
+msgid "&File system:"
+msgstr ""
 
 #: tfrmoptionscustomcolumns.lblfontname.caption
 #, fuzzy
@@ -5094,6 +5127,37 @@ msgstr ""
 msgid "Addition from main panel"
 msgstr "Додатак из главне површи:"
 
+#: tfrmoptionsdirectoryhotlistextra.btnpathtoberelativetoall.caption
+msgid "Apply current settings to directory hotlist"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlistsource.caption
+msgid "Source"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlisttarget.caption
+msgid "Target"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption
+msgctxt "tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption"
+msgid "Paths"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.lbdirectoryhotlistfilenamestyle.caption
+msgid "Way to set paths when adding them:"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption
+msgctxt "tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption"
+msgid "Do this for paths of:"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption"
+msgid "Path to be relative to:"
+msgstr ""
+
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
 msgid "From all the supported formats, ask which one to use every time"
 msgstr ""
@@ -5205,6 +5269,10 @@ msgstr ""
 
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
+msgstr ""
+
+#: tfrmoptionseditor.lblrightedge.caption
+msgid "Right margin:"
 msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
@@ -5428,18 +5496,6 @@ msgstr ""
 msgid "Tabs saved on right to be restored to:"
 msgstr ""
 
-#: tfrmoptionsfavoritetabs.menuitem1.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.menuitem1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.menuitem2.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.menuitem2.caption"
-msgid "-"
-msgstr "-"
-
 #: tfrmoptionsfavoritetabs.miaddseparator.caption
 #, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miaddseparator.caption"
@@ -5561,54 +5617,6 @@ msgstr "Прилепи"
 msgctxt "tfrmoptionsfavoritetabs.mirename.caption"
 msgid "Rename"
 msgstr "Преименуј"
-
-#: tfrmoptionsfavoritetabs.miseparator1.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator10.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator11.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator2.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator3.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator3.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator7.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator7.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator8.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator8.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator9.caption
-#, fuzzy
-msgctxt "tfrmoptionsfavoritetabs.miseparator9.caption"
-msgid "-"
-msgstr "-"
 
 #: tfrmoptionsfavoritetabs.misorteverything.caption
 #, fuzzy
@@ -5880,6 +5888,10 @@ msgstr ""
 msgid "Click me to change icon!"
 msgstr ""
 
+#: tfrmoptionsfileassocextra.btnpathtoberelativetoall.caption
+msgid "Apply current settings to all current configured filenames and paths"
+msgstr ""
+
 #: tfrmoptionsfileassocextra.cbexecuteviashell.caption
 msgctxt "tfrmoptionsfileassocextra.cbexecuteviashell.caption"
 msgid "Execute via shell"
@@ -5912,8 +5924,43 @@ msgctxt "tfrmoptionsfileassocextra.cbopensystemwithterminalstayopen.caption"
 msgid "Execute via terminal and stay open"
 msgstr ""
 
+#: tfrmoptionsfileassocextra.ckbfileassoccommand.caption
+msgctxt "tfrmoptionsfileassocextra.ckbfileassoccommand.caption"
+msgid "Commands"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.ckbfileassocicons.caption
+msgctxt "tfrmoptionsfileassocextra.ckbfileassocicons.caption"
+msgid "Icons"
+msgstr "Иконице"
+
+#: tfrmoptionsfileassocextra.ckbfileassocstartpath.caption
+msgctxt "tfrmoptionsfileassocextra.ckbfileassocstartpath.caption"
+msgid "Starting paths"
+msgstr ""
+
 #: tfrmoptionsfileassocextra.gbextendedcontextmenuoptions.caption
 msgid "Extended options items:"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption
+msgctxt "tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption"
+msgid "Paths"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption
+msgctxt "tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption"
+msgid "Way to set paths when adding elements for icons, commands and starting paths:"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.lblapplysettingsfor.caption
+msgctxt "tfrmoptionsfileassocextra.lblapplysettingsfor.caption"
+msgid "Do this for files and path for:"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionsfileassocextra.lbpathtoberelativeto.caption"
+msgid "Path to be relative to:"
 msgstr ""
 
 #: tfrmoptionsfileoperations.bvlconfirmations.caption
@@ -6383,85 +6430,10 @@ msgctxt "TFRMOPTIONSFILETYPESCOLORS.LBLCATEGORYNAME.CAPTION"
 msgid "Category &name:"
 msgstr "Име &врсте:"
 
-#: tfrmoptionsfonts.btnpatheditfnt.caption
-#, fuzzy
-msgctxt "tfrmoptionsfonts.btnpatheditfnt.caption"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnsearchresultsfnt.caption
-#, fuzzy
-msgctxt "tfrmoptionsfonts.btnsearchresultsfnt.caption"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselconsolefnt.caption
-#, fuzzy
-msgctxt "tfrmoptionsfonts.btnselconsolefnt.caption"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnseleditfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELEDITFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnsellogfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELLOGFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselmainfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELMAINFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselviewerbookfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELVIEWERBOOKFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselviewfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELVIEWFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.lblconsolefont.caption
-msgid "&Console font"
-msgstr ""
-
-#: tfrmoptionsfonts.lbleditorfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLEDITORFONT.CAPTION"
-msgid "&Editor font"
-msgstr "Словни лик уређивача"
-
-#: tfrmoptionsfonts.lbllogfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLLOGFONT.CAPTION"
-msgid "&Log font"
-msgstr "Словни лик дневника&"
-
-#: tfrmoptionsfonts.lblmainfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLMAINFONT.CAPTION"
-msgid "Main &font"
-msgstr "Главни словни лик&"
-
-#: tfrmoptionsfonts.lblpatheditfont.caption
-msgid "Path font"
-msgstr ""
-
-#: tfrmoptionsfonts.lblsearchresultsfont.caption
-msgid "Search results font"
-msgstr ""
-
-#: tfrmoptionsfonts.lblviewerbookfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLVIEWERBOOKFONT.CAPTION"
-msgid "Viewer&Book Font"
-msgstr "Словни лик прегледника& књига"
-
-#: tfrmoptionsfonts.lblviewerfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLVIEWERFONT.CAPTION"
-msgid "&Viewer font"
-msgstr "Словни лик прегледника&"
+#: tfrmoptionsfonts.hint
+msgctxt "tfrmoptionsfonts.hint"
+msgid "Fonts"
+msgstr "Словни ликови"
 
 #: tfrmoptionshotkeys.actaddhotkey.caption
 #, fuzzy
@@ -6565,14 +6537,42 @@ msgctxt "tfrmoptionshotkeys.micommands.caption"
 msgid "Command"
 msgstr "Наредба"
 
-#: tfrmoptionshotkeys.miseparator1.caption
-#, fuzzy
-msgctxt "tfrmoptionshotkeys.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
 #: tfrmoptionshotkeys.misortorder.caption
 msgid "Sort order"
+msgstr ""
+
+#: tfrmoptionshotkeys.stgcommands.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stgcommands.columns[0].title.caption"
+msgid "Command"
+msgstr "Наредба"
+
+#: tfrmoptionshotkeys.stgcommands.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stgcommands.columns[1].title.caption"
+msgid "Hotkeys"
+msgstr "Пречице"
+
+#: tfrmoptionshotkeys.stgcommands.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stgcommands.columns[2].title.caption"
+msgid "Description"
+msgstr "Опис"
+
+#: tfrmoptionshotkeys.stghotkeys.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stghotkeys.columns[0].title.caption"
+msgid "Hotkey"
+msgstr "Пречица"
+
+#: tfrmoptionshotkeys.stghotkeys.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stghotkeys.columns[1].title.caption"
+msgid "Parameters"
+msgstr "Одреднице"
+
+#: tfrmoptionshotkeys.stghotkeys.columns[2].title.caption
+msgid "Controls"
 msgstr ""
 
 #: tfrmoptionsicons.cbiconsexclude.caption
@@ -6711,11 +6711,6 @@ msgctxt "TFRMOPTIONSLAYOUT.CBFLATINTERFACE.CAPTION"
 msgid "Flat i&nterface"
 msgstr "Равно &сучеље"
 
-#: tfrmoptionslayout.cbflattoolbar.caption
-msgctxt "TFRMOPTIONSLAYOUT.CBFLATTOOLBAR.CAPTION"
-msgid "Flat b&uttons"
-msgstr "Равна дугмад&"
-
 #: tfrmoptionslayout.cbfreespaceind.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBFREESPACEIND.CAPTION"
 msgid "Show fr&ee space indicator on drive label"
@@ -6806,6 +6801,10 @@ msgctxt "TFRMOPTIONSLAYOUT.CBTWODISKPANELS.CAPTION"
 msgid "Show two drive button bars (fi&xed width, above file windows)"
 msgstr "Приказуј две траке дугмади уређаја (сталне ширине, изнад прозора)"
 
+#: tfrmoptionslayout.chkshowmiddletoolbar.caption
+msgid "Show middle toolbar"
+msgstr ""
+
 #: tfrmoptionslayout.gbscreenlayout.caption
 msgctxt "TFRMOPTIONSLAYOUT.GBSCREENLAYOUT.CAPTION"
 msgid " Screen layout "
@@ -6858,6 +6857,10 @@ msgstr "Дневник грешака"
 msgctxt "TFRMOPTIONSLOG.CBLOGFILE.CAPTION"
 msgid "C&reate a log file:"
 msgstr "Направи& датотеку дневника:"
+
+#: tfrmoptionslog.cblogfilecount.caption
+msgid "Maximum log file count"
+msgstr ""
 
 #: tfrmoptionslog.cbloginfo.caption
 msgctxt "TFRMOPTIONSLOG.CBLOGINFO.CAPTION"
@@ -7035,6 +7038,53 @@ msgstr ""
 msgid "Single click (opens folders, double click for files)"
 msgstr ""
 
+#: tfrmoptionsmultirename.btnmulrenlogfilenamerelative.hint
+#, fuzzy
+msgctxt "tfrmoptionsmultirename.btnmulrenlogfilenamerelative.hint"
+msgid "Some functions to select appropriate path"
+msgstr "Неке радње за одабир одговарајуће путање"
+
+#: tfrmoptionsmultirename.btnmulrenlogfilenameview.hint
+msgctxt "tfrmoptionsmultirename.btnmulrenlogfilenameview.hint"
+msgid "View log file content"
+msgstr ""
+
+#: tfrmoptionsmultirename.ckbdailyindividualdirmultrenlog.caption
+msgid "Individual directories per day"
+msgstr ""
+
+#: tfrmoptionsmultirename.ckbfilenamewithfullpathinlog.caption
+msgid "Log filenames with full path"
+msgstr ""
+
+#: tfrmoptionsmultirename.ckbshowmenubarontop.caption
+msgid "Show menu bar on top "
+msgstr ""
+
+#: tfrmoptionsmultirename.gbsaverenaminglog.caption
+msgid "Rename log"
+msgstr ""
+
+#: tfrmoptionsmultirename.lbinvalidcharreplacement.caption
+msgid "Replace invalid filename character b&y"
+msgstr ""
+
+#: tfrmoptionsmultirename.rbrenaminglogappendsamefile.caption
+msgid "Append in the same rename log file"
+msgstr ""
+
+#: tfrmoptionsmultirename.rbrenaminglogperpreset.caption
+msgid "Per preset"
+msgstr ""
+
+#: tfrmoptionsmultirename.rgexitmodifiedpreset.caption
+msgid "Exit with modified preset"
+msgstr ""
+
+#: tfrmoptionsmultirename.rglaunchbehavior.caption
+msgid "Preset at launch"
+msgstr ""
+
 #: tfrmoptionspluginsbase.btnaddplugin.caption
 msgctxt "tfrmoptionspluginsbase.btnaddplugin.caption"
 msgid "A&dd"
@@ -7090,6 +7140,30 @@ msgctxt "tfrmoptionspluginsdsx.lblplugindescription.caption"
 msgid "Searc&h plugins allow one to use alternative search algorithms or external tools (like \"locate\", etc.)"
 msgstr "Прикључци &претраге омогућују заменске алгоритме претраге, или спољне алате (као што је „locate“, итд.)"
 
+#: tfrmoptionspluginsdsx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "Радно"
+
+#: tfrmoptionspluginsdsx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "Прикључак"
+
+#: tfrmoptionspluginsdsx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "Пријављено за"
+
+#: tfrmoptionspluginsdsx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "Име датотеке"
+
 #: tfrmoptionspluginsgroup.btnpathtoberelativetoall.caption
 msgid "Apply current settings to all current configured plugins"
 msgstr ""
@@ -7102,7 +7176,12 @@ msgstr ""
 msgid "Configuration:"
 msgstr ""
 
+#: tfrmoptionspluginsgroup.lbllualibraryfilename.caption
+msgid "Lua library file to use:"
+msgstr ""
+
 #: tfrmoptionspluginsgroup.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionspluginsgroup.lbpathtoberelativeto.caption"
 msgid "Path to be relative to:"
 msgstr ""
 
@@ -7144,15 +7223,87 @@ msgctxt "tfrmoptionspluginswdx.lblplugindescription.caption"
 msgid "Content plu&gins allow one to display extended file details like mp3 tags or image attributes in file lists, or use them in search and multi-rename tool"
 msgstr "Прикључци за садржаје се употребљавају за проширење приказа појединости датотека као што су мп3 ознаке или својства слика у списковима датотека, или се користе у прикључцима претраге и алатима за вишеструко преимановање"
 
+#: tfrmoptionspluginswdx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "Радно"
+
+#: tfrmoptionspluginswdx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "Прикључак"
+
+#: tfrmoptionspluginswdx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "Пријављено за"
+
+#: tfrmoptionspluginswdx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "Име датотеке"
+
 #: tfrmoptionspluginswfx.lblplugindescription.caption
 msgctxt "tfrmoptionspluginswfx.lblplugindescription.caption"
 msgid "Fi&le system plugins allow access to disks inaccessible by operating system or to external devices like Palm/PocketPC."
 msgstr "Прикључци система датотека& омогућавају приступ радњама са дисковима које нису доступне из оперативног система или спољњим уређајима ко што су Палм и џепни рачунар."
 
+#: tfrmoptionspluginswfx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "Радно"
+
+#: tfrmoptionspluginswfx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "Прикључак"
+
+#: tfrmoptionspluginswfx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "Пријављено за"
+
+#: tfrmoptionspluginswfx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "Име датотеке"
+
 #: tfrmoptionspluginswlx.lblplugindescription.caption
 msgctxt "tfrmoptionspluginswlx.lblplugindescription.caption"
 msgid "Vie&wer plugins allow one to display file formats like images, spreadsheets, databases etc. in Viewer (F3, Ctrl+Q)"
 msgstr "Прикључци за преглед омогућавају приказ облика датотека као што су слике, табеле, базе података итд. у прегледнику (Ф3, Ктрл+Ку)"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "Радно"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "Прикључак"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "Пријављено за"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "Име датотеке"
 
 #: tfrmoptionsquicksearchfilter.cbexactbeginning.caption
 msgctxt "TFRMOPTIONSQUICKSEARCHFILTER.CBEXACTBEGINNING.CAPTION"
@@ -7384,525 +7535,499 @@ msgctxt "tfrmoptionsterminal.lbruntermparams.caption"
 msgid "Parameters:"
 msgstr "Одреднице:"
 
-#: tfrmoptionstoolbar.btnclonebutton.caption
+#: tfrmoptionstoolbarbase.btnclonebutton.caption
 msgid "C&lone button"
 msgstr "Дугме потпуно истих умножака"
 
-#: tfrmoptionstoolbar.btndeletebutton.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNDELETEBUTTON.CAPTION"
+#: tfrmoptionstoolbarbase.btndeletebutton.caption
+msgctxt "tfrmoptionstoolbarbase.BTNDELETEBUTTON.CAPTION"
 msgid "&Delete"
 msgstr "&Избриши"
 
-#: tfrmoptionstoolbar.btnedithotkey.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNEDITHOTKEY.CAPTION"
+#: tfrmoptionstoolbarbase.btnedithotkey.caption
+msgctxt "tfrmoptionstoolbarbase.BTNEDITHOTKEY.CAPTION"
 msgid "Edit hot&key"
 msgstr "Уреди &пречицу"
 
-#: tfrmoptionstoolbar.btninsertbutton.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNINSERTBUTTON.CAPTION"
+#: tfrmoptionstoolbarbase.btninsertbutton.caption
+msgctxt "tfrmoptionstoolbarbase.BTNINSERTBUTTON.CAPTION"
 msgid "&Insert new button"
 msgstr "&Унеси ново дугме"
 
-#: tfrmoptionstoolbar.btnopencmddlg.caption
+#: tfrmoptionstoolbarbase.btnopencmddlg.caption
 msgid "Select"
 msgstr ""
 
-#: tfrmoptionstoolbar.btnopenfile.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNOPENFILE.CAPTION"
+#: tfrmoptionstoolbarbase.btnopenfile.caption
+msgctxt "tfrmoptionstoolbarbase.BTNOPENFILE.CAPTION"
 msgid ">>"
 msgstr ">>"
 
-#: tfrmoptionstoolbar.btnother.caption
-msgctxt "tfrmoptionstoolbar.btnother.caption"
+#: tfrmoptionstoolbarbase.btnother.caption
+msgctxt "tfrmoptionstoolbarbase.btnother.caption"
 msgid "Other..."
 msgstr "Друго..."
 
-#: tfrmoptionstoolbar.btnremovehotkey.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNREMOVEHOTKEY.CAPTION"
+#: tfrmoptionstoolbarbase.btnremovehotkey.caption
+msgctxt "tfrmoptionstoolbarbase.BTNREMOVEHOTKEY.CAPTION"
 msgid "Remove hotke&y"
 msgstr "Уклони &пречицу"
 
-#: tfrmoptionstoolbar.btnstartpath.caption
-msgctxt "tfrmoptionstoolbar.btnstartpath.caption"
+#: tfrmoptionstoolbarbase.btnstartpath.caption
+msgctxt "tfrmoptionstoolbarbase.btnstartpath.caption"
 msgid ">>"
 msgstr ">>"
 
-#: tfrmoptionstoolbar.btnsuggestiontooltip.caption
+#: tfrmoptionstoolbarbase.btnsuggestiontooltip.caption
 msgid "Suggest"
 msgstr ""
 
-#: tfrmoptionstoolbar.btnsuggestiontooltip.hint
+#: tfrmoptionstoolbarbase.btnsuggestiontooltip.hint
 msgid "Have DC suggest the tooltip based on button type, command and parameters"
 msgstr ""
 
-#: tfrmoptionstoolbar.cbflatbuttons.caption
-msgctxt "tfrmoptionstoolbar.cbflatbuttons.caption"
+#: tfrmoptionstoolbarbase.cbflatbuttons.caption
+msgctxt "tfrmoptionstoolbarbase.cbflatbuttons.caption"
 msgid "&Flat buttons"
 msgstr "Равна& дугмад"
 
-#: tfrmoptionstoolbar.cbreporterrorwithcommands.caption
+#: tfrmoptionstoolbarbase.cbreporterrorwithcommands.caption
 msgid "Report errors with commands"
 msgstr ""
 
-#: tfrmoptionstoolbar.edtinternalparameters.hint
+#: tfrmoptionstoolbarbase.cbshowcaptions.caption
+msgid "Sho&w captions"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.edtinternalparameters.hint
 msgid "Enter command parameters, each in a separate line. Press F1 to see help on parameters."
 msgstr "Унесите одреднице наредбе, сваку у посебној линији. Притисните Ф1 за преглед помоћи за одреднице."
 
-#: tfrmoptionstoolbar.gbgroupbox.caption
+#: tfrmoptionstoolbarbase.gbgroupbox.caption
 msgid "Appearance"
 msgstr "Приказ"
 
-#: tfrmoptionstoolbar.lblbarsize.caption
+#: tfrmoptionstoolbarbase.lblbarsize.caption
 msgid "&Bar size:"
 msgstr "Величина &траке:"
 
-#: tfrmoptionstoolbar.lblexternalcommand.caption
-msgctxt "TFRMOPTIONSTOOLBAR.LBLEXTERNALCOMMAND.CAPTION"
-msgid "Comman&d:"
+#: tfrmoptionstoolbarbase.lblexternalcommand.caption
+msgctxt "tfrmoptionstoolbarbase.LBLEXTERNALCOMMAND.CAPTION"
+msgid "Co&mmand:"
 msgstr "&Наредба:"
 
-#: tfrmoptionstoolbar.lblexternalparameters.caption
-msgctxt "TFRMOPTIONSTOOLBAR.LBLEXTERNALPARAMETERS.CAPTION"
+#: tfrmoptionstoolbarbase.lblexternalparameters.caption
+msgctxt "tfrmoptionstoolbarbase.LBLEXTERNALPARAMETERS.CAPTION"
 msgid "Parameter&s:"
 msgstr "Одредница&:"
 
-#: tfrmoptionstoolbar.lblhelponinternalcommand.caption
-msgctxt "tfrmoptionstoolbar.lblhelponinternalcommand.caption"
+#: tfrmoptionstoolbarbase.lblhelponinternalcommand.caption
+msgctxt "tfrmoptionstoolbarbase.lblhelponinternalcommand.caption"
 msgid "Help"
 msgstr "Помоћ"
 
-#: tfrmoptionstoolbar.lblhotkey.caption
+#: tfrmoptionstoolbarbase.lblhotkey.caption
 msgid "Hot key:"
 msgstr "Пречица:"
 
-#: tfrmoptionstoolbar.lbliconfile.caption
+#: tfrmoptionstoolbarbase.lbliconfile.caption
 msgid "Ico&n:"
 msgstr "Иконица&:"
 
-#: tfrmoptionstoolbar.lbliconsize.caption
+#: tfrmoptionstoolbarbase.lbliconsize.caption
 msgid "Icon si&ze:"
 msgstr "Величина& иконице:"
 
-#: tfrmoptionstoolbar.lblinternalcommand.caption
-msgctxt "tfrmoptionstoolbar.lblinternalcommand.caption"
+#: tfrmoptionstoolbarbase.lblinternalcommand.caption
+msgctxt "tfrmoptionstoolbarbase.lblinternalcommand.caption"
 msgid "Co&mmand:"
 msgstr "Наредба&:"
 
-#: tfrmoptionstoolbar.lblinternalparameters.caption
-msgctxt "tfrmoptionstoolbar.lblinternalparameters.caption"
+#: tfrmoptionstoolbarbase.lblinternalparameters.caption
+msgctxt "tfrmoptionstoolbarbase.lblinternalparameters.caption"
 msgid "&Parameters:"
 msgstr "Одреднице&:"
 
-#: tfrmoptionstoolbar.lblstartpath.caption
-msgctxt "tfrmoptionstoolbar.lblstartpath.caption"
+#: tfrmoptionstoolbarbase.lblstartpath.caption
+msgctxt "tfrmoptionstoolbarbase.lblstartpath.caption"
 msgid "Start pat&h:"
 msgstr "Почетна &путања:"
 
-#: tfrmoptionstoolbar.lbltooltip.caption
+#: tfrmoptionstoolbarbase.lblstyle.caption
+msgid "Style:"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.lbltooltip.caption
 msgid "&Tooltip:"
 msgstr "&Напомена:"
 
-#: tfrmoptionstoolbar.miaddallcmds.caption
+#: tfrmoptionstoolbarbase.miaddallcmds.caption
 msgid "Add toolbar with ALL DC commands"
 msgstr ""
 
-#: tfrmoptionstoolbar.miaddexternalcommandsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddexternalcommandsubmenu.caption
 msgid "for an external command"
 msgstr ""
 
-#: tfrmoptionstoolbar.miaddinternalcommandsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddinternalcommandsubmenu.caption
 msgid "for an internal command"
 msgstr ""
 
-#: tfrmoptionstoolbar.miaddseparatorsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddseparatorsubmenu.caption
 msgid "for a separator"
 msgstr ""
 
-#: tfrmoptionstoolbar.miaddsubtoolbarsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddsubtoolbarsubmenu.caption
 msgid "for a sub-tool bar"
 msgstr ""
 
-#: tfrmoptionstoolbar.mibackup.caption
-msgctxt "tfrmoptionstoolbar.mibackup.caption"
+#: tfrmoptionstoolbarbase.mibackup.caption
+msgctxt "tfrmoptionstoolbarbase.mibackup.caption"
 msgid "Backup..."
 msgstr "Остава..."
 
-#: tfrmoptionstoolbar.miexport.caption
-msgctxt "tfrmoptionstoolbar.miexport.caption"
+#: tfrmoptionstoolbarbase.miexport.caption
+msgctxt "tfrmoptionstoolbarbase.miexport.caption"
 msgid "Export..."
 msgstr "Извоз..."
 
-#: tfrmoptionstoolbar.miexportcurrent.caption
+#: tfrmoptionstoolbarbase.miexportcurrent.caption
 msgid "Current toolbar..."
 msgstr ""
 
-#: tfrmoptionstoolbar.miexportcurrenttodcbar.caption
-msgctxt "tfrmoptionstoolbar.miexportcurrenttodcbar.caption"
+#: tfrmoptionstoolbarbase.miexportcurrenttodcbar.caption
+msgctxt "tfrmoptionstoolbarbase.miexportcurrenttodcbar.caption"
 msgid "to a Toolbar File (.toolbar)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexportcurrenttotcbarkeep.caption
-msgctxt "tfrmoptionstoolbar.miexportcurrenttotcbarkeep.caption"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcbarkeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexportcurrenttotcbarkeep.caption"
 msgid "to a TC .BAR file (keep existing)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexportcurrenttotcbarnokeep.caption
-msgctxt "tfrmoptionstoolbar.miexportcurrenttotcbarnokeep.caption"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcbarnokeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexportcurrenttotcbarnokeep.caption"
 msgid "to a TC .BAR file (erase existing)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption
-msgctxt "tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcinikeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexportcurrenttotcinikeep.caption"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgstr "у „wincmd.ini“ ТЦ-а (задржи постојеће)"
 
-#: tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption
-msgctxt "tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcininokeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexportcurrenttotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "у „wincmd.ini“ ТЦ-а (избриши постојеће)"
 
-#: tfrmoptionstoolbar.miexportseparator1.caption
-msgctxt "tfrmoptionstoolbar.miexportseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexportseparator2.caption
-msgctxt "tfrmoptionstoolbar.miexportseparator2.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexportseparator3.caption
-msgctxt "tfrmoptionstoolbar.miexportseparator3.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexportseparator4.caption
-msgctxt "tfrmoptionstoolbar.miexportseparator4.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexporttop.caption
+#: tfrmoptionstoolbarbase.miexporttop.caption
 msgid "Top toolbar..."
 msgstr ""
 
-#: tfrmoptionstoolbar.miexporttoptobackup.caption
+#: tfrmoptionstoolbarbase.miexporttoptobackup.caption
 msgid "Save a backup of Toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexporttoptodcbar.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptodcbar.caption"
+#: tfrmoptionstoolbarbase.miexporttoptodcbar.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptodcbar.caption"
 msgid "to a Toolbar File (.toolbar)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexporttoptotcbarkeep.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptotcbarkeep.caption"
+#: tfrmoptionstoolbarbase.miexporttoptotcbarkeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptotcbarkeep.caption"
 msgid "to a TC .BAR file (keep existing)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexporttoptotcbarnokeep.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptotcbarnokeep.caption"
+#: tfrmoptionstoolbarbase.miexporttoptotcbarnokeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptotcbarnokeep.caption"
 msgid "to a TC .BAR file (erase existing)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexporttoptotcinikeep.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptotcinikeep.caption"
+#: tfrmoptionstoolbarbase.miexporttoptotcinikeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptotcinikeep.caption"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgstr "у „wincmd.ini“ ТЦ-а (задржи постојеће)"
 
-#: tfrmoptionstoolbar.miexporttoptotcininokeep.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptotcininokeep.caption"
+#: tfrmoptionstoolbarbase.miexporttoptotcininokeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "у „wincmd.ini“ ТЦ-а (избриши постојеће)"
 
-#: tfrmoptionstoolbar.miexternalcommandaftercurrent.caption
-msgctxt "tfrmoptionstoolbar.miexternalcommandaftercurrent.caption"
+#: tfrmoptionstoolbarbase.miexternalcommandaftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miexternalcommandaftercurrent.caption"
 msgid "just after current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexternalcommandfirstelement.caption
-msgctxt "tfrmoptionstoolbar.miexternalcommandfirstelement.caption"
+#: tfrmoptionstoolbarbase.miexternalcommandfirstelement.caption
+msgctxt "tfrmoptionstoolbarbase.miexternalcommandfirstelement.caption"
 msgid "as first element"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexternalcommandlastelement.caption
-msgctxt "tfrmoptionstoolbar.miexternalcommandlastelement.caption"
+#: tfrmoptionstoolbarbase.miexternalcommandlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.miexternalcommandlastelement.caption"
 msgid "as last element"
 msgstr ""
 
-#: tfrmoptionstoolbar.miexternalcommandpriorcurrent.caption
-msgctxt "tfrmoptionstoolbar.miexternalcommandpriorcurrent.caption"
+#: tfrmoptionstoolbarbase.miexternalcommandpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miexternalcommandpriorcurrent.caption"
 msgid "just prior current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimport.caption
-msgctxt "tfrmoptionstoolbar.miimport.caption"
+#: tfrmoptionstoolbarbase.miimport.caption
+msgctxt "tfrmoptionstoolbarbase.miimport.caption"
 msgid "Import..."
 msgstr "Увоз..."
 
-#: tfrmoptionstoolbar.miimportbackup.caption
+#: tfrmoptionstoolbarbase.miimportbackup.caption
 msgid "Restore a backup of Toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportbackupaddcurrent.caption
-msgctxt "tfrmoptionstoolbar.miimportbackupaddcurrent.caption"
+#: tfrmoptionstoolbarbase.miimportbackupaddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimportbackupaddcurrent.caption"
 msgid "to add to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportbackupaddmenucurrent.caption
-msgctxt "tfrmoptionstoolbar.miimportbackupaddmenucurrent.caption"
+#: tfrmoptionstoolbarbase.miimportbackupaddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimportbackupaddmenucurrent.caption"
 msgid "to add to a new toolbar to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportbackupaddmenutop.caption
-msgctxt "tfrmoptionstoolbar.miimportbackupaddmenutop.caption"
+#: tfrmoptionstoolbarbase.miimportbackupaddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportbackupaddmenutop.caption"
 msgid "to add to a new toolbar to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportbackupaddtop.caption
-msgctxt "tfrmoptionstoolbar.miimportbackupaddtop.caption"
+#: tfrmoptionstoolbarbase.miimportbackupaddtop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportbackupaddtop.caption"
 msgid "to add to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportbackupreplacetop.caption
-msgctxt "tfrmoptionstoolbar.miimportbackupreplacetop.caption"
+#: tfrmoptionstoolbarbase.miimportbackupreplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportbackupreplacetop.caption"
 msgid "to replace top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportdcbar.caption
+#: tfrmoptionstoolbarbase.miimportdcbar.caption
 msgid "from a Toolbar File (.toolbar)"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportdcbaraddcurrent.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddcurrent.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddcurrent.caption"
 msgid "to add to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportdcbaraddmenucurrent.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddmenucurrent.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddmenucurrent.caption"
 msgid "to add to a new toolbar to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportdcbaraddmenutop.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddmenutop.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddmenutop.caption"
 msgid "to add to a new toolbar to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportdcbaraddtop.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddtop.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddtop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddtop.caption"
 msgid "to add to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportdcbarreplacetop.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbarreplacetop.caption"
+#: tfrmoptionstoolbarbase.miimportdcbarreplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbarreplacetop.caption"
 msgid "to replace top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimportseparator.caption
-msgctxt "tfrmoptionstoolbar.miimportseparator.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miimporttcbar.caption
+#: tfrmoptionstoolbarbase.miimporttcbar.caption
 msgid "from a single TC .BAR file"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcbaraddcurrent.caption
-msgctxt "tfrmoptionstoolbar.miimporttcbaraddcurrent.caption"
+#: tfrmoptionstoolbarbase.miimporttcbaraddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttcbaraddcurrent.caption"
 msgid "to add to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcbaraddmenucurrent.caption
-msgctxt "tfrmoptionstoolbar.miimporttcbaraddmenucurrent.caption"
+#: tfrmoptionstoolbarbase.miimporttcbaraddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttcbaraddmenucurrent.caption"
 msgid "to add to a new toolbar to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcbaraddmenutop.caption
-msgctxt "tfrmoptionstoolbar.miimporttcbaraddmenutop.caption"
+#: tfrmoptionstoolbarbase.miimporttcbaraddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttcbaraddmenutop.caption"
 msgid "to add to a new toolbar to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcbaraddtop.caption
-msgctxt "tfrmoptionstoolbar.miimporttcbaraddtop.caption"
+#: tfrmoptionstoolbarbase.miimporttcbaraddtop.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttcbaraddtop.caption"
 msgid "to add to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcbarreplacetop.caption
-msgctxt "tfrmoptionstoolbar.miimporttcbarreplacetop.caption"
+#: tfrmoptionstoolbarbase.miimporttcbarreplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttcbarreplacetop.caption"
 msgid "to replace top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcini.caption
+#: tfrmoptionstoolbarbase.miimporttcini.caption
 msgid "from \"wincmd.ini\" of TC..."
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttciniaddcurrent.caption
-msgctxt "tfrmoptionstoolbar.miimporttciniaddcurrent.caption"
+#: tfrmoptionstoolbarbase.miimporttciniaddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttciniaddcurrent.caption"
 msgid "to add to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttciniaddmenucurrent.caption
-msgctxt "tfrmoptionstoolbar.miimporttciniaddmenucurrent.caption"
+#: tfrmoptionstoolbarbase.miimporttciniaddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttciniaddmenucurrent.caption"
 msgid "to add to a new toolbar to current toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttciniaddmenutop.caption
-msgctxt "tfrmoptionstoolbar.miimporttciniaddmenutop.caption"
+#: tfrmoptionstoolbarbase.miimporttciniaddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttciniaddmenutop.caption"
 msgid "to add to a new toolbar to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttciniaddtop.caption
-msgctxt "tfrmoptionstoolbar.miimporttciniaddtop.caption"
+#: tfrmoptionstoolbarbase.miimporttciniaddtop.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttciniaddtop.caption"
 msgid "to add to top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miimporttcinireplacetop.caption
-msgctxt "tfrmoptionstoolbar.miimporttcinireplacetop.caption"
+#: tfrmoptionstoolbarbase.miimporttcinireplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.miimporttcinireplacetop.caption"
 msgid "to replace top toolbar"
 msgstr ""
 
-#: tfrmoptionstoolbar.miinternalcommandaftercurrent.caption
-msgctxt "tfrmoptionstoolbar.miinternalcommandaftercurrent.caption"
+#: tfrmoptionstoolbarbase.miinternalcommandaftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miinternalcommandaftercurrent.caption"
 msgid "just after current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.miinternalcommandfirstelement.caption
-msgctxt "tfrmoptionstoolbar.miinternalcommandfirstelement.caption"
+#: tfrmoptionstoolbarbase.miinternalcommandfirstelement.caption
+msgctxt "tfrmoptionstoolbarbase.miinternalcommandfirstelement.caption"
 msgid "as first element"
 msgstr ""
 
-#: tfrmoptionstoolbar.miinternalcommandlastelement.caption
-msgctxt "tfrmoptionstoolbar.miinternalcommandlastelement.caption"
+#: tfrmoptionstoolbarbase.miinternalcommandlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.miinternalcommandlastelement.caption"
 msgid "as last element"
 msgstr ""
 
-#: tfrmoptionstoolbar.miinternalcommandpriorcurrent.caption
-msgctxt "tfrmoptionstoolbar.miinternalcommandpriorcurrent.caption"
+#: tfrmoptionstoolbarbase.miinternalcommandpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miinternalcommandpriorcurrent.caption"
 msgid "just prior current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.misearchandreplace.caption
-msgctxt "tfrmoptionstoolbar.misearchandreplace.caption"
+#: tfrmoptionstoolbarbase.misearchandreplace.caption
+msgctxt "tfrmoptionstoolbarbase.misearchandreplace.caption"
 msgid "Search and replace..."
 msgstr ""
 
-#: tfrmoptionstoolbar.miseparator1.caption
-msgctxt "tfrmoptionstoolbar.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator10.caption
-msgctxt "tfrmoptionstoolbar.miseparator10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator11.caption
-msgctxt "tfrmoptionstoolbar.miseparator11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator13.caption
-msgctxt "tfrmoptionstoolbar.miseparator13.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator14.caption
-msgctxt "tfrmoptionstoolbar.miseparator14.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator2.caption
-msgctxt "tfrmoptionstoolbar.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator6.caption
-msgctxt "tfrmoptionstoolbar.miseparator6.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator7.caption
-msgctxt "tfrmoptionstoolbar.miseparator7.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator8.caption
-msgctxt "tfrmoptionstoolbar.miseparator8.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator9.caption
-msgctxt "tfrmoptionstoolbar.miseparator9.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparatoraftercurrent.caption
-msgctxt "tfrmoptionstoolbar.miseparatoraftercurrent.caption"
+#: tfrmoptionstoolbarbase.miseparatoraftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatoraftercurrent.caption"
 msgid "just after current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.miseparatorfirstitem.caption
-msgctxt "tfrmoptionstoolbar.miseparatorfirstitem.caption"
+#: tfrmoptionstoolbarbase.miseparatorfirstitem.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatorfirstitem.caption"
 msgid "as first element"
 msgstr ""
 
-#: tfrmoptionstoolbar.miseparatorlastelement.caption
-msgctxt "tfrmoptionstoolbar.miseparatorlastelement.caption"
+#: tfrmoptionstoolbarbase.miseparatorlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatorlastelement.caption"
 msgid "as last element"
 msgstr ""
 
-#: tfrmoptionstoolbar.miseparatorpriorcurrent.caption
-msgctxt "tfrmoptionstoolbar.miseparatorpriorcurrent.caption"
+#: tfrmoptionstoolbarbase.miseparatorpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatorpriorcurrent.caption"
 msgid "just prior current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.misrcrplallofall.caption
+#: tfrmoptionstoolbarbase.misrcrplallofall.caption
 msgid "in all of all the above..."
 msgstr ""
 
-#: tfrmoptionstoolbar.misrcrplclickseparator.caption
-msgctxt "tfrmoptionstoolbar.misrcrplclickseparator.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.misrcrplcommands.caption
+#: tfrmoptionstoolbarbase.misrcrplcommands.caption
 msgid "in all commands..."
 msgstr ""
 
-#: tfrmoptionstoolbar.misrcrpliconnames.caption
+#: tfrmoptionstoolbarbase.misrcrpliconnames.caption
 msgid "in all icon names..."
 msgstr ""
 
-#: tfrmoptionstoolbar.misrcrplparameters.caption
+#: tfrmoptionstoolbarbase.misrcrplparameters.caption
 msgid "in all parameters..."
 msgstr ""
 
-#: tfrmoptionstoolbar.misrcrplstartpath.caption
+#: tfrmoptionstoolbarbase.misrcrplstartpath.caption
 msgid "in all start path..."
 msgstr ""
 
-#: tfrmoptionstoolbar.misubtoolbaraftercurrent.caption
-msgctxt "tfrmoptionstoolbar.misubtoolbaraftercurrent.caption"
+#: tfrmoptionstoolbarbase.misubtoolbaraftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.misubtoolbaraftercurrent.caption"
 msgid "just after current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.misubtoolbarfirstelement.caption
-msgctxt "tfrmoptionstoolbar.misubtoolbarfirstelement.caption"
+#: tfrmoptionstoolbarbase.misubtoolbarfirstelement.caption
+msgctxt "tfrmoptionstoolbarbase.misubtoolbarfirstelement.caption"
 msgid "as first element"
 msgstr ""
 
-#: tfrmoptionstoolbar.misubtoolbarlastelement.caption
-msgctxt "tfrmoptionstoolbar.misubtoolbarlastelement.caption"
+#: tfrmoptionstoolbarbase.misubtoolbarlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.misubtoolbarlastelement.caption"
 msgid "as last element"
 msgstr ""
 
-#: tfrmoptionstoolbar.misubtoolbarpriorcurrent.caption
-msgctxt "tfrmoptionstoolbar.misubtoolbarpriorcurrent.caption"
+#: tfrmoptionstoolbarbase.misubtoolbarpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.misubtoolbarpriorcurrent.caption"
 msgid "just prior current selection"
 msgstr ""
 
-#: tfrmoptionstoolbar.rgtoolitemtype.caption
+#: tfrmoptionstoolbarbase.rbseparator.caption
+msgid "Separator"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.rbspace.caption
+msgid "Space"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.rgtoolitemtype.caption
 msgid "Button type"
 msgstr "Врста дугмета"
+
+#: tfrmoptionstoolbarextra.btnpathtoberelativetoall.caption
+msgid "Apply current settings to all configured filenames and paths"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.ckbtoolbarcommand.caption
+msgctxt "tfrmoptionstoolbarextra.ckbtoolbarcommand.caption"
+msgid "Commands"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.ckbtoolbaricons.caption
+msgctxt "tfrmoptionstoolbarextra.ckbtoolbaricons.caption"
+msgid "Icons"
+msgstr "Иконице"
+
+#: tfrmoptionstoolbarextra.ckbtoolbarstartpath.caption
+msgctxt "tfrmoptionstoolbarextra.ckbtoolbarstartpath.caption"
+msgid "Starting paths"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption
+msgctxt "tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption"
+msgid "Paths"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.lblapplysettingsfor.caption
+msgid "Do this for files and paths for:"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionstoolbarextra.lbpathtoberelativeto.caption"
+msgid "Path to be relative to:"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption
+msgctxt "tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption"
+msgid "Way to set paths when adding elements for icons, commands and starting paths:"
+msgstr ""
 
 #: tfrmoptionstoolbase.btnrelativetoolpath.hint
 #, fuzzy
@@ -8095,6 +8220,12 @@ msgstr ""
 msgid "With History:"
 msgstr ""
 
+#: tfrmoptionstreeviewmenucolor.btfont.caption
+#, fuzzy
+msgctxt "tfrmoptionstreeviewmenucolor.btfont.caption"
+msgid "..."
+msgstr "..."
+
 #: tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption
 #, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption"
@@ -8169,6 +8300,10 @@ msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.cbkusagekeyboardshortcut.caption
 msgid "Use and display keyboard shortcut for choosing items"
+msgstr ""
+
+#: tfrmoptionstreeviewmenucolor.gbfont.caption
+msgid "Font"
 msgstr ""
 
 #: tfrmoptionstreeviewmenucolor.gblayoutandcolors.caption
@@ -8366,6 +8501,30 @@ msgstr "Сажималац:"
 msgid "Time:"
 msgstr "Време:"
 
+#: tfrmprintsetup.caption
+msgid "Print configuration"
+msgstr ""
+
+#: tfrmprintsetup.gbmargins.caption
+msgid "Margins (mm)"
+msgstr ""
+
+#: tfrmprintsetup.lblbottom.caption
+msgid "&Bottom:"
+msgstr ""
+
+#: tfrmprintsetup.lblleft.caption
+msgid "&Left:"
+msgstr ""
+
+#: tfrmprintsetup.lblright.caption
+msgid "&Right:"
+msgstr ""
+
+#: tfrmprintsetup.lbltop.caption
+msgid "&Top:"
+msgstr ""
+
 #: tfrmquicksearch.btncancel.caption
 msgctxt "TFRMQUICKSEARCH.BTNCANCEL.CAPTION"
 msgid "X"
@@ -8448,10 +8607,12 @@ msgid "Plugin"
 msgstr "Прикључак"
 
 #: tfrmsearchplugin.headercontrol.sections[1].text
+msgctxt "tfrmsearchplugin.headercontrol.sections[1].text"
 msgid "Field"
 msgstr ""
 
 #: tfrmsearchplugin.headercontrol.sections[2].text
+msgctxt "tfrmsearchplugin.headercontrol.sections[2].text"
 msgid "Operator"
 msgstr ""
 
@@ -8468,29 +8629,159 @@ msgstr ""
 msgid "&OR (any match)"
 msgstr ""
 
-#: tfrmselecttextrange.btppanel.cancelbutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.CANCELBUTTON.CAPTION"
-msgid "Cancel"
-msgstr "Откажи"
+#: tfrmselectduplicates.btnapply.caption
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnapply.caption"
+msgid "&Apply"
+msgstr "Примени&"
 
-#: tfrmselecttextrange.btppanel.closebutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.CLOSEBUTTON.CAPTION"
-msgid "&Close"
-msgstr "&Затвори"
+#: tfrmselectduplicates.btncancel.caption
+#, fuzzy
+msgctxt "tfrmselectduplicates.btncancel.caption"
+msgid "&Cancel"
+msgstr "&Откажи"
 
-#: tfrmselecttextrange.btppanel.helpbutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.HELPBUTTON.CAPTION"
-msgid "&Help"
-msgstr "&Помоћ"
+#: tfrmselectduplicates.btnexcludemask.hint
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnexcludemask.hint"
+msgid "Template..."
+msgstr "Образац..."
 
-#: tfrmselecttextrange.btppanel.okbutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.OKBUTTON.CAPTION"
+#: tfrmselectduplicates.btnincludemask.hint
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnincludemask.hint"
+msgid "Template..."
+msgstr "Образац..."
+
+#: tfrmselectduplicates.btnok.caption
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnok.caption"
 msgid "&OK"
 msgstr "&У реду"
+
+#: tfrmselectduplicates.caption
+msgid "Select duplicate files"
+msgstr ""
+
+#: tfrmselectduplicates.chkleaveunselected.caption
+msgid "&Leave at least one file in each group unselected:"
+msgstr ""
+
+#: tfrmselectduplicates.cmbincludemask.text
+#, fuzzy
+msgctxt "tfrmselectduplicates.cmbincludemask.text"
+msgid "*"
+msgstr "*"
+
+#: tfrmselectduplicates.lblexcludemask.caption
+msgid "&Remove selection by name/extension:"
+msgstr ""
+
+#: tfrmselectduplicates.lblfirstmethod.caption
+msgid "&1."
+msgstr ""
+
+#: tfrmselectduplicates.lblincludemask.caption
+msgid "Select by &name/extension:"
+msgstr ""
+
+#: tfrmselectduplicates.lblsecondmethod.caption
+msgid "&2."
+msgstr ""
+
+#: tfrmselectpathrange.buttonpanel.cancelbutton.caption
+msgctxt "tfrmselectpathrange.buttonpanel.cancelbutton.caption"
+msgid "&Cancel"
+msgstr "Откажи"
+
+#: tfrmselectpathrange.buttonpanel.okbutton.caption
+msgctxt "tfrmselectpathrange.buttonpanel.okbutton.caption"
+msgid "&OK"
+msgstr "У реду"
+
+#: tfrmselectpathrange.edseparator.editlabel.caption
+msgid "Sep&arator"
+msgstr ""
+
+#: tfrmselectpathrange.gbcountfrom.caption
+msgid "Count from"
+msgstr ""
+
+#: tfrmselectpathrange.lblresult.caption
+msgctxt "tfrmselectpathrange.lblresult.caption"
+msgid "Result:"
+msgstr ""
+
+#: tfrmselectpathrange.lblselectdirectories.caption
+msgid "&Select the directories to insert (you may select more than one)"
+msgstr ""
+
+#: tfrmselectpathrange.rbfirstfromend.caption
+msgctxt "tfrmselectpathrange.rbfirstfromend.caption"
+msgid "The en&d"
+msgstr ""
+
+#: tfrmselectpathrange.rbfirstfromstart.caption
+msgctxt "tfrmselectpathrange.rbfirstfromstart.caption"
+msgid "The sta&rt"
+msgstr ""
+
+#: tfrmselecttextrange.buttonpanel.cancelbutton.caption
+msgctxt "tfrmselecttextrange.buttonpanel.cancelbutton.caption"
+msgid "&Cancel"
+msgstr "Откажи"
+
+#: tfrmselecttextrange.buttonpanel.okbutton.caption
+msgctxt "tfrmselecttextrange.buttonpanel.okbutton.caption"
+msgid "&OK"
+msgstr "У реду"
+
+#: tfrmselecttextrange.gbcountfirstfrom.caption
+msgid "Count first from"
+msgstr ""
+
+#: tfrmselecttextrange.gbcountlastfrom.caption
+msgid "Count last from"
+msgstr ""
+
+#: tfrmselecttextrange.gbrangedescription.caption
+msgid "Range description"
+msgstr ""
+
+#: tfrmselecttextrange.lblresult.caption
+msgctxt "tfrmselecttextrange.lblresult.caption"
+msgid "Result:"
+msgstr ""
 
 #: tfrmselecttextrange.lblselecttext.caption
 msgid "&Select the characters to insert:"
 msgstr "&Изаберите знакове за унос:"
+
+#: tfrmselecttextrange.rbdescriptionfirstlast.caption
+msgid "[&First:Last]"
+msgstr ""
+
+#: tfrmselecttextrange.rbdescriptionfirstlength.caption
+msgid "[First,&Length]"
+msgstr ""
+
+#: tfrmselecttextrange.rbfirstfromend.caption
+msgctxt "tfrmselecttextrange.rbfirstfromend.caption"
+msgid "The en&d"
+msgstr ""
+
+#: tfrmselecttextrange.rbfirstfromstart.caption
+msgctxt "tfrmselecttextrange.rbfirstfromstart.caption"
+msgid "The sta&rt"
+msgstr ""
+
+#: tfrmselecttextrange.rblastfromend.caption
+msgid "The &end"
+msgstr ""
+
+#: tfrmselecttextrange.rblastfromstart.caption
+msgid "The s&tart"
+msgstr ""
 
 #: tfrmsetfileproperties.btncancel.caption
 msgctxt "TFRMSETFILEPROPERTIES.BTNCANCEL.CAPTION"
@@ -8634,6 +8925,43 @@ msgctxt "TFRMSETFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Пиши"
 
+#: tfrmsetfileproperties.zvcreationdatetime.textfornulldate
+msgctxt "tfrmsetfileproperties.zvcreationdatetime.textfornulldate"
+msgid " "
+msgstr ""
+
+#: tfrmsetfileproperties.zvlastaccessdatetime.textfornulldate
+msgctxt "tfrmsetfileproperties.zvlastaccessdatetime.textfornulldate"
+msgid " "
+msgstr ""
+
+#: tfrmsetfileproperties.zvlastwritedatetime.textfornulldate
+msgctxt "tfrmsetfileproperties.zvlastwritedatetime.textfornulldate"
+msgid " "
+msgstr ""
+
+#: tfrmsortanything.btnsort.caption
+msgid "&Sort"
+msgstr "Разврставање"
+
+#: tfrmsortanything.buttonpanel.cancelbutton.caption
+msgctxt "tfrmsortanything.buttonpanel.cancelbutton.caption"
+msgid "&Cancel"
+msgstr "Откажи"
+
+#: tfrmsortanything.buttonpanel.okbutton.caption
+msgctxt "tfrmsortanything.buttonpanel.okbutton.caption"
+msgid "&OK"
+msgstr "У реду"
+
+#: tfrmsortanything.caption
+msgid "frmSortAnything"
+msgstr ""
+
+#: tfrmsortanything.lblsortanything.caption
+msgid "Drag and drop elements to sort them"
+msgstr ""
+
 #: tfrmsplitter.btnrelativeftchoice.hint
 msgctxt "tfrmsplitter.btnrelativeftchoice.hint"
 msgid "Some functions to select appropriate path"
@@ -8760,6 +9088,18 @@ msgctxt "TFRMSYMLINK.LBLLINKTOCREATE.CAPTION"
 msgid "&Link name"
 msgstr "Име &везе"
 
+#: tfrmsyncdirsdlg.actdeleteboth.caption
+msgid "Delete on both sides"
+msgstr ""
+
+#: tfrmsyncdirsdlg.actdeleteleft.caption
+msgid "<- Delete left"
+msgstr ""
+
+#: tfrmsyncdirsdlg.actdeleteright.caption
+msgid "-> Delete right"
+msgstr ""
+
 #: tfrmsyncdirsdlg.actselectclear.caption
 msgid "Remove selection"
 msgstr ""
@@ -8780,6 +9120,14 @@ msgstr ""
 msgid "Select for copying <- (right to left)"
 msgstr ""
 
+#: tfrmsyncdirsdlg.actselectdeleteboth.caption
+msgid "Select for deleting <-> (both)"
+msgstr ""
+
+#: tfrmsyncdirsdlg.actselectdeleteleft.caption
+msgid "Select for deleting <- (left)"
+msgstr ""
+
 #: tfrmsyncdirsdlg.actselectdeleteright.caption
 msgid "Select for deleting -> (right)"
 msgstr ""
@@ -8794,15 +9142,11 @@ msgctxt "TFRMSYNCDIRSDLG.BTNCOMPARE.CAPTION"
 msgid "Compare"
 msgstr "Упореди"
 
-#: tfrmsyncdirsdlg.btnseldir1.caption
-msgctxt "TFRMSYNCDIRSDLG.BTNSELDIR1.CAPTION"
-msgid ">>"
-msgstr ">>"
-
-#: tfrmsyncdirsdlg.btnseldir2.caption
-msgctxt "TFRMSYNCDIRSDLG.BTNSELDIR2.CAPTION"
-msgid ">>"
-msgstr ">>"
+#: tfrmsyncdirsdlg.btnsearchtemplate.hint
+#, fuzzy
+msgctxt "tfrmsyncdirsdlg.btnsearchtemplate.hint"
+msgid "Template..."
+msgstr "Образац..."
 
 #: tfrmsyncdirsdlg.btnsynchronize.caption
 msgctxt "tfrmsyncdirsdlg.btnsynchronize.caption"
@@ -8814,8 +9158,10 @@ msgid "Synchronize directories"
 msgstr "Усклађене фасцикле"
 
 #: tfrmsyncdirsdlg.cbextfilter.text
+#, fuzzy
+#| msgid "*.*"
 msgctxt "TFRMSYNCDIRSDLG.CBEXTFILTER.TEXT"
-msgid "*.*"
+msgid "*"
 msgstr "*.*"
 
 #: tfrmsyncdirsdlg.chkasymmetric.caption
@@ -9120,6 +9466,10 @@ msgstr "О прегледнику..."
 msgid "Displays the About message"
 msgstr "Приказује поруку о програму"
 
+#: tfrmviewer.actautoreload.caption
+msgid "Auto Reload"
+msgstr ""
+
 #: tfrmviewer.actchangeencoding.caption
 msgid "Change encoding"
 msgstr ""
@@ -9236,6 +9586,14 @@ msgstr "Премести датотеку"
 msgctxt "tfrmviewer.actpreview.caption"
 msgid "Preview"
 msgstr "Преглед"
+
+#: tfrmviewer.actprint.caption
+msgid "P&rint..."
+msgstr ""
+
+#: tfrmviewer.actprintsetup.caption
+msgid "Print &setup..."
+msgstr ""
 
 #: tfrmviewer.actreload.caption
 msgctxt "TFRMVIEWER.ACTRELOAD.CAPTION"
@@ -9357,6 +9715,10 @@ msgctxt "tfrmviewer.actshowaswraptext.caption"
 msgid "Show as &Wrap text"
 msgstr "Прикажи као &увучен текст"
 
+#: tfrmviewer.actshowcaret.caption
+msgid "Show text c&ursor"
+msgstr ""
+
 #: tfrmviewer.actshowgraphics.caption
 #, fuzzy
 msgctxt "tfrmviewer.actshowgraphics.caption"
@@ -9393,11 +9755,21 @@ msgctxt "tfrmviewer.actzoomin.caption"
 msgid "Zoom In"
 msgstr "Приближи"
 
+#: tfrmviewer.actzoomin.hint
+msgctxt "tfrmviewer.actzoomin.hint"
+msgid "Zoom In"
+msgstr ""
+
 #: tfrmviewer.actzoomout.caption
 #, fuzzy
 msgctxt "tfrmviewer.actzoomout.caption"
 msgid "Zoom Out"
 msgstr "Удаљи"
+
+#: tfrmviewer.actzoomout.hint
+msgctxt "tfrmviewer.actzoomout.hint"
+msgid "Zoom Out"
+msgstr ""
 
 #: tfrmviewer.btncuttuimage.hint
 msgctxt "TFRMVIEWER.BTNCUTTUIMAGE.HINT"
@@ -9409,32 +9781,33 @@ msgctxt "TFRMVIEWER.BTNFULLSCREEN.HINT"
 msgid "Full Screen"
 msgstr "Преко целог екрана"
 
-#: tfrmviewer.btngifmove.caption
-msgctxt "TFRMVIEWER.BTNGIFMOVE.CAPTION"
-msgid "||"
-msgstr "||"
-
-#: tfrmviewer.btngiftobmp.caption
-msgid "S"
-msgstr "С"
+#: tfrmviewer.btngiftobmp.hint
+msgid "Export Frame"
+msgstr ""
 
 #: tfrmviewer.btnhightlight.hint
 msgctxt "TFRMVIEWER.BTNHIGHTLIGHT.HINT"
 msgid "Highlight"
 msgstr "Истицање"
 
-#: tfrmviewer.btnnextgifframe.caption
-msgid "||>"
-msgstr "||>"
+#: tfrmviewer.btnnextgifframe.hint
+msgid "Next Frame"
+msgstr ""
 
 #: tfrmviewer.btnpaint.hint
 msgctxt "TFRMVIEWER.BTNPAINT.HINT"
 msgid "Paint"
 msgstr "Обоји"
 
-#: tfrmviewer.btnprevgifframe.caption
-msgid "<||"
-msgstr "<||"
+#: tfrmviewer.btnpenwidth.caption
+#, fuzzy
+msgctxt "tfrmviewer.btnpenwidth.caption"
+msgid "1"
+msgstr "1"
+
+#: tfrmviewer.btnprevgifframe.hint
+msgid "Previous Frame"
+msgstr ""
 
 #: tfrmviewer.btnredeye.hint
 msgid "Red Eyes"
@@ -9444,6 +9817,12 @@ msgstr "Црвене очи"
 msgctxt "TFRMVIEWER.BTNRESIZE.HINT"
 msgid "Resize"
 msgstr "Промени величину"
+
+#: tfrmviewer.btnslideshow.caption
+#, fuzzy
+msgctxt "tfrmviewer.btnslideshow.caption"
+msgid "Slide Show"
+msgstr "Покретне слике"
 
 #: tfrmviewer.btnundo.hint
 msgctxt "TFRMVIEWER.BTNUNDO.HINT"
@@ -9455,44 +9834,6 @@ msgctxt "TFRMVIEWER.CAPTION"
 msgid "Viewer"
 msgstr "Прегледник"
 
-#: tfrmviewer.cbslideshow.caption
-msgctxt "TFRMVIEWER.CBSLIDESHOW.CAPTION"
-msgid "Slide Show"
-msgstr "Покретне слике"
-
-#: tfrmviewer.comboboxpaint.text
-msgid "Pen"
-msgstr "Оловка"
-
-#: tfrmviewer.comboboxwidth.text
-msgctxt "TFRMVIEWER.COMBOBOXWIDTH.TEXT"
-msgid "1"
-msgstr "1"
-
-#: tfrmviewer.gboxhightlight.caption
-msgctxt "TFRMVIEWER.GBOXHIGHTLIGHT.CAPTION"
-msgid "Highlight"
-msgstr "Истицање"
-
-#: tfrmviewer.gboxpaint.caption
-msgctxt "TFRMVIEWER.GBOXPAINT.CAPTION"
-msgid "Paint"
-msgstr "Бојење"
-
-#: tfrmviewer.gboxslideshow.caption
-msgctxt "TFRMVIEWER.GBOXSLIDESHOW.CAPTION"
-msgid "Slide Show"
-msgstr "Покретни приказ"
-
-#: tfrmviewer.gboxview.caption
-msgctxt "TFRMVIEWER.GBOXVIEW.CAPTION"
-msgid "View"
-msgstr "Преглед"
-
-#: tfrmviewer.lblhightlight.caption
-msgid "0x0"
-msgstr "0x0"
-
 #: tfrmviewer.miabout.caption
 msgctxt "TFRMVIEWER.MIABOUT.CAPTION"
 msgid "About"
@@ -9502,6 +9843,10 @@ msgstr "О програму"
 msgctxt "TFRMVIEWER.MIEDIT.CAPTION"
 msgid "&Edit"
 msgstr "&Уреди"
+
+#: tfrmviewer.miellipse.caption
+msgid "Ellipse"
+msgstr ""
 
 #: tfrmviewer.miencoding.caption
 msgctxt "TFRMVIEWER.MIENCODING.CAPTION"
@@ -9517,9 +9862,15 @@ msgstr "&Датотека"
 msgid "&Image"
 msgstr "&Слика"
 
-#: tfrmviewer.miprint.caption
-msgid "Print..."
-msgstr "Штампај..."
+#: tfrmviewer.mipen.caption
+#, fuzzy
+msgctxt "tfrmviewer.mipen.caption"
+msgid "Pen"
+msgstr "Оловка"
+
+#: tfrmviewer.mirect.caption
+msgid "Rect"
+msgstr ""
 
 #: tfrmviewer.mirotate.caption
 msgctxt "TFRMVIEWER.MIROTATE.CAPTION"
@@ -9645,10 +9996,54 @@ msgstr ""
 msgid "&Pause all"
 msgstr ""
 
+#: tgiocopymoveoperationoptionsui.cbfollowlinks.caption
+#, fuzzy
+msgctxt "tgiocopymoveoperationoptionsui.cbfollowlinks.caption"
+msgid "Fo&llow links"
+msgstr "С&леди везе"
+
+#: tgiocopymoveoperationoptionsui.lbldirectoryexists.caption
+#, fuzzy
+msgctxt "tgiocopymoveoperationoptionsui.lbldirectoryexists.caption"
+msgid "When dir&ectory exists"
+msgstr "Када &фасцикла постоји"
+
+#: tgiocopymoveoperationoptionsui.lblfileexists.caption
+#, fuzzy
+msgctxt "tgiocopymoveoperationoptionsui.lblfileexists.caption"
+msgid "When file exists"
+msgstr "Када датотека постоји"
+
 #: tmultiarchivecopyoperationoptionsui.lblfileexists.caption
 msgctxt "TMULTIARCHIVECOPYOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "Када датотека постоји"
+
+#: ttfrmconfirmcommandline.btncancel.caption
+#, fuzzy
+msgctxt "ttfrmconfirmcommandline.btncancel.caption"
+msgid "&Cancel"
+msgstr "&Откажи"
+
+#: ttfrmconfirmcommandline.btnok.caption
+#, fuzzy
+msgctxt "ttfrmconfirmcommandline.btnok.caption"
+msgid "&OK"
+msgstr "&У реду"
+
+#: ttfrmconfirmcommandline.lblecommandline.editlabel.caption
+msgid "Command line:"
+msgstr ""
+
+#: ttfrmconfirmcommandline.lbleparameters.editlabel.caption
+#, fuzzy
+msgctxt "ttfrmconfirmcommandline.lbleparameters.editlabel.caption"
+msgid "Parameters:"
+msgstr "Одреднице:"
+
+#: ttfrmconfirmcommandline.lblestartpath.editlabel.caption
+msgid "Start path:"
+msgstr ""
 
 #: twcxarchivecopyoperationoptionsui.lblfileexists.caption
 msgctxt "TWCXARCHIVECOPYOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
@@ -9669,6 +10064,50 @@ msgstr "Ради у позадини (посебна веза)"
 msgctxt "TWFXPLUGINCOPYMOVEOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "Када датотека постоји"
+
+#: uaccentsutils.rsstraccents
+msgid "á;â;à;å;ã;ä;ç;é;ê;è;ë;í;î;ì;ï;ñ;ó;ô;ò;ø;õ;ö;ú;û;ù;ü;ÿ;Á;Â;À;Å;Ã;Ä;Ç;É;Ê;È;Ë;Í;Í;Ì;Ï;Ñ;Ó;Ô;Ø;Õ;Ö;ß;Ú;Û;Ù;Ü;Ÿ;¿;¡;œ;æ;Æ;Œ"
+msgstr ""
+
+#: uaccentsutils.rsstraccentsstripped
+msgid "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;E;E;I;I;I;I;N;O;O;O;O;O;B;U;U;U;U;Y;?;!;oe;ae;AE;OE"
+msgstr ""
+
+#: uadministrator.rselevationrequired
+msgid "You need to provide administrator permission"
+msgstr ""
+
+#: uadministrator.rselevationrequiredcreate
+msgid "to create this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequireddelete
+msgid "to delete this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredgetattributes
+msgid "to get attributes of this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredhardlink
+msgid "to create this hard link:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredopen
+msgid "to open this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredrename
+msgid "to rename this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredsetattributes
+msgid "to set attributes of this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredsymlink
+msgid "to create this symbolic link:"
+msgstr ""
 
 #: uexifreader.rsdatetimeoriginal
 msgid "Date taken"
@@ -9866,9 +10305,10 @@ msgid "Imported TC toolbar"
 msgstr ""
 
 #: ulng.rsdefaultpersonalizedabbrevbyte
+#, fuzzy
 msgctxt "ulng.rsdefaultpersonalizedabbrevbyte"
 msgid "B"
-msgstr ""
+msgstr "Б"
 
 #: ulng.rsdefaultpersonalizedabbrevgiga
 msgid "GB"
@@ -9946,6 +10386,10 @@ msgstr "&Настави"
 #: ulng.rsdlgbuttonautorenamesource
 msgid "A&uto-rename source files"
 msgstr "&Самостално преименуј изворне датотеке"
+
+#: ulng.rsdlgbuttonautorenametarget
+msgid "A&uto-rename target files"
+msgstr ""
 
 #: ulng.rsdlgbuttoncancel
 msgctxt "ulng.rsdlgbuttoncancel"
@@ -10231,6 +10675,14 @@ msgstr ""
 msgid "Legacy DC .tab files"
 msgstr ""
 
+#: ulng.rsfilterlibraries
+msgid "Library files"
+msgstr ""
+
+#: ulng.rsfilterpluginfiles
+msgid "Plugin files"
+msgstr ""
+
 #: ulng.rsfilterstatus
 msgid "FILTER"
 msgstr "Услов"
@@ -10302,6 +10754,47 @@ msgstr ""
 msgid "Begin at"
 msgstr "Почни са"
 
+#: ulng.rsfontusageconsole
+msgid "&Console Font"
+msgstr ""
+
+#: ulng.rsfontusageeditor
+msgid "&Editor Font"
+msgstr "Словни лик уређивача"
+
+#: ulng.rsfontusagefunctionbuttons
+msgid "Function Buttons Font"
+msgstr ""
+
+#: ulng.rsfontusagelog
+msgid "&Log Font"
+msgstr "Словни лик дневника&"
+
+#: ulng.rsfontusagemain
+msgid "Main &Font"
+msgstr "Главни словни лик&"
+
+#: ulng.rsfontusagepathedit
+msgid "Path Font"
+msgstr ""
+
+#: ulng.rsfontusagesearchresults
+msgid "Search Results Font"
+msgstr ""
+
+#: ulng.rsfontusagetreeviewmenu
+msgid "Tree View Menu Font"
+msgstr ""
+
+#: ulng.rsfontusageviewer
+msgid "&Viewer Font"
+msgstr "Словни лик прегледника&"
+
+#: ulng.rsfontusageviewerbook
+msgctxt "ulng.rsfontusageviewerbook"
+msgid "Viewer&Book Font"
+msgstr "Словни лик прегледника& књига"
+
 #: ulng.rsfreemsg
 #, fuzzy
 msgid "%s of %s free"
@@ -10335,6 +10828,7 @@ msgid "Creation date/time"
 msgstr "Датум и време настанка"
 
 #: ulng.rsfuncext
+msgctxt "ulng.rsfuncext"
 msgid "Extension"
 msgstr "Наставак"
 
@@ -10434,6 +10928,11 @@ msgstr "Нађи датотеке"
 #: ulng.rshotkeycategorymain
 msgid "Main"
 msgstr "Главни"
+
+#: ulng.rshotkeycategorymultirename
+msgctxt "ulng.rshotkeycategorymultirename"
+msgid "Multi-Rename Tool"
+msgstr "Вишеструко преименовање"
 
 #: ulng.rshotkeycategorysyncdirs
 msgid "Synchronize Directories"
@@ -11444,6 +11943,7 @@ msgid "Below is a preview. You may move cursor and select files to get immediate
 msgstr ""
 
 #: ulng.rsmsgpassword
+msgctxt "ulng.rsmsgpassword"
 msgid "Password:"
 msgstr "Лозинка:"
 
@@ -11470,6 +11970,10 @@ msgstr "Обриши %s"
 #: ulng.rsmsgpresetalreadyexists
 msgid "Preset \"%s\" already exists. Overwrite?"
 msgstr "Датотека „%s“ већ постоји. Да је препишем?"
+
+#: ulng.rsmsgpresetconfigdelete
+msgid "Are you sure you want to delete preset \"%s\"?"
+msgstr ""
 
 #: ulng.rsmsgproblemexecutingcommand
 msgid "Problem executing command (%s)"
@@ -11510,6 +12014,10 @@ msgstr ""
 #: ulng.rsmsgrestartforapplychanges
 msgid "Please, restart Double Commander in order to apply changes"
 msgstr "Молим, поново покрените Двоструког наредника да би се примениле измене"
+
+#: ulng.rsmsgscriptcantfindlibrary
+msgid "ERROR: Problem loading Lua library file \"%s\""
+msgstr ""
 
 #: ulng.rsmsgsekectfiletype
 msgid "Select to which file type to add extension \"%s\""
@@ -11710,6 +12218,7 @@ msgid "<NO NAME>"
 msgstr ""
 
 #: ulng.rsmsgusername
+msgctxt "ulng.rsmsgusername"
 msgid "User name:"
 msgstr "Корисничко име:"
 
@@ -11737,6 +12246,10 @@ msgstr "Ознака уређаја:"
 msgid "Please enter the volume size:"
 msgstr "Унесите величину уређаја:"
 
+#: ulng.rsmsgwanttoconfigurelibrarylocation
+msgid "Do you want to configure Lua library location?"
+msgstr ""
+
 #: ulng.rsmsgwipefldr
 msgid "Wipe %d selected files/directories?"
 msgstr "Да ли да потпуно избришем %d означених датотека/фасцикли?"
@@ -11759,9 +12272,213 @@ msgstr ""
 msgid "Do auto-rename to \"name (1).ext\", \"name (2).ext\" etc.?"
 msgstr ""
 
+#: ulng.rsmulrencounter
+msgctxt "ulng.rsmulrencounter"
+msgid "Counter"
+msgstr "Бројач"
+
+#: ulng.rsmulrendate
+msgctxt "ulng.rsmulrendate"
+msgid "Date"
+msgstr "Датум"
+
+#: ulng.rsmulrendefaultpresetname
+msgid "Preset name"
+msgstr ""
+
+#: ulng.rsmulrendefinevariablename
+msgid "Define variable name"
+msgstr ""
+
+#: ulng.rsmulrendefinevariablevalue
+msgid "Define variable value"
+msgstr ""
+
+#: ulng.rsmulrenenternameforvar
+msgid "Enter variable name"
+msgstr ""
+
+#: ulng.rsmulrenentervalueforvar
+msgid "Enter value for variable \"%s\""
+msgstr ""
+
+#: ulng.rsmulrenexitmodifiedpresetoptions
+msgid "Ignore, just save as the [Last One];Prompt user to confirm if we save it;Save automatically"
+msgstr ""
+
+#: ulng.rsmulrenextension
+msgctxt "ulng.rsmulrenextension"
+msgid "Extension"
+msgstr "Наставак"
+
+#: ulng.rsmulrenfilename
+msgctxt "ulng.rsmulrenfilename"
+msgid "Name"
+msgstr "Име"
+
 #: ulng.rsmulrenfilenamestylelist
 msgid "No change;UPPERCASE;lowercase;First char uppercase;First Char Of Every Word Uppercase;"
 msgstr "Без измена;ВЕЛИКА СЛОВА;мала слова;Први знак велики;Први Знак Сваке Речи Велики;"
+
+#: ulng.rsmulrenlastpreset
+msgid "[The last used]"
+msgstr ""
+
+#: ulng.rsmulrenlaunchbehavioroptions
+msgid "Last masks under [Last One] preset;Last preset;New fresh masks"
+msgstr ""
+
+#: ulng.rsmulrenlogstart
+msgctxt "ulng.rsmulrenlogstart"
+msgid "Multi-Rename Tool"
+msgstr "Вишеструко преименовање"
+
+#: ulng.rsmulrenmaskcharatposx
+msgid "Character at position x"
+msgstr "знак на положају x"
+
+#: ulng.rsmulrenmaskcharatposxtoy
+msgid "Characters from position x to y"
+msgstr "знаци од положаја x до положаја y"
+
+#: ulng.rsmulrenmaskcompletedate
+msgid "Complete date"
+msgstr ""
+
+#: ulng.rsmulrenmaskcompletetime
+msgid "Complete time"
+msgstr ""
+
+#: ulng.rsmulrenmaskcounter
+msgctxt "ulng.rsmulrenmaskcounter"
+msgid "Counter"
+msgstr "Бројач"
+
+#: ulng.rsmulrenmaskday
+msgid "Day"
+msgstr "дан"
+
+#: ulng.rsmulrenmaskday2digits
+msgid "Day (2 digits)"
+msgstr "дан (2 цифре)"
+
+#: ulng.rsmulrenmaskdowabrev
+msgid "Day of the week (short, e.g., \"mon\")"
+msgstr "дан у недељи (кратко, нпр. „пон“)"
+
+#: ulng.rsmulrenmaskdowcomplete
+msgid "Day of the week (long, e.g., \"monday\")"
+msgstr "дан у недељи (потпуно, нпр. „понедељак“)"
+
+#: ulng.rsmulrenmaskextension
+msgctxt "ulng.rsmulrenmaskextension"
+msgid "Extension"
+msgstr "Наставак"
+
+#: ulng.rsmulrenmaskfullname
+msgid "Complete filename with path and extension"
+msgstr ""
+
+#: ulng.rsmulrenmaskfullnamecharatposxtoy
+msgid "Complete filename, char from pos x to y"
+msgstr ""
+
+#: ulng.rsmulrenmaskguid
+msgid "GUID"
+msgstr ""
+
+#: ulng.rsmulrenmaskhour
+msgid "Hour"
+msgstr "час"
+
+#: ulng.rsmulrenmaskhour2digits
+msgid "Hour (2 digits)"
+msgstr "Час (2 знака)"
+
+#: ulng.rsmulrenmaskmin
+msgid "Minute"
+msgstr "Минут"
+
+#: ulng.rsmulrenmaskmin2digits
+msgid "Minute (2 digits)"
+msgstr "Минут (2 знака)"
+
+#: ulng.rsmulrenmaskmonth
+msgid "Month"
+msgstr "Месец"
+
+#: ulng.rsmulrenmaskmonth2digits
+msgid "Month (2 digits)"
+msgstr "Месец (2 знака)"
+
+#: ulng.rsmulrenmaskmonthabrev
+msgid "Month name (short, e.g., \"jan\")"
+msgstr "Име месеца (кратко, нпр., „јан“)"
+
+#: ulng.rsmulrenmaskmonthcomplete
+msgid "Month name (long, e.g., \"january\")"
+msgstr "Име месеца (пуно, нпр., „јануар“)"
+
+#: ulng.rsmulrenmaskname
+msgctxt "ulng.rsmulrenmaskname"
+msgid "Name"
+msgstr "Име"
+
+#: ulng.rsmulrenmaskparent
+msgid "Parent folder(s)"
+msgstr ""
+
+#: ulng.rsmulrenmasksec
+msgid "Second"
+msgstr "Секунд"
+
+#: ulng.rsmulrenmasksec2digits
+msgid "Second (2 digits)"
+msgstr "Секунд (2 знака)"
+
+#: ulng.rsmulrenmaskvaronthefly
+msgid "Variable on the fly"
+msgstr ""
+
+#: ulng.rsmulrenmaskyear2digits
+msgid "Year (2 digits)"
+msgstr "Година (2 знака)"
+
+#: ulng.rsmulrenmaskyear4digits
+msgid "Year (4 digits)"
+msgstr "Година (4 знака)"
+
+#: ulng.rsmulrenplugins
+msgctxt "ulng.rsmulrenplugins"
+msgid "Plugins"
+msgstr "Прикљуци"
+
+#: ulng.rsmulrenpromptforsavedpresetname
+msgid "Save preset as"
+msgstr ""
+
+#: ulng.rsmulrenpromptnewnameexists
+msgid "Preset name already exists. Overwrite?"
+msgstr ""
+
+#: ulng.rsmulrenpromptnewpresetname
+msgid "Enter new preset name"
+msgstr ""
+
+#: ulng.rsmulrensavemodifiedpreset
+msgid ""
+"\"%s\" preset has been modified.\n"
+"Do you want to save it now?\n"
+msgstr ""
+
+#: ulng.rsmulrensortingpresets
+msgid "Sorting presets"
+msgstr ""
+
+#: ulng.rsmulrentime
+msgctxt "ulng.rsmulrentime"
+msgid "Time"
+msgstr "Време"
 
 #: ulng.rsmulrenwarningduplicate
 msgid "Warning, duplicate names!"
@@ -12374,6 +13091,10 @@ msgctxt "ulng.rsoptionseditordirectoryhotlist"
 msgid "Directory Hotlist"
 msgstr "Брзи списак фасцикли"
 
+#: ulng.rsoptionseditordirectoryhotlistextra
+msgid "Directory Hotlist Extra"
+msgstr ""
+
 #: ulng.rsoptionseditordraganddrop
 msgid "Drag & drop"
 msgstr "Превуци и спусти"
@@ -12491,6 +13212,11 @@ msgstr "Разно"
 msgid "Mouse"
 msgstr "Миш"
 
+#: ulng.rsoptionseditormultirename
+msgctxt "ulng.rsoptionseditormultirename"
+msgid "Multi-Rename Tool"
+msgstr "Вишеструко преименовање"
+
 #: ulng.rsoptionseditoroptionschanged
 msgid ""
 "Options have changed in \"%s\"\n"
@@ -12516,6 +13242,14 @@ msgstr "Терминал"
 #: ulng.rsoptionseditortoolbar
 msgid "Toolbar"
 msgstr "Трака алата"
+
+#: ulng.rsoptionseditortoolbarextra
+msgid "Toolbar Extra"
+msgstr ""
+
+#: ulng.rsoptionseditortoolbarmiddle
+msgid "Toolbar Middle"
+msgstr ""
 
 #: ulng.rsoptionseditortools
 msgctxt "ulng.rsoptionseditortools"
@@ -12629,7 +13363,9 @@ msgid "sort by name and show first;sort like files and show first;sort like file
 msgstr "распореди по имену и прикажи прву;распореди као датотеке и прикажи прву;распореди као датотеке"
 
 #: ulng.rsoptsortmethod
-msgid "Alphabetical, considering accents;Natural sorting: alphabetical and numbers"
+#, fuzzy
+#| msgid "Alphabetical, considering accents;Natural sorting: alphabetical and numbers"
+msgid "Alphabetical, considering accents;Alphabetical with special characters sort;Natural sorting: alphabetical and numbers;Natural with special characters sort"
 msgstr "Азбучно, водећи рачуна о акцентима;Природан распоред: азбучно и бројевно"
 
 #: ulng.rsopttabsposition
@@ -12842,6 +13578,10 @@ msgstr ""
 msgid "Select a directory"
 msgstr "Изаберите фасциклу"
 
+#: ulng.rsselectduplicatemethod
+msgid "Newest;Oldest;Largest;Smallest;First in group;Last in group"
+msgstr ""
+
 #: ulng.rsselectyoufindfileswindow
 msgid "Select your window"
 msgstr ""
@@ -12883,6 +13623,7 @@ msgid "False"
 msgstr ""
 
 #: ulng.rssimplewordfilename
+msgctxt "ulng.rssimplewordfilename"
 msgid "Filename"
 msgstr ""
 
@@ -12908,6 +13649,10 @@ msgstr ""
 
 #: ulng.rssimplewordtrue
 msgid "True"
+msgstr ""
+
+#: ulng.rssimplewordvariable
+msgid "Variable"
 msgstr ""
 
 #: ulng.rssimplewordworkdir
@@ -12964,14 +13709,6 @@ msgstr ""
 #: ulng.rssplitseldir
 msgid "Select directory:"
 msgstr "Изаберите фасциклу:"
-
-#: ulng.rsstraccents
-msgid "á;â;à;å;ã;ä;ç;é;ê;è;ë;í;î;ì;ï;ñ;ó;ô;ò;ø;õ;ö;ú;û;ù;ü;ÿ;Á;Â;À;Å;Ã;Ä;Ç;É;Ê;È;Ë;Í;Í;Ì;Ï;Ñ;Ó;Ô;Ø;Õ;Ö;ß;Ú;Û;Ù;Ü;Ÿ;¿;¡;œ;æ;Æ;Œ"
-msgstr ""
-
-#: ulng.rsstraccentsstripped
-msgid "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;E;E;I;I;I;I;N;O;O;O;O;O;B;U;U;U;U;Y;?;!;oe;ae;AE;OE"
-msgstr ""
 
 #: ulng.rsstrpreviewjustpreview
 msgid "Just preview"
@@ -13178,6 +13915,14 @@ msgstr ""
 
 #: ulng.rsvarinputparam
 msgid "Will request request user to enter a parameter with a default suggested value"
+msgstr ""
+
+#: ulng.rsvarlastdircurrentpath
+msgid "Last directory of panel's path"
+msgstr ""
+
+#: ulng.rsvarlastdirofpath
+msgid "Last directory of file's path"
 msgstr ""
 
 #: ulng.rsvarleftpanel

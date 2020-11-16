@@ -6,14 +6,16 @@ unit uWcxArchiveCopyOutOperation;
 interface
 
 uses
-  Classes, LazFileUtils,SysUtils, StringHashList, WcxPlugin, uLog, uGlobs,
+  Classes, LazFileUtils,SysUtils, DCStringHashListUtf8, WcxPlugin, uLog, uGlobs,
   uFileSourceCopyOperation,
+  uArchiveCopyOperation,
   uFileSource,
   uFileSourceOperation,
   uFileSourceOperationUI,
   uFileSourceOperationOptions,
   uFileSourceOperationOptionsUI,
   uFile,
+  uMasks,
   uWcxModule,
   uWcxArchiveFileSource;
 
@@ -21,7 +23,7 @@ type
 
   { TWcxArchiveCopyOutOperation }
 
-  TWcxArchiveCopyOutOperation = class(TFileSourceCopyOutOperation)
+  TWcxArchiveCopyOutOperation = class(TArchiveCopyOutOperation)
 
   private
     FWcxArchiveFileSource: IWcxArchiveFileSource;
@@ -38,7 +40,7 @@ type
 
       @param(Files
              List of files/directories to extract (relative to archive root).)
-      @param(FileMask
+      @param(MaskList
              Only directories containing files matching this mask will be created.)
       @param(sDestPath
              Destination path where the files will be extracted.)
@@ -47,9 +49,9 @@ type
       @param(CreatedPaths
              This list will be filled with absolute paths to directories
              that were created, together with their attributes.)}
-    procedure CreateDirsAndCountFiles(const theFiles: TFiles; FileMask: String;
+    procedure CreateDirsAndCountFiles(const theFiles: TFiles; MaskList: TMaskList;
                                       sDestPath: String; CurrentArchiveDir: String;
-                                      var CreatedPaths: TStringHashList);
+                                      var CreatedPaths: TStringHashListUtf8);
 
     {en
       Sets attributes for directories.
@@ -57,7 +59,7 @@ type
              The list of absolute paths, which attributes are to be set.
              Each list item's data field must be a pointer to THeaderData,
              from where the attributes are retrieved.}
-    function SetDirsAttributes(const Paths: TStringHashList): Boolean;
+    function SetDirsAttributes(const Paths: TStringHashListUtf8): Boolean;
 
     function DoFileExists(Header: TWcxHeader; var AbsoluteTargetFileName: String): TFileSourceOperationOptionFileExists;
 	
@@ -94,7 +96,7 @@ type
 implementation
 
 uses
-  Forms, LazUTF8, uMasks, FileUtil, contnrs, DCOSUtils, DCStrUtils, uDCUtils,
+  Forms, LazUTF8, FileUtil, contnrs, DCOSUtils, DCStrUtils, uDCUtils,
   fWcxArchiveCopyOperationOptions, uFileSystemUtil,
   uFileProcs, uLng, DCDateTimeUtils, DCBasicTypes, uShowMsg, DCConvertEncoding;
 
@@ -226,12 +228,12 @@ var
   ArcHandle: TArcHandle;
   Header: TWCXHeader;
   TargetFileName: String;
-  FileMask: String;
-  CreatedPaths: TStringHashList;
+  CreatedPaths: TStringHashListUtf8;
   OpenResult: Longint;
   iResult: Integer;
   Files: TFiles = nil;
   WcxModule: TWcxModule;
+  MaskList: TMaskList;
 begin
   WcxModule := FWcxArchiveFileSource.WcxModule;
 
@@ -244,18 +246,22 @@ begin
     RaiseAbortOperation;
   end;
 
-  FileMask := ExtractFileName(TargetPath);
-  if FileMask = '' then FileMask := '*';  // extract all selected files/folders
+  // Extract all selected files/folders
+  if (FExtractMask = '') or (FExtractMask = '*.*') or (FExtractMask = '*') then
+    MaskList:= nil
+  else begin
+    MaskList:= TMaskList.Create(FExtractMask);
+  end;
 
   // Convert file list so that filenames are relative to archive root.
   Files := SourceFiles.Clone;
   ChangeFileListRoot(PathDelim, Files);
 
-  CreatedPaths := TStringHashList.Create(True);
+  CreatedPaths := TStringHashListUtf8.Create(True);
 
   try
     // Count total files size and create needed directories.
-    CreateDirsAndCountFiles(Files, FileMask,
+    CreateDirsAndCountFiles(Files, MaskList,
                             TargetPath, Files.Path,
                             CreatedPaths);
 
@@ -270,22 +276,22 @@ begin
 
       if  (not FPS_ISDIR(Header.FileAttr))           // Omit directories (we handle them ourselves).
       and MatchesFileList(Files, Header.FileName)    // Check if it's included in the filelist
-      and ((FileMask = '*.*') or (FileMask = '*')    // And name matches file mask
-          or MatchesMaskList(ExtractFileName(Header.FileName), FileMask))
+      and ((MaskList = nil) or MaskList.Matches(ExtractFileNameEx(Header.FileName))) // And name matches file mask
       then
       begin
         if FExtractWithoutPath then
-          TargetFileName := TargetPath + ExtractFileName(Header.FileName)
+          TargetFileName := ExtractFileNameEx(Header.FileName)
         else
-          TargetFileName := TargetPath + ExtractDirLevel(Files.Path, Header.FileName);
+          TargetFileName := ExtractDirLevel(Files.Path, Header.FileName);
 
         if FRenamingFiles then
         begin
-          TargetFileName := ExtractFilePath(TargetFileName) +
-                            ApplyRenameMask(ExtractFileName(TargetFileName),
+          TargetFileName := ExtractFilePathEx(TargetFileName) +
+                            ApplyRenameMask(ExtractFileNameEx(TargetFileName),
                                             FRenameNameMask, FRenameExtMask);
-
         end;
+
+        TargetFileName := TargetPath + ReplaceInvalidChars(TargetFileName);
 
         with FStatistics do
         begin
@@ -352,6 +358,7 @@ begin
     iResult := WcxModule.CloseArchive(ArcHandle);
     // Free memory
     FreeAndNil(Files);
+    FreeAndNil(MaskList);
     FreeAndNil(CreatedPaths);
   end;
 end;
@@ -372,16 +379,16 @@ begin
 end;
 
 procedure TWcxArchiveCopyOutOperation.CreateDirsAndCountFiles(
-              const theFiles: TFiles; FileMask: String;
+              const theFiles: TFiles; MaskList: TMaskList;
               sDestPath: String; CurrentArchiveDir: String;
-              var CreatedPaths: TStringHashList);
+              var CreatedPaths: TStringHashListUtf8);
 var
   // List of paths that we know must be created.
-  PathsToCreate: TStringHashList;
+  PathsToCreate: TStringHashListUtf8;
 
   // List of possible directories to create with their attributes.
   // This hash list is created to speed up searches for attributes in archive file list.
-  DirsAttributes: TStringHashList;
+  DirsAttributes: TStringHashListUtf8;
 
   i: Integer;
   CurrentFileName: String;
@@ -392,56 +399,60 @@ var
   TargetDir: String;
   FileList: TObjectList;
 begin
-  FileList := FWcxArchiveFileSource.ArchiveFileList;
-
   { First, collect all the paths that need to be created and their attributes. }
 
-  PathsToCreate := TStringHashList.Create(True);
-  DirsAttributes := TStringHashList.Create(True);
+  PathsToCreate := TStringHashListUtf8.Create(True);
+  DirsAttributes := TStringHashListUtf8.Create(True);
 
-  for i := 0 to FileList.Count - 1 do
-  begin
-    Header := TWCXHeader(FileList.Items[i]);
-
-    // Check if the file from the archive fits the selection given via SourceFiles.
-    if not MatchesFileList(theFiles, Header.FileName) then
-      Continue;
-
-    if FPS_ISDIR(Header.FileAttr) then
+  FileList := FWcxArchiveFileSource.ArchiveFileList.LockList;
+  try
+    for i := 0 to FileList.Count - 1 do
     begin
-      CurrentFileName := ExtractDirLevel(CurrentArchiveDir, Header.FileName);
+      Header := TWCXHeader(FileList.Items[i]);
 
-      // Save this directory and a pointer to its entry.
-      DirsAttributes.Add(CurrentFileName, Header);
+      // Check if the file from the archive fits the selection given via SourceFiles.
+      if not MatchesFileList(theFiles, Header.FileName) then
+        Continue;
 
-      // If extracting all files and directories, add this directory
-      // to PathsToCreate so that empty directories are also created.
-      if (FileMask = '*.*') or (FileMask = '*') then
+      if FPS_ISDIR(Header.FileAttr) then
       begin
-        // Paths in PathsToCreate list must end with path delimiter.
-        CurrentFileName := IncludeTrailingPathDelimiter(CurrentFileName);
+        CurrentFileName := ExtractDirLevel(CurrentArchiveDir, Header.FileName);
+        CurrentFileName := ReplaceInvalidChars(CurrentFileName);
 
-        if PathsToCreate.Find(CurrentFileName) < 0 then
-          PathsToCreate.Add(CurrentFileName);
-      end;
-    end
-    else
-    begin
-      if ((FileMask = '*.*') or (FileMask = '*') or
-          MatchesMaskList(ExtractFileName(Header.FileName), FileMask)) then
-      begin
-        Inc(FStatistics.TotalBytes, Header.UnpSize);
-        Inc(FStatistics.TotalFiles, 1);
+        // Save this directory and a pointer to its entry.
+        DirsAttributes.Add(CurrentFileName, Header);
 
-        CurrentFileName := ExtractDirLevel(CurrentArchiveDir, ExtractFilePath(Header.FileName));
+        // If extracting all files and directories, add this directory
+        // to PathsToCreate so that empty directories are also created.
+        if (MaskList = nil) then
+        begin
+          // Paths in PathsToCreate list must end with path delimiter.
+          CurrentFileName := IncludeTrailingPathDelimiter(CurrentFileName);
 
-        // If CurrentFileName is empty now then it was a file in current archive
-        // directory, therefore we don't have to create any paths for it.
-        if Length(CurrentFileName) > 0 then
           if PathsToCreate.Find(CurrentFileName) < 0 then
             PathsToCreate.Add(CurrentFileName);
+        end;
+      end
+      else
+      begin
+        if ((MaskList = nil) or MaskList.Matches(ExtractFileNameEx(Header.FileName))) then
+        begin
+          Inc(FStatistics.TotalBytes, Header.UnpSize);
+          Inc(FStatistics.TotalFiles, 1);
+
+          CurrentFileName := ExtractDirLevel(CurrentArchiveDir, ExtractFilePathEx(Header.FileName));
+          CurrentFileName := ReplaceInvalidChars(CurrentFileName);
+
+          // If CurrentFileName is empty now then it was a file in current archive
+          // directory, therefore we don't have to create any paths for it.
+          if Length(CurrentFileName) > 0 then
+            if PathsToCreate.Find(CurrentFileName) < 0 then
+              PathsToCreate.Add(CurrentFileName);
+        end;
       end;
     end;
+  finally
+    FWcxArchiveFileSource.ArchiveFileList.UnlockList;
   end;
 
   if FExtractWithoutPath then Exit;
@@ -503,7 +514,7 @@ begin
   end;
 end;
 
-function TWcxArchiveCopyOutOperation.SetDirsAttributes(const Paths: TStringHashList): Boolean;
+function TWcxArchiveCopyOutOperation.SetDirsAttributes(const Paths: TStringHashListUtf8): Boolean;
 var
   PathIndex: Integer;
   TargetDir: String;
@@ -525,13 +536,7 @@ begin
         // Restore attributes
         mbFileSetAttr(TargetDir, Header.FileAttr);
 
-{$IF DEFINED(MSWINDOWS)}
-        DosToWinTime(TDosFileTime(Header.FileTime), Time);
-{$ELSE}
-  {$PUSH}{$R-}
-        Time := Header.FileTime;
-  {$POP}
-{$ENDIF}
+        Time := WcxFileTimeToFileTime(Header.FileTime);
 
         // Set creation, modification time
         mbFileSetTime(TargetDir, Time, Time, Time);
@@ -657,12 +662,12 @@ begin
             end;
           fsourRenameSource:
             begin
-              Message:= ExtractFileName(AbsoluteTargetFileName);
+              Message:= ExtractFileNameEx(AbsoluteTargetFileName);
               Answer:= ShowInputQuery(Thread, Application.Title, rsEditNewFileName, Message);
               if Answer then
               begin
                 Result:= fsoofeOverwrite;
-                AbsoluteTargetFileName:= ExtractFilePath(AbsoluteTargetFileName) + Message;
+                AbsoluteTargetFileName:= ExtractFilePathEx(AbsoluteTargetFileName) + Message;
               end;
             end;
           fsourNone,

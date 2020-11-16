@@ -29,16 +29,13 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Dialogs, Menus, ComCtrls,
   ActnList, ExtCtrls, EditBtn, Buttons, SynEdit, uSynDiffControls,
   uPariterControls, uDiffOND, uFormCommands, uHotkeyManager, uOSForms,
-  uBinaryDiffViewer, uShowForm, Graphics;
+  uBinaryDiffViewer, uShowForm, KASStatusBar, Graphics;
 
 type
 
   { TStatusBar }
 
-  TStatusBar = class(ComCtrls.TStatusBar)
-  protected
-    procedure InvalidatePanel(PanelIndex: Integer; PanelParts: TPanelParts); override;
-  end;
+  TStatusBar = class(TKASStatusBar);
 
   { TfrmDiffer }
 
@@ -302,18 +299,6 @@ begin
         WaitData.ShowOnTop(Differ);
     end;
   end;
-end;
-
-{ TStatusBar }
-
-procedure TStatusBar.InvalidatePanel(PanelIndex: Integer; PanelParts: TPanelParts);
-begin
-  if (PanelIndex >= 0) and (ppText in PanelParts) then
-  begin
-    if Length(Panels[PanelIndex].Text) > 0 then
-      Panels[PanelIndex].Width:= Canvas.TextWidth('WW' + Panels[PanelIndex].Text);
-  end;
-  inherited InvalidatePanel(PanelIndex, PanelParts);
 end;
 
 { TfrmDiffer }
@@ -1195,7 +1180,7 @@ begin
       end;
       with SynDiffEdit do
       begin
-        if (Encoding = EncodingUCS2LE) or (Encoding = EncodingUCS2BE) then
+        if (Encoding = EncodingUTF16LE) or (Encoding = EncodingUTF16BE) then
           AText:= Copy(AText, 3, MaxInt); // Skip BOM
       end;
       SynDiffEdit.Lines.Text:= ConvertEncoding(AText, SynDiffEdit.Encoding, EncodingUTF8)
@@ -1216,9 +1201,9 @@ var
   AMode: LongWord;
 begin
   AText := EmptyStr;
-  if (SynDiffEdit.Encoding = EncodingUCS2LE) then
+  if (SynDiffEdit.Encoding = EncodingUTF16LE) then
     AText := UTF16LEBOM
-  else if (SynDiffEdit.Encoding = EncodingUCS2BE) then begin
+  else if (SynDiffEdit.Encoding = EncodingUTF16BE) then begin
     AText := UTF16BEBOM
   end;
   with TStringListEx.Create do

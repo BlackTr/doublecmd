@@ -56,7 +56,7 @@ uses
    , BSD, BaseUnix, StrUtils, FileUtil
    {$ENDIF}
    {$IFDEF LINUX}
-   , uUDisks, uUDev, uMountWatcher, DCStrUtils, uOSUtils, FileUtil, uGVolume
+   , uUDisks, uUDev, uMountWatcher, DCStrUtils, uOSUtils, FileUtil, uGVolume, DCOSUtils
    {$ENDIF}
   {$ENDIF}
   {$IFDEF MSWINDOWS}
@@ -449,6 +449,7 @@ begin
     end;
     Drive^.DriveLabel := IdLabel;
     Drive^.FileSystem := IdType;
+    Drive^.DriveSize := StrToInt64Def(DeviceSize, 0) * 512;
 
     if DeviceIsPartition then
     begin
@@ -594,6 +595,7 @@ begin
       begin
         case DriveType of
           dtFloppy: ; // Don't retrieve, it's slow.
+          dtFlash,
           dtHardDisk:
             begin
               DriveLabel := mbGetVolumeLabel(Path, True);
@@ -603,6 +605,13 @@ begin
             DriveLabel := mbGetRemoteFileName(Path);
           else
             DriveLabel := mbGetVolumeLabel(Path, True);
+        end;
+        if DriveType in [dtFlash, dtHardDisk] then
+        begin
+          case mbDriveBusType(DriveLetter) of
+            BusTypeUsb: DriveType := dtRemovableUsb;
+            BusTypeSd, BusTypeMmc: DriveType := dtFlash;
+          end;
         end;
       end;
     end;
@@ -955,7 +964,7 @@ begin
                   DriveType := dtFloppy else
                 if IsPartOfString(['ZIP', 'USB', 'CAMERA'], UpperCase(FileSystem)) then
                   DriveType := dtFlash else
-                if IsPartOfString(['/MEDIA/'], UpperCase(MountPoint)) then
+                if IsPartOfString(['/MEDIA/', '/RUN/MEDIA/'], UpperCase(MountPoint)) then
                     DriveType := dtFlash else
                 if IsPartOfString(['NFS', 'SMB', 'NETW', 'CIFS'], UpperCase(FileSystem)) then
                   DriveType := dtNetwork

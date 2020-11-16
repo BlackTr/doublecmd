@@ -17,6 +17,10 @@ msgstr ""
 msgid "Comparing... %d%% (ESC to cancel)"
 msgstr "비교하기... %d%% (취소 ESC)"
 
+#: fsyncdirsdlg.rsdeleteleft
+msgid "Left: Delete %d file(s)"
+msgstr ""
+
 #: fsyncdirsdlg.rsdeleteright
 msgid "Right: Delete %d file(s)"
 msgstr "오른쪽: %d개 파일 삭제"
@@ -26,11 +30,15 @@ msgid "Files found: %d  (Identical: %d, Different: %d, Unique left: %d, Unique r
 msgstr "파일 찾음; %d (동일: %d, 다름: %d, 왼쪽 유일함: %d, 오른쪽 유일함: %d)"
 
 #: fsyncdirsdlg.rslefttorightcopy
-msgid "Left to Right: Copy %d files, total size: %d bytes"
+#, fuzzy,badformat
+#| msgid "Left to Right: Copy %d files, total size: %d bytes"
+msgid "Left to Right: Copy %d files, total size: %s (%s)"
 msgstr "왼쪽에서 오른쪽: %d개 파일 복사, 총 용량: %d 바이트"
 
 #: fsyncdirsdlg.rsrighttoleftcopy
-msgid "Right to Left: Copy %d files, total size: %d bytes"
+#, fuzzy,badformat
+#| msgid "Right to Left: Copy %d files, total size: %d bytes"
+msgid "Right to Left: Copy %d files, total size: %s (%s)"
 msgstr "오른쪽에서 왼쪽: %d 개 파일 복사, 총 용량: %d 바이트"
 
 #: tfilesystemcopymoveoperationoptionsui.btnsearchtemplate.hint
@@ -72,6 +80,7 @@ msgid "E&xclude empty directories"
 msgstr "빈 폴더 제외(&X)"
 
 #: tfilesystemcopymoveoperationoptionsui.cbfollowlinks.caption
+msgctxt "tfilesystemcopymoveoperationoptionsui.cbfollowlinks.caption"
 msgid "Fo&llow links"
 msgstr "링크 연결(&L)"
 
@@ -92,6 +101,7 @@ msgid "Use file template"
 msgstr "템플릿 파일 사용"
 
 #: tfilesystemcopymoveoperationoptionsui.lbldirectoryexists.caption
+msgctxt "tfilesystemcopymoveoperationoptionsui.lbldirectoryexists.caption"
 msgid "When dir&ectory exists"
 msgstr "폴더가 존재할 때(&E)"
 
@@ -693,56 +703,6 @@ msgctxt "TFRMDIFFER.CAPTION"
 msgid "Compare files"
 msgstr "파일 비교하기"
 
-#: tfrmdiffer.midivider1.caption
-msgctxt "TFRMDIFFER.MIDIVIDER1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider10.caption
-msgctxt "TFRMDIFFER.MIDIVIDER10.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider2.caption
-msgctxt "TFRMDIFFER.MIDIVIDER2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider3.caption
-msgctxt "TFRMDIFFER.MIDIVIDER3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider4.caption
-msgctxt "TFRMDIFFER.MIDIVIDER4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider5.caption
-msgctxt "TFRMDIFFER.MIDIVIDER5.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider6.caption
-msgctxt "TFRMDIFFER.MIDIVIDER6.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider7.caption
-msgctxt "TFRMDIFFER.MIDIVIDER7.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider8.caption
-msgctxt "TFRMDIFFER.MIDIVIDER8.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.midivider9.caption
-msgctxt "TFRMDIFFER.MIDIVIDER9.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmdiffer.miencodingleft.caption
 msgid "&Left"
 msgstr "왼쪽 방향키(&L)"
@@ -750,16 +710,6 @@ msgstr "왼쪽 방향키(&L)"
 #: tfrmdiffer.miencodingright.caption
 msgid "&Right"
 msgstr "오른쪽 방향키(&R)"
-
-#: tfrmdiffer.miseparator1.caption
-msgctxt "TFRMDIFFER.MISEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmdiffer.miseparator2.caption
-msgctxt "TFRMDIFFER.MISEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmdiffer.mnuactions.caption
 msgid "&Actions"
@@ -1308,11 +1258,6 @@ msgctxt "TFRMFILEPROPERTIES.LBLATTRTEXTSTR.CAPTION"
 msgid "Text:"
 msgstr "텍스트:"
 
-#: tfrmfileproperties.lblcontains.caption
-msgctxt "TFRMFILEPROPERTIES.LBLCONTAINS.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblcontainsstr.caption
 msgid "Contains:"
 msgstr "Contains:"
@@ -1341,11 +1286,6 @@ msgctxt "TFRMFILEPROPERTIES.LBLFILESTR.CAPTION"
 msgid "File name"
 msgstr "파일명"
 
-#: tfrmfileproperties.lblfolder.caption
-msgctxt "TFRMFILEPROPERTIES.LBLFOLDER.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblfolderstr.caption
 msgctxt "tfrmfileproperties.lblfolderstr.caption"
 msgid "Path:"
@@ -1356,28 +1296,13 @@ msgctxt "TFRMFILEPROPERTIES.LBLGROUPSTR.CAPTION"
 msgid "&Group"
 msgstr "그룹(&G)"
 
-#: tfrmfileproperties.lbllastaccess.caption
-msgctxt "TFRMFILEPROPERTIES.LBLLASTACCESS.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lbllastaccessstr.caption
 msgid "Last access:"
 msgstr "마지막 액세스:"
 
-#: tfrmfileproperties.lbllastmodif.caption
-msgctxt "TFRMFILEPROPERTIES.LBLLASTMODIF.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lbllastmodifstr.caption
 msgid "Last modification:"
 msgstr "마지막 변경:"
-
-#: tfrmfileproperties.lbllaststchange.caption
-msgctxt "TFRMFILEPROPERTIES.LBLLASTSTCHANGE.CAPTION"
-msgid "???"
-msgstr "???"
 
 #: tfrmfileproperties.lbllaststchangestr.caption
 msgid "Last status change:"
@@ -1398,29 +1323,14 @@ msgctxt "TFRMFILEPROPERTIES.LBLREAD.CAPTION"
 msgid "Read"
 msgstr "읽기"
 
-#: tfrmfileproperties.lblsize.caption
-msgctxt "TFRMFILEPROPERTIES.LBLSIZE.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblsizestr.caption
 msgctxt "TFRMFILEPROPERTIES.LBLSIZESTR.CAPTION"
 msgid "Size:"
 msgstr "크기:"
 
-#: tfrmfileproperties.lblsymlink.caption
-msgctxt "TFRMFILEPROPERTIES.LBLSYMLINK.CAPTION"
-msgid "???"
-msgstr "???"
-
 #: tfrmfileproperties.lblsymlinkstr.caption
 msgid "Symlink to:"
 msgstr "심볼링크 달기:"
-
-#: tfrmfileproperties.lbltype.caption
-msgctxt "TFRMFILEPROPERTIES.LBLTYPE.CAPTION"
-msgid "???"
-msgstr "???"
 
 #: tfrmfileproperties.lbltypestr.caption
 msgid "Type:"
@@ -1710,11 +1620,11 @@ msgid "Re&place by"
 msgstr "바꾸기(&P)"
 
 #: tfrmfinddlg.cbselectedfiles.caption
-msgid "Selected directories and &files"
+msgid "Selected directories and files"
 msgstr "선택된 파일과 폴더(&F)"
 
 #: tfrmfinddlg.cbtextregexp.caption
-msgid "Regular &expression"
+msgid "Reg&ular expression"
 msgstr "정규식(&E)"
 
 #: tfrmfinddlg.cbtimefrom.caption
@@ -1729,8 +1639,29 @@ msgstr "시간까지(&M):"
 msgid "&Use search plugin:"
 msgstr "검색 플러그인 사용(&U):"
 
+#: tfrmfinddlg.chkduplicatecontent.caption
+msgid "same content"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicatehash.caption
+msgid "same hash"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicatename.caption
+msgid "same name"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicates.caption
+msgid "Find du&plicate files:"
+msgstr ""
+
+#: tfrmfinddlg.chkduplicatesize.caption
+msgid "same size"
+msgstr ""
+
 #: tfrmfinddlg.chkhex.caption
-msgid "Hexadecimal"
+msgctxt "tfrmfinddlg.chkhex.caption"
+msgid "Hexadeci&mal"
 msgstr ""
 
 #: tfrmfinddlg.cmbexcludedirectories.hint
@@ -1744,6 +1675,30 @@ msgstr "\";\"로 검색 구분된 파일명 입력"
 #: tfrmfinddlg.cmbfindfilemask.hint
 msgid "Enter files names separated with \";\""
 msgstr "\";\"로 구분된 파일명 입력"
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[0].text
+#, fuzzy
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[0].text"
+msgid "Plugin"
+msgstr "플러그인"
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[1].text
+#, fuzzy
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[1].text"
+msgid "Field"
+msgstr "필드"
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[2].text
+#, fuzzy
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[2].text"
+msgid "Operator"
+msgstr "연산자"
+
+#: tfrmfinddlg.frmcontentplugins.headercontrol.sections[3].text
+#, fuzzy
+msgctxt "tfrmfinddlg.frmcontentplugins.headercontrol.sections[3].text"
+msgid "Value"
+msgstr "값"
 
 #: tfrmfinddlg.gbdirectories.caption
 msgctxt "TFRMFINDDLG.GBDIRECTORIES.CAPTION"
@@ -1878,6 +1833,35 @@ msgstr "찾기"
 msgid "C&ase sensitive"
 msgstr "대소문자 구분(&A)"
 
+#: tfrmfindview.chkhex.caption
+msgctxt "tfrmfindview.chkhex.caption"
+msgid "Hexadecimal"
+msgstr ""
+
+#: tfrmgioauthdialog.lbldomain.caption
+msgid "Domain:"
+msgstr ""
+
+#: tfrmgioauthdialog.lblpassword.caption
+#, fuzzy
+msgctxt "tfrmgioauthdialog.lblpassword.caption"
+msgid "Password:"
+msgstr "비밀번호:"
+
+#: tfrmgioauthdialog.lblusername.caption
+#, fuzzy
+msgctxt "tfrmgioauthdialog.lblusername.caption"
+msgid "User name:"
+msgstr "사용자 명:"
+
+#: tfrmgioauthdialog.rbanonymous.caption
+msgid "Connect anonymously"
+msgstr ""
+
+#: tfrmgioauthdialog.rbconnetas.caption
+msgid "Connect as user:"
+msgstr ""
+
 #: tfrmhardlink.btncancel.caption
 msgctxt "TFRMHARDLINK.BTNCANCEL.CAPTION"
 msgid "&Cancel"
@@ -2001,6 +1985,10 @@ msgstr "명령줄에 경로와 파일명 추가"
 #: tfrmmain.actaddpathtocmdline.caption
 msgid "Copy path to command line"
 msgstr "명령줄에 경로 복사"
+
+#: tfrmmain.actaddplugin.caption
+msgid "Add Plugin"
+msgstr ""
 
 #: tfrmmain.actbenchmark.caption
 msgid "&Benchmark"
@@ -2295,6 +2283,10 @@ msgstr "파일 쪼개기(&I)..."
 msgid "&Flat view"
 msgstr "일괄보기(하위폴더 포함)(&F)"
 
+#: tfrmmain.actflatviewsel.caption
+msgid "&Flat view, only selected"
+msgstr ""
+
 #: tfrmmain.actfocuscmdline.caption
 msgid "Focus command line"
 msgstr "명령 라인 포커스"
@@ -2315,13 +2307,29 @@ msgstr ""
 msgid "Switch between current file list and tree view (if enabled)"
 msgstr ""
 
+#: tfrmmain.actgotofirstentry.caption
+msgid "Place cursor on first folder or file"
+msgstr ""
+
 #: tfrmmain.actgotofirstfile.caption
 msgid "Place cursor on first file in list"
 msgstr "목록 첫 파일에 커서 두기"
 
+#: tfrmmain.actgotolastentry.caption
+msgid "Place cursor on last folder or file"
+msgstr ""
+
 #: tfrmmain.actgotolastfile.caption
 msgid "Place cursor on last file in list"
 msgstr "목록의 마지막 파일에 커서 두기"
+
+#: tfrmmain.actgotonextentry.caption
+msgid "Place cursor on next folder or file"
+msgstr ""
+
+#: tfrmmain.actgotopreventry.caption
+msgid "Place cursor on previous folder or file"
+msgstr ""
 
 #: tfrmmain.acthardlink.caption
 msgctxt "TFRMMAIN.ACTHARDLINK.CAPTION"
@@ -2449,7 +2457,7 @@ msgid "Minimize window"
 msgstr "창 최소화"
 
 #: tfrmmain.actmultirename.caption
-msgid "Multi &Rename Tool"
+msgid "Multi-&Rename Tool"
 msgstr "파일명 변경 도구(&R)"
 
 #: tfrmmain.actnetworkconnect.caption
@@ -3003,6 +3011,7 @@ msgid "Create link..."
 msgstr "링크 생성..."
 
 #: tfrmmain.milogclear.caption
+msgctxt "tfrmmain.milogclear.caption"
 msgid "Clear"
 msgstr "지우기"
 
@@ -3372,59 +3381,221 @@ msgstr "폭"
 msgid "456456465465465"
 msgstr ""
 
-#: tfrmmultirename.btnclose.caption
-msgctxt "TFRMMULTIRENAME.BTNCLOSE.CAPTION"
+#: tfrmmultirename.actanyextmask.caption
+msgctxt "tfrmmultirename.actanyextmask.caption"
+msgid "Extension"
+msgstr "확장자"
+
+#: tfrmmultirename.actanynamemask.caption
+msgctxt "tfrmmultirename.actanynamemask.caption"
+msgid "Filename"
+msgstr "파일명"
+
+#: tfrmmultirename.actclearextmask.caption
+msgctxt "tfrmmultirename.actclearextmask.caption"
+msgid "Clear"
+msgstr "지우기"
+
+#: tfrmmultirename.actclearnamemask.caption
+msgctxt "tfrmmultirename.actclearnamemask.caption"
+msgid "Clear"
+msgstr "지우기"
+
+#: tfrmmultirename.actclose.caption
+msgctxt "tfrmmultirename.actclose.caption"
 msgid "&Close"
 msgstr "닫기(&C)"
 
-#: tfrmmultirename.btndeletepreset.caption
-msgctxt "TFRMMULTIRENAME.BTNDELETEPRESET.CAPTION"
-msgid "&Delete"
-msgstr "삭제(&D)"
+#: tfrmmultirename.actconfig.caption
+msgid "Confi&guration"
+msgstr "환경설정"
 
-#: tfrmmultirename.btnedit.caption
-#, fuzzy
-msgctxt "tfrmmultirename.btnedit.caption"
-msgid "&Edit"
+#: tfrmmultirename.actctrextmask.caption
+msgctxt "tfrmmultirename.actctrextmask.caption"
+msgid "Counter"
+msgstr "일련 번호"
+
+#: tfrmmultirename.actctrnamemask.caption
+msgctxt "tfrmmultirename.actctrnamemask.caption"
+msgid "Counter"
+msgstr "일련 번호"
+
+#: tfrmmultirename.actdateextmask.caption
+msgctxt "tfrmmultirename.actdateextmask.caption"
+msgid "Date"
+msgstr "날짜"
+
+#: tfrmmultirename.actdatenamemask.caption
+msgctxt "tfrmmultirename.actdatenamemask.caption"
+msgid "Date"
+msgstr "날짜"
+
+#: tfrmmultirename.actdeletepreset.caption
+msgctxt "tfrmmultirename.actdeletepreset.caption"
+msgid "Delete"
+msgstr "삭제"
+
+#: tfrmmultirename.actdropdownpresetlist.caption
+msgid "Drop Down Presets List"
+msgstr ""
+
+#: tfrmmultirename.acteditnames.caption
+msgid "Edit Names..."
+msgstr ""
+
+#: tfrmmultirename.acteditnewnames.caption
+msgid "Edit Current New Names..."
+msgstr ""
+
+#: tfrmmultirename.actextextmask.caption
+msgctxt "tfrmmultirename.actextextmask.caption"
+msgid "Extension"
+msgstr "확장자"
+
+#: tfrmmultirename.actextnamemask.caption
+msgctxt "tfrmmultirename.actextnamemask.caption"
+msgid "Extension"
+msgstr "확장자"
+
+#: tfrmmultirename.actinvokeeditor.caption
+msgctxt "tfrmmultirename.actinvokeeditor.caption"
+msgid "Edit&or"
 msgstr "편집(&E)"
 
-#: tfrmmultirename.btnextmenu.caption
-msgctxt "TFRMMULTIRENAME.BTNEXTMENU.CAPTION"
-msgid "..."
-msgstr "..."
+#: tfrmmultirename.actinvokerelativepath.caption
+msgid "Invoke Relative Path Menu"
+msgstr ""
 
-#: tfrmmultirename.btnloadpreset.caption
-msgid "&Load"
-msgstr "불러오기(&L)"
+#: tfrmmultirename.actloadlastpreset.caption
+msgid "Load Last Preset"
+msgstr ""
 
-#: tfrmmultirename.btnnamemenu.caption
-msgctxt "TFRMMULTIRENAME.BTNNAMEMENU.CAPTION"
-msgid "..."
-msgstr "..."
+#: tfrmmultirename.actloadnamesfromfile.caption
+msgid "Load Names from File..."
+msgstr ""
 
-#: tfrmmultirename.btnrename.caption
-msgctxt "tfrmmultirename.btnrename.caption"
+#: tfrmmultirename.actloadpreset.caption
+msgid "Load Preset by Name or Index"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset1.caption
+msgid "Load Preset 1"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset2.caption
+msgid "Load Preset 2"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset3.caption
+msgid "Load Preset 3"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset4.caption
+msgid "Load Preset 4"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset5.caption
+msgid "Load Preset 5"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset6.caption
+msgid "Load Preset 6"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset7.caption
+msgid "Load Preset 7"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset8.caption
+msgid "Load Preset 8"
+msgstr ""
+
+#: tfrmmultirename.actloadpreset9.caption
+msgid "Load Preset 9"
+msgstr ""
+
+#: tfrmmultirename.actnameextmask.caption
+msgctxt "tfrmmultirename.actnameextmask.caption"
+msgid "Filename"
+msgstr "파일명"
+
+#: tfrmmultirename.actnamenamemask.caption
+msgctxt "tfrmmultirename.actnamenamemask.caption"
+msgid "Filename"
+msgstr "파일명"
+
+#: tfrmmultirename.actplgnextmask.caption
+msgctxt "tfrmmultirename.actplgnextmask.caption"
+msgid "Plugins"
+msgstr "플러그인"
+
+#: tfrmmultirename.actplgnnamemask.caption
+msgctxt "tfrmmultirename.actplgnnamemask.caption"
+msgid "Plugins"
+msgstr "플러그인"
+
+#: tfrmmultirename.actrename.caption
+msgctxt "tfrmmultirename.actrename.caption"
 msgid "&Rename"
 msgstr "파일명 변경(&R)"
 
-#: tfrmmultirename.btnrestore.caption
-msgid "Reset &all"
-msgstr "전체 재설정(&A)"
+#: tfrmmultirename.actrenamepreset.caption
+msgctxt "tfrmmultirename.actrenamepreset.caption"
+msgid "Rename"
+msgstr "파일명 바꾸기"
 
-#: tfrmmultirename.btnsavepreset.caption
-msgctxt "TFRMMULTIRENAME.BTNSAVEPRESET.CAPTION"
-msgid "&Save"
-msgstr "저장(&S)"
+#: tfrmmultirename.actresetall.caption
+msgctxt "tfrmmultirename.actresetall.caption"
+msgid "Reset &All"
+msgstr "전체 재설정(A)"
+
+#: tfrmmultirename.actsavepreset.caption
+msgctxt "tfrmmultirename.actsavepreset.caption"
+msgid "Save"
+msgstr "저장(S)"
+
+#: tfrmmultirename.actsavepresetas.caption
+msgctxt "tfrmmultirename.actsavepresetas.caption"
+msgid "Save As..."
+msgstr "새 이름 저장(A)..."
+
+#: tfrmmultirename.actshowpresetsmenu.caption
+msgid "Show Preset Menu"
+msgstr ""
+
+#: tfrmmultirename.actsortpresets.caption
+msgid "Sort"
+msgstr "정렬"
+
+#: tfrmmultirename.acttimeextmask.caption
+msgctxt "tfrmmultirename.acttimeextmask.caption"
+msgid "Time"
+msgstr "시각"
+
+#: tfrmmultirename.acttimenamemask.caption
+msgctxt "tfrmmultirename.acttimenamemask.caption"
+msgid "Time"
+msgstr "시각"
+
+#: tfrmmultirename.actviewrenamelogfile.caption
+msgid "View Rename Log File"
+msgstr ""
 
 #: tfrmmultirename.caption
 msgctxt "TFRMMULTIRENAME.CAPTION"
-msgid "MultiRename"
+msgid "Multi-Rename Tool"
 msgstr "여러개 파일명 바꾸기"
 
 #: tfrmmultirename.cblog.caption
+#, fuzzy
+#| msgid "Ena&ble"
 msgctxt "TFRMMULTIRENAME.CBLOG.CAPTION"
-msgid "Ena&ble"
+msgid "&Log result"
 msgstr "가능(&B)"
+
+#: tfrmmultirename.cblogappend.caption
+msgid "Append"
+msgstr ""
 
 #: tfrmmultirename.cbregexp.caption
 msgctxt "TFRMMULTIRENAME.CBREGEXP.CAPTION"
@@ -3449,21 +3620,14 @@ msgctxt "TFRMMULTIRENAME.EDPOC.TEXT"
 msgid "1"
 msgstr "1"
 
-#: tfrmmultirename.extension.caption
-msgid "[E] Extension"
-msgstr "[E] 확장자"
-
 #: tfrmmultirename.gbcounter.caption
+msgctxt "tfrmmultirename.gbcounter.caption"
 msgid "Counter"
 msgstr "일련 번호"
 
 #: tfrmmultirename.gbfindreplace.caption
 msgid "Find && Replace"
 msgstr "찾기 && 바꾸기"
-
-#: tfrmmultirename.gblog.caption
-msgid "Log Result"
-msgstr "로그 결과"
 
 #: tfrmmultirename.gbmaska.caption
 msgid "Mask"
@@ -3502,143 +3666,15 @@ msgctxt "TFRMMULTIRENAME.LBWIDTH.CAPTION"
 msgid "&Width"
 msgstr "자릿수(&W)"
 
-#: tfrmmultirename.micounter.caption
-msgid "[C] Counter"
-msgstr "[C] 일련 번호"
+#: tfrmmultirename.miactions.caption
+msgctxt "tfrmmultirename.miactions.caption"
+msgid "Actions"
+msgstr "액션"
 
-#: tfrmmultirename.miday.caption
-msgid "[D] Day"
-msgstr "[D] 일자"
-
-#: tfrmmultirename.miday1.caption
-msgid "[DD] Day (2 digits)"
-msgstr "[DD] 일자( 2 didgits)"
-
-#: tfrmmultirename.miday2.caption
-msgid "[DDD] Day of the week (short, e.g., \"mon\")"
-msgstr "[DDD] 요일(짧게,예,\"월\")"
-
-#: tfrmmultirename.miday3.caption
-msgid "[DDDD] Day of the week (long, e.g., \"monday\")"
-msgstr "[DDDD] 요일(길게, 예, \"월요일\")"
-
-#: tfrmmultirename.miextensionx.caption
-msgid "[Ex] Character at position x"
-msgstr "[Ex] 문자 위치 x"
-
-#: tfrmmultirename.miextensionxx.caption
-msgid "[Ex:y] Characters from position x to y"
-msgstr "[Ex:y] 문자 위치 x에서 y"
-
-#: tfrmmultirename.mihour.caption
-msgid "[h] Hour"
-msgstr "[h] 시간"
-
-#: tfrmmultirename.mihour1.caption
-msgid "[hh] Hour (2 digits)"
-msgstr "[hh] 시간 ( 2자리)"
-
-#: tfrmmultirename.miminute.caption
-msgid "[n] Minute"
-msgstr "[n] 분"
-
-#: tfrmmultirename.miminute1.caption
-msgid "[nn] Minute (2 digits)"
-msgstr "[nn] 분 (2자리)"
-
-#: tfrmmultirename.mimonth.caption
-msgid "[M] Month"
-msgstr "[M] 월"
-
-#: tfrmmultirename.mimonth1.caption
-msgid "[MM] Month (2 digits)"
-msgstr "[MM] 월 (2자리)"
-
-#: tfrmmultirename.mimonth2.caption
-msgid "[MMM] Month name (short, e.g., \"jan\")"
-msgstr "[MMM] 월 (짧게, 예, \"jan\")"
-
-#: tfrmmultirename.mimonth3.caption
-msgid "[MMMM] Month name (long, e.g., \"january\")"
-msgstr "[MMMM] 월 (길게, 예, \"january\")"
-
-#: tfrmmultirename.miname.caption
-msgid "[N] Name"
-msgstr "[N] 파일명"
-
-#: tfrmmultirename.minamex.caption
-msgid "[Nx] Character at position x"
-msgstr "[Nx] 문자 위치 x"
-
-#: tfrmmultirename.minamexx.caption
-msgid "[Nx:y] Characters from position x to y"
-msgstr "[Nx:y] 문자 위치 x에서 y까지"
-
-#: tfrmmultirename.minext.caption
-msgid "Time..."
-msgstr "시각..."
-
-#: tfrmmultirename.minextextension.caption
-msgid "Extension..."
-msgstr "확장자..."
-
-#: tfrmmultirename.minextname.caption
-msgid "Name..."
-msgstr "파일명..."
-
-#: tfrmmultirename.miplugin.caption
-msgctxt "TFRMMULTIRENAME.MIPLUGIN.CAPTION"
-msgid "Plugin"
-msgstr "플러그인"
-
-#: tfrmmultirename.misecond.caption
-msgid "[s] Second"
-msgstr "[s] 초"
-
-#: tfrmmultirename.misecond1.caption
-msgid "[ss] Second (2 digits)"
-msgstr "[ss] 초 (2자리)"
-
-#: tfrmmultirename.miyear.caption
-msgid "[Y] Year (2 digits)"
-msgstr "[Y] 년 (2 자리)"
-
-#: tfrmmultirename.miyear1.caption
-msgid "[YYYY] Year (4 digits)"
-msgstr "[YYYY] 년 (4 자리)"
-
-#: tfrmmultirename.mnueditnames.caption
-msgid "Edit names..."
-msgstr ""
-
-#: tfrmmultirename.mnuloadfromfile.caption
-msgid "Load names from file..."
-msgstr ""
-
-#: tfrmmultirename.n1.caption
-msgctxt "TFRMMULTIRENAME.N1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n2.caption
-msgctxt "TFRMMULTIRENAME.N2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n3.caption
-msgctxt "TFRMMULTIRENAME.N3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n4.caption
-msgctxt "TFRMMULTIRENAME.N4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmultirename.n5.caption
-msgctxt "TFRMMULTIRENAME.N5.CAPTION"
-msgid "-"
-msgstr "-"
+#: tfrmmultirename.mieditor.caption
+msgctxt "tfrmmultirename.mieditor.caption"
+msgid "Editor"
+msgstr "편집(&E)"
 
 #: tfrmmultirename.stringgrid.columns[0].title.caption
 msgctxt "TFRMMULTIRENAME.STRINGGRID.COLUMNS[0].TITLE.CAPTION"
@@ -4349,11 +4385,6 @@ msgstr ">>"
 msgid "Go to set default"
 msgstr "기본설정 가기"
 
-#: tfrmoptionscustomcolumns.btngotosetdefault.hint
-msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNGOTOSETDEFAULT.HINT"
-msgid "Reset to default"
-msgstr "기본으로 재설정"
-
 #: tfrmoptionscustomcolumns.btninactivecursorcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNINACTIVECURSORCOLOR.CAPTION"
 msgid ">>"
@@ -4583,7 +4614,9 @@ msgid "Background 2:"
 msgstr "배경2:"
 
 #: tfrmoptionscustomcolumns.lblconfigcolumns.caption
-msgid "Con&figure columns view:"
+#, fuzzy
+#| msgid "Con&figure columns view:"
+msgid "&Columns view:"
 msgstr "파일속성열 제목 보기 환경설정(&F):"
 
 #: tfrmoptionscustomcolumns.lblcurrentcolumn.caption
@@ -4599,6 +4632,10 @@ msgstr "커서 색상:"
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLCURSORTEXT.CAPTION"
 msgid "Cursor Text:"
 msgstr "커서 글자:"
+
+#: tfrmoptionscustomcolumns.lblfilesystem.caption
+msgid "&File system:"
+msgstr ""
 
 #: tfrmoptionscustomcolumns.lblfontname.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLFONTNAME.CAPTION"
@@ -5090,6 +5127,37 @@ msgstr ""
 msgid "Addition from main panel"
 msgstr "메인창에서 추가:"
 
+#: tfrmoptionsdirectoryhotlistextra.btnpathtoberelativetoall.caption
+msgid "Apply current settings to directory hotlist"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlistsource.caption
+msgid "Source"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.ckbdirectoryhotlisttarget.caption
+msgid "Target"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption
+msgctxt "tfrmoptionsdirectoryhotlistextra.gbdirectoryhotlistoptionsextra.caption"
+msgid "Paths"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.lbdirectoryhotlistfilenamestyle.caption
+msgid "Way to set paths when adding them:"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption
+msgctxt "tfrmoptionsdirectoryhotlistextra.lblapplysettingsfor.caption"
+msgid "Do this for paths of:"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionsdirectoryhotlistextra.lbpathtoberelativeto.caption"
+msgid "Path to be relative to:"
+msgstr ""
+
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
 msgid "From all the supported formats, ask which one to use every time"
 msgstr "지원 가능한 모든 파일 형태를 항상 묻기"
@@ -5202,6 +5270,10 @@ msgstr ""
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "내부 편집기 옵션"
+
+#: tfrmoptionseditor.lblrightedge.caption
+msgid "Right margin:"
+msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -5416,16 +5488,6 @@ msgstr "저장된 탭 왼쪽창에 복구:"
 msgid "Tabs saved on right to be restored to:"
 msgstr "저장된 탭 오른쪽창에 복구:"
 
-#: tfrmoptionsfavoritetabs.menuitem1.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MENUITEM1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.menuitem2.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MENUITEM2.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmoptionsfavoritetabs.miaddseparator.caption
 msgctxt "TFRMOPTIONSFAVORITETABS.MIADDSEPARATOR.CAPTION"
 msgid "a separator"
@@ -5533,46 +5595,6 @@ msgstr "붙여넣기"
 msgctxt "TFRMOPTIONSFAVORITETABS.MIRENAME.CAPTION"
 msgid "Rename"
 msgstr "이름 바꾸기"
-
-#: tfrmoptionsfavoritetabs.miseparator1.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator10.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR10.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator11.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR11.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator2.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator3.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator7.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR7.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator8.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR8.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsfavoritetabs.miseparator9.caption
-msgctxt "TFRMOPTIONSFAVORITETABS.MISEPARATOR9.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmoptionsfavoritetabs.misorteverything.caption
 msgctxt "TFRMOPTIONSFAVORITETABS.MISORTEVERYTHING.CAPTION"
@@ -5840,6 +5862,10 @@ msgstr "다른 뷰어로 보기..."
 msgid "Click me to change icon!"
 msgstr "아이콘 변경하려면 클릭!"
 
+#: tfrmoptionsfileassocextra.btnpathtoberelativetoall.caption
+msgid "Apply current settings to all current configured filenames and paths"
+msgstr ""
+
 #: tfrmoptionsfileassocextra.cbexecuteviashell.caption
 msgctxt "TFRMOPTIONSFILEASSOCEXTRA.CBEXECUTEVIASHELL.CAPTION"
 msgid "Execute via shell"
@@ -5872,9 +5898,44 @@ msgctxt "TFRMOPTIONSFILEASSOCEXTRA.CBOPENSYSTEMWITHTERMINALSTAYOPEN.CAPTION"
 msgid "Execute via terminal and stay open"
 msgstr "명령 프롬프트에서 실행하고 창 열어두기"
 
+#: tfrmoptionsfileassocextra.ckbfileassoccommand.caption
+msgctxt "tfrmoptionsfileassocextra.ckbfileassoccommand.caption"
+msgid "Commands"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.ckbfileassocicons.caption
+msgctxt "tfrmoptionsfileassocextra.ckbfileassocicons.caption"
+msgid "Icons"
+msgstr "아이콘"
+
+#: tfrmoptionsfileassocextra.ckbfileassocstartpath.caption
+msgctxt "tfrmoptionsfileassocextra.ckbfileassocstartpath.caption"
+msgid "Starting paths"
+msgstr ""
+
 #: tfrmoptionsfileassocextra.gbextendedcontextmenuoptions.caption
 msgid "Extended options items:"
 msgstr "목록 확장 옵션:"
+
+#: tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption
+msgctxt "tfrmoptionsfileassocextra.gbtoolbaroptionsextra.caption"
+msgid "Paths"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption
+msgctxt "tfrmoptionsfileassocextra.lbfileassocfilenamestyle.caption"
+msgid "Way to set paths when adding elements for icons, commands and starting paths:"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.lblapplysettingsfor.caption
+msgctxt "tfrmoptionsfileassocextra.lblapplysettingsfor.caption"
+msgid "Do this for files and path for:"
+msgstr ""
+
+#: tfrmoptionsfileassocextra.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionsfileassocextra.lbpathtoberelativeto.caption"
+msgid "Path to be relative to:"
+msgstr ""
 
 #: tfrmoptionsfileoperations.bvlconfirmations.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.BVLCONFIRMATIONS.CAPTION"
@@ -6351,84 +6412,10 @@ msgctxt "TFRMOPTIONSFILETYPESCOLORS.LBLCATEGORYNAME.CAPTION"
 msgid "Category &name:"
 msgstr "범주명(&N):"
 
-#: tfrmoptionsfonts.btnpatheditfnt.caption
-#, fuzzy
-msgctxt "tfrmoptionsfonts.btnpatheditfnt.caption"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnsearchresultsfnt.caption
-#, fuzzy
-msgctxt "tfrmoptionsfonts.btnsearchresultsfnt.caption"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselconsolefnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELCONSOLEFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnseleditfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELEDITFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnsellogfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELLOGFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselmainfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELMAINFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselviewerbookfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELVIEWERBOOKFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.btnselviewfnt.caption
-msgctxt "TFRMOPTIONSFONTS.BTNSELVIEWFNT.CAPTION"
-msgid "..."
-msgstr "..."
-
-#: tfrmoptionsfonts.lblconsolefont.caption
-msgid "&Console font"
-msgstr "콘솔 글꼴(&C)"
-
-#: tfrmoptionsfonts.lbleditorfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLEDITORFONT.CAPTION"
-msgid "&Editor font"
-msgstr "편집기 글꼴(&E)"
-
-#: tfrmoptionsfonts.lbllogfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLLOGFONT.CAPTION"
-msgid "&Log font"
-msgstr "로그 글꼴(&L)"
-
-#: tfrmoptionsfonts.lblmainfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLMAINFONT.CAPTION"
-msgid "Main &font"
-msgstr "주 글꼴(&F)"
-
-#: tfrmoptionsfonts.lblpatheditfont.caption
-msgid "Path font"
-msgstr ""
-
-#: tfrmoptionsfonts.lblsearchresultsfont.caption
-msgid "Search results font"
-msgstr ""
-
-#: tfrmoptionsfonts.lblviewerbookfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLVIEWERBOOKFONT.CAPTION"
-msgid "Viewer&Book Font"
-msgstr "뷰어책 글꼴(&B)"
-
-#: tfrmoptionsfonts.lblviewerfont.caption
-msgctxt "TFRMOPTIONSFONTS.LBLVIEWERFONT.CAPTION"
-msgid "&Viewer font"
-msgstr "뷰어 글꼴(&V)"
+#: tfrmoptionsfonts.hint
+msgctxt "tfrmoptionsfonts.hint"
+msgid "Fonts"
+msgstr "글꼴"
 
 #: tfrmoptionshotkeys.actaddhotkey.caption
 #, fuzzy
@@ -6532,14 +6519,42 @@ msgctxt "tfrmoptionshotkeys.micommands.caption"
 msgid "Command"
 msgstr "명령어"
 
-#: tfrmoptionshotkeys.miseparator1.caption
-#, fuzzy
-msgctxt "tfrmoptionshotkeys.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
 #: tfrmoptionshotkeys.misortorder.caption
 msgid "Sort order"
+msgstr ""
+
+#: tfrmoptionshotkeys.stgcommands.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stgcommands.columns[0].title.caption"
+msgid "Command"
+msgstr "명령어"
+
+#: tfrmoptionshotkeys.stgcommands.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stgcommands.columns[1].title.caption"
+msgid "Hotkeys"
+msgstr "바로 가기"
+
+#: tfrmoptionshotkeys.stgcommands.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stgcommands.columns[2].title.caption"
+msgid "Description"
+msgstr "설명"
+
+#: tfrmoptionshotkeys.stghotkeys.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stghotkeys.columns[0].title.caption"
+msgid "Hotkey"
+msgstr "단축키"
+
+#: tfrmoptionshotkeys.stghotkeys.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionshotkeys.stghotkeys.columns[1].title.caption"
+msgid "Parameters"
+msgstr "매개변수"
+
+#: tfrmoptionshotkeys.stghotkeys.columns[2].title.caption
+msgid "Controls"
 msgstr ""
 
 #: tfrmoptionsicons.cbiconsexclude.caption
@@ -6683,11 +6698,6 @@ msgctxt "TFRMOPTIONSLAYOUT.CBFLATINTERFACE.CAPTION"
 msgid "Flat i&nterface"
 msgstr "단순 인터페이스(&N)"
 
-#: tfrmoptionslayout.cbflattoolbar.caption
-msgctxt "TFRMOPTIONSLAYOUT.CBFLATTOOLBAR.CAPTION"
-msgid "Flat b&uttons"
-msgstr "단순 버튼(&U)"
-
 #: tfrmoptionslayout.cbfreespaceind.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBFREESPACEIND.CAPTION"
 msgid "Show fr&ee space indicator on drive label"
@@ -6778,6 +6788,10 @@ msgctxt "TFRMOPTIONSLAYOUT.CBTWODISKPANELS.CAPTION"
 msgid "Show two drive button bars (fi&xed width, above file windows)"
 msgstr "(파일창위에 고정폭으로)두 개의 버튼 바 표시(&X)"
 
+#: tfrmoptionslayout.chkshowmiddletoolbar.caption
+msgid "Show middle toolbar"
+msgstr ""
+
 #: tfrmoptionslayout.gbscreenlayout.caption
 msgctxt "TFRMOPTIONSLAYOUT.GBSCREENLAYOUT.CAPTION"
 msgid " Screen layout "
@@ -6830,6 +6844,10 @@ msgstr "에러 로그(&E)"
 msgctxt "TFRMOPTIONSLOG.CBLOGFILE.CAPTION"
 msgid "C&reate a log file:"
 msgstr "로그파일 생성(&R):"
+
+#: tfrmoptionslog.cblogfilecount.caption
+msgid "Maximum log file count"
+msgstr ""
 
 #: tfrmoptionslog.cbloginfo.caption
 msgctxt "TFRMOPTIONSLOG.CBLOGINFO.CAPTION"
@@ -7007,6 +7025,54 @@ msgstr ""
 msgid "Single click (opens folders, double click for files)"
 msgstr ""
 
+#: tfrmoptionsmultirename.btnmulrenlogfilenamerelative.hint
+#, fuzzy
+msgctxt "tfrmoptionsmultirename.btnmulrenlogfilenamerelative.hint"
+msgid "Some functions to select appropriate path"
+msgstr "적절한 경로를 선택하기위한 기능"
+
+#: tfrmoptionsmultirename.btnmulrenlogfilenameview.hint
+#, fuzzy
+msgctxt "tfrmoptionsmultirename.btnmulrenlogfilenameview.hint"
+msgid "View log file content"
+msgstr "로그 파일 내용 보기"
+
+#: tfrmoptionsmultirename.ckbdailyindividualdirmultrenlog.caption
+msgid "Individual directories per day"
+msgstr ""
+
+#: tfrmoptionsmultirename.ckbfilenamewithfullpathinlog.caption
+msgid "Log filenames with full path"
+msgstr ""
+
+#: tfrmoptionsmultirename.ckbshowmenubarontop.caption
+msgid "Show menu bar on top "
+msgstr ""
+
+#: tfrmoptionsmultirename.gbsaverenaminglog.caption
+msgid "Rename log"
+msgstr ""
+
+#: tfrmoptionsmultirename.lbinvalidcharreplacement.caption
+msgid "Replace invalid filename character b&y"
+msgstr ""
+
+#: tfrmoptionsmultirename.rbrenaminglogappendsamefile.caption
+msgid "Append in the same rename log file"
+msgstr ""
+
+#: tfrmoptionsmultirename.rbrenaminglogperpreset.caption
+msgid "Per preset"
+msgstr ""
+
+#: tfrmoptionsmultirename.rgexitmodifiedpreset.caption
+msgid "Exit with modified preset"
+msgstr ""
+
+#: tfrmoptionsmultirename.rglaunchbehavior.caption
+msgid "Preset at launch"
+msgstr ""
+
 #: tfrmoptionspluginsbase.btnaddplugin.caption
 msgctxt "tfrmoptionspluginsbase.btnaddplugin.caption"
 msgid "A&dd"
@@ -7062,6 +7128,30 @@ msgctxt "tfrmoptionspluginsdsx.lblplugindescription.caption"
 msgid "Searc&h plugins allow one to use alternative search algorithms or external tools (like \"locate\", etc.)"
 msgstr "다른 검색 알고리듬 또는 외부프로그램(예,\"locate\"처럼) 검색 플러그인 허용(&H)"
 
+#: tfrmoptionspluginsdsx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "활성"
+
+#: tfrmoptionspluginsdsx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "플러그인"
+
+#: tfrmoptionspluginsdsx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "등록"
+
+#: tfrmoptionspluginsdsx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginsdsx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "파일명"
+
 #: tfrmoptionspluginsgroup.btnpathtoberelativetoall.caption
 msgid "Apply current settings to all current configured plugins"
 msgstr ""
@@ -7074,7 +7164,12 @@ msgstr ""
 msgid "Configuration:"
 msgstr ""
 
+#: tfrmoptionspluginsgroup.lbllualibraryfilename.caption
+msgid "Lua library file to use:"
+msgstr ""
+
 #: tfrmoptionspluginsgroup.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionspluginsgroup.lbpathtoberelativeto.caption"
 msgid "Path to be relative to:"
 msgstr ""
 
@@ -7116,15 +7211,87 @@ msgctxt "tfrmoptionspluginswdx.lblplugindescription.caption"
 msgid "Content plu&gins allow one to display extended file details like mp3 tags or image attributes in file lists, or use them in search and multi-rename tool"
 msgstr "Mp3태그나 이미지 속성 표시, 검색, 파일명 변경도구 플러그인 허용(&G)"
 
+#: tfrmoptionspluginswdx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "활성"
+
+#: tfrmoptionspluginswdx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "플러그인"
+
+#: tfrmoptionspluginswdx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "등록"
+
+#: tfrmoptionspluginswdx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswdx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "파일명"
+
 #: tfrmoptionspluginswfx.lblplugindescription.caption
 msgctxt "tfrmoptionspluginswfx.lblplugindescription.caption"
 msgid "Fi&le system plugins allow access to disks inaccessible by operating system or to external devices like Palm/PocketPC."
 msgstr "다른 운영체제나 팜(Palm)/포켓PC(PocketPC)처럼 외부 디바이스 파일에 접근할 수 있는 플러그인 허용(&L)"
 
+#: tfrmoptionspluginswfx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "활성"
+
+#: tfrmoptionspluginswfx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "플러그인"
+
+#: tfrmoptionspluginswfx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "등록"
+
+#: tfrmoptionspluginswfx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswfx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "파일명"
+
 #: tfrmoptionspluginswlx.lblplugindescription.caption
 msgctxt "tfrmoptionspluginswlx.lblplugindescription.caption"
 msgid "Vie&wer plugins allow one to display file formats like images, spreadsheets, databases etc. in Viewer (F3, Ctrl+Q)"
 msgstr "이미지, 스프레드 시트, 데이타베이스 &뷰어 플러그인 허용(F3, Ctrl+Q)(&W)"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[0].title.caption"
+msgid "Active"
+msgstr "활성"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[1].title.caption"
+msgid "Plugin"
+msgstr "플러그인"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[2].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[2].title.caption"
+msgid "Registered for"
+msgstr "등록"
+
+#: tfrmoptionspluginswlx.stgplugins.columns[3].title.caption
+#, fuzzy
+msgctxt "tfrmoptionspluginswlx.stgplugins.columns[3].title.caption"
+msgid "File name"
+msgstr "파일명"
 
 #: tfrmoptionsquicksearchfilter.cbexactbeginning.caption
 msgctxt "TFRMOPTIONSQUICKSEARCHFILTER.CBEXACTBEGINNING.CAPTION"
@@ -7364,525 +7531,499 @@ msgctxt "tfrmoptionsterminal.lbruntermparams.caption"
 msgid "Parameters:"
 msgstr "매개변수:"
 
-#: tfrmoptionstoolbar.btnclonebutton.caption
+#: tfrmoptionstoolbarbase.btnclonebutton.caption
 msgid "C&lone button"
 msgstr "버튼 복제(&L)"
 
-#: tfrmoptionstoolbar.btndeletebutton.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNDELETEBUTTON.CAPTION"
+#: tfrmoptionstoolbarbase.btndeletebutton.caption
+msgctxt "tfrmoptionstoolbarbase.BTNDELETEBUTTON.CAPTION"
 msgid "&Delete"
 msgstr "삭제(&D)"
 
-#: tfrmoptionstoolbar.btnedithotkey.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNEDITHOTKEY.CAPTION"
+#: tfrmoptionstoolbarbase.btnedithotkey.caption
+msgctxt "tfrmoptionstoolbarbase.BTNEDITHOTKEY.CAPTION"
 msgid "Edit hot&key"
 msgstr "단축키 편집(&K)"
 
-#: tfrmoptionstoolbar.btninsertbutton.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNINSERTBUTTON.CAPTION"
+#: tfrmoptionstoolbarbase.btninsertbutton.caption
+msgctxt "tfrmoptionstoolbarbase.BTNINSERTBUTTON.CAPTION"
 msgid "&Insert new button"
 msgstr "새 버튼 삽입(&I)"
 
-#: tfrmoptionstoolbar.btnopencmddlg.caption
+#: tfrmoptionstoolbarbase.btnopencmddlg.caption
 msgid "Select"
 msgstr "선택"
 
-#: tfrmoptionstoolbar.btnopenfile.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNOPENFILE.CAPTION"
+#: tfrmoptionstoolbarbase.btnopenfile.caption
+msgctxt "tfrmoptionstoolbarbase.BTNOPENFILE.CAPTION"
 msgid ">>"
 msgstr ">>"
 
-#: tfrmoptionstoolbar.btnother.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNOTHER.CAPTION"
+#: tfrmoptionstoolbarbase.btnother.caption
+msgctxt "tfrmoptionstoolbarbase.BTNOTHER.CAPTION"
 msgid "Other..."
 msgstr "다른 옵션..."
 
-#: tfrmoptionstoolbar.btnremovehotkey.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNREMOVEHOTKEY.CAPTION"
+#: tfrmoptionstoolbarbase.btnremovehotkey.caption
+msgctxt "tfrmoptionstoolbarbase.BTNREMOVEHOTKEY.CAPTION"
 msgid "Remove hotke&y"
 msgstr "단축키 제거(&Y)"
 
-#: tfrmoptionstoolbar.btnstartpath.caption
-msgctxt "TFRMOPTIONSTOOLBAR.BTNSTARTPATH.CAPTION"
+#: tfrmoptionstoolbarbase.btnstartpath.caption
+msgctxt "tfrmoptionstoolbarbase.BTNSTARTPATH.CAPTION"
 msgid ">>"
 msgstr ">>"
 
-#: tfrmoptionstoolbar.btnsuggestiontooltip.caption
+#: tfrmoptionstoolbarbase.btnsuggestiontooltip.caption
 msgid "Suggest"
 msgstr "제안"
 
-#: tfrmoptionstoolbar.btnsuggestiontooltip.hint
+#: tfrmoptionstoolbarbase.btnsuggestiontooltip.hint
 msgid "Have DC suggest the tooltip based on button type, command and parameters"
 msgstr "버튼형태, 명령어와 매개변수에 따라 풍선도움말 제공"
 
-#: tfrmoptionstoolbar.cbflatbuttons.caption
-msgctxt "tfrmoptionstoolbar.cbflatbuttons.caption"
+#: tfrmoptionstoolbarbase.cbflatbuttons.caption
+msgctxt "tfrmoptionstoolbarbase.cbflatbuttons.caption"
 msgid "&Flat buttons"
 msgstr "기본 버튼(&F)"
 
-#: tfrmoptionstoolbar.cbreporterrorwithcommands.caption
+#: tfrmoptionstoolbarbase.cbreporterrorwithcommands.caption
 msgid "Report errors with commands"
 msgstr "명령어와 함께 오류 보고"
 
-#: tfrmoptionstoolbar.edtinternalparameters.hint
+#: tfrmoptionstoolbarbase.cbshowcaptions.caption
+msgid "Sho&w captions"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.edtinternalparameters.hint
 msgid "Enter command parameters, each in a separate line. Press F1 to see help on parameters."
 msgstr "명령어 매개변수 각 줄에 입력. F1키 도움말 보기"
 
-#: tfrmoptionstoolbar.gbgroupbox.caption
+#: tfrmoptionstoolbarbase.gbgroupbox.caption
 msgid "Appearance"
 msgstr "모양"
 
-#: tfrmoptionstoolbar.lblbarsize.caption
+#: tfrmoptionstoolbarbase.lblbarsize.caption
 msgid "&Bar size:"
 msgstr "도구바 크기(&B):"
 
-#: tfrmoptionstoolbar.lblexternalcommand.caption
-msgctxt "TFRMOPTIONSTOOLBAR.LBLEXTERNALCOMMAND.CAPTION"
-msgid "Comman&d:"
+#: tfrmoptionstoolbarbase.lblexternalcommand.caption
+msgctxt "tfrmoptionstoolbarbase.LBLEXTERNALCOMMAND.CAPTION"
+msgid "Co&mmand:"
 msgstr "명령어(&D):"
 
-#: tfrmoptionstoolbar.lblexternalparameters.caption
-msgctxt "TFRMOPTIONSTOOLBAR.LBLEXTERNALPARAMETERS.CAPTION"
+#: tfrmoptionstoolbarbase.lblexternalparameters.caption
+msgctxt "tfrmoptionstoolbarbase.LBLEXTERNALPARAMETERS.CAPTION"
 msgid "Parameter&s:"
 msgstr "매개변수(&S):"
 
-#: tfrmoptionstoolbar.lblhelponinternalcommand.caption
-msgctxt "TFRMOPTIONSTOOLBAR.LBLHELPONINTERNALCOMMAND.CAPTION"
+#: tfrmoptionstoolbarbase.lblhelponinternalcommand.caption
+msgctxt "tfrmoptionstoolbarbase.LBLHELPONINTERNALCOMMAND.CAPTION"
 msgid "Help"
 msgstr "도움말"
 
-#: tfrmoptionstoolbar.lblhotkey.caption
+#: tfrmoptionstoolbarbase.lblhotkey.caption
 msgid "Hot key:"
 msgstr "단축키:"
 
-#: tfrmoptionstoolbar.lbliconfile.caption
+#: tfrmoptionstoolbarbase.lbliconfile.caption
 msgid "Ico&n:"
 msgstr "아이콘(&N):"
 
-#: tfrmoptionstoolbar.lbliconsize.caption
+#: tfrmoptionstoolbarbase.lbliconsize.caption
 msgid "Icon si&ze:"
 msgstr "아이콘 크기(&Z):"
 
-#: tfrmoptionstoolbar.lblinternalcommand.caption
-msgctxt "tfrmoptionstoolbar.lblinternalcommand.caption"
+#: tfrmoptionstoolbarbase.lblinternalcommand.caption
+msgctxt "tfrmoptionstoolbarbase.lblinternalcommand.caption"
 msgid "Co&mmand:"
 msgstr "명령어(&M):"
 
-#: tfrmoptionstoolbar.lblinternalparameters.caption
-msgctxt "tfrmoptionstoolbar.lblinternalparameters.caption"
+#: tfrmoptionstoolbarbase.lblinternalparameters.caption
+msgctxt "tfrmoptionstoolbarbase.lblinternalparameters.caption"
 msgid "&Parameters:"
 msgstr "매개변수(&P):"
 
-#: tfrmoptionstoolbar.lblstartpath.caption
-msgctxt "tfrmoptionstoolbar.lblstartpath.caption"
+#: tfrmoptionstoolbarbase.lblstartpath.caption
+msgctxt "tfrmoptionstoolbarbase.lblstartpath.caption"
 msgid "Start pat&h:"
 msgstr "시작 경로(&H):"
 
-#: tfrmoptionstoolbar.lbltooltip.caption
+#: tfrmoptionstoolbarbase.lblstyle.caption
+msgid "Style:"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.lbltooltip.caption
 msgid "&Tooltip:"
 msgstr "풍선도움말(&T):"
 
-#: tfrmoptionstoolbar.miaddallcmds.caption
+#: tfrmoptionstoolbarbase.miaddallcmds.caption
 msgid "Add toolbar with ALL DC commands"
 msgstr "모든 더블커맨더 명령 도구상자 추가"
 
-#: tfrmoptionstoolbar.miaddexternalcommandsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddexternalcommandsubmenu.caption
 msgid "for an external command"
 msgstr "외부명령"
 
-#: tfrmoptionstoolbar.miaddinternalcommandsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddinternalcommandsubmenu.caption
 msgid "for an internal command"
 msgstr "내부명령"
 
-#: tfrmoptionstoolbar.miaddseparatorsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddseparatorsubmenu.caption
 msgid "for a separator"
 msgstr "구분자"
 
-#: tfrmoptionstoolbar.miaddsubtoolbarsubmenu.caption
+#: tfrmoptionstoolbarbase.miaddsubtoolbarsubmenu.caption
 msgid "for a sub-tool bar"
 msgstr "하위 도구상자"
 
-#: tfrmoptionstoolbar.mibackup.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIBACKUP.CAPTION"
+#: tfrmoptionstoolbarbase.mibackup.caption
+msgctxt "tfrmoptionstoolbarbase.MIBACKUP.CAPTION"
 msgid "Backup..."
 msgstr "백업..."
 
-#: tfrmoptionstoolbar.miexport.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORT.CAPTION"
+#: tfrmoptionstoolbarbase.miexport.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORT.CAPTION"
 msgid "Export..."
 msgstr "내보내기..."
 
-#: tfrmoptionstoolbar.miexportcurrent.caption
+#: tfrmoptionstoolbarbase.miexportcurrent.caption
 msgid "Current toolbar..."
 msgstr "현재 도구상자..."
 
-#: tfrmoptionstoolbar.miexportcurrenttodcbar.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTCURRENTTODCBAR.CAPTION"
+#: tfrmoptionstoolbarbase.miexportcurrenttodcbar.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTCURRENTTODCBAR.CAPTION"
 msgid "to a Toolbar File (.toolbar)"
 msgstr "툴바 파일(.toolbar)로"
 
-#: tfrmoptionstoolbar.miexportcurrenttotcbarkeep.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTCURRENTTOTCBARKEEP.CAPTION"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcbarkeep.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTCURRENTTOTCBARKEEP.CAPTION"
 msgid "to a TC .BAR file (keep existing)"
 msgstr "TC.BAR 파일로(기존 파일 유지)"
 
-#: tfrmoptionstoolbar.miexportcurrenttotcbarnokeep.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTCURRENTTOTCBARNOKEEP.CAPTION"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcbarnokeep.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTCURRENTTOTCBARNOKEEP.CAPTION"
 msgid "to a TC .BAR file (erase existing)"
 msgstr "TC.BAR 파일로(기존 파일 지우기)"
 
-#: tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTCURRENTTOTCINIKEEP.CAPTION"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcinikeep.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTCURRENTTOTCINIKEEP.CAPTION"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgstr "TC \"wincmd.ini로 (기존파일 유지)\""
 
-#: tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTCURRENTTOTCININOKEEP.CAPTION"
+#: tfrmoptionstoolbarbase.miexportcurrenttotcininokeep.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTCURRENTTOTCININOKEEP.CAPTION"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "TC \"wincmd.ini로 (기존파일 지우기)"
 
-#: tfrmoptionstoolbar.miexportseparator1.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexportseparator2.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexportseparator3.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexportseparator4.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTSEPARATOR4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miexporttop.caption
+#: tfrmoptionstoolbarbase.miexporttop.caption
 msgid "Top toolbar..."
 msgstr "최상위 도구상자..."
 
-#: tfrmoptionstoolbar.miexporttoptobackup.caption
+#: tfrmoptionstoolbarbase.miexporttoptobackup.caption
 msgid "Save a backup of Toolbar"
 msgstr "도구상자 백업 저장"
 
-#: tfrmoptionstoolbar.miexporttoptodcbar.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptodcbar.caption"
+#: tfrmoptionstoolbarbase.miexporttoptodcbar.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptodcbar.caption"
 msgid "to a Toolbar File (.toolbar)"
 msgstr "도구상자 파일로(.toolbar)"
 
-#: tfrmoptionstoolbar.miexporttoptotcbarkeep.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptotcbarkeep.caption"
+#: tfrmoptionstoolbarbase.miexporttoptotcbarkeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptotcbarkeep.caption"
 msgid "to a TC .BAR file (keep existing)"
 msgstr "TC .BAR 파일로(기존파일 유지)"
 
-#: tfrmoptionstoolbar.miexporttoptotcbarnokeep.caption
-msgctxt "tfrmoptionstoolbar.miexporttoptotcbarnokeep.caption"
+#: tfrmoptionstoolbarbase.miexporttoptotcbarnokeep.caption
+msgctxt "tfrmoptionstoolbarbase.miexporttoptotcbarnokeep.caption"
 msgid "to a TC .BAR file (erase existing)"
 msgstr "TC .BAR 파일로(기존파일 지우기)"
 
-#: tfrmoptionstoolbar.miexporttoptotcinikeep.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTTOPTOTCINIKEEP.CAPTION"
+#: tfrmoptionstoolbarbase.miexporttoptotcinikeep.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTTOPTOTCINIKEEP.CAPTION"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgstr "TC \"wincmd.ini로 (기존파일 유지)"
 
-#: tfrmoptionstoolbar.miexporttoptotcininokeep.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXPORTTOPTOTCININOKEEP.CAPTION"
+#: tfrmoptionstoolbarbase.miexporttoptotcininokeep.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXPORTTOPTOTCININOKEEP.CAPTION"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "TC \"wincmd.ini로 (기존파일 지우기)"
 
-#: tfrmoptionstoolbar.miexternalcommandaftercurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXTERNALCOMMANDAFTERCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miexternalcommandaftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXTERNALCOMMANDAFTERCURRENT.CAPTION"
 msgid "just after current selection"
 msgstr "현재 선택 바로 다음"
 
-#: tfrmoptionstoolbar.miexternalcommandfirstelement.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXTERNALCOMMANDFIRSTELEMENT.CAPTION"
+#: tfrmoptionstoolbarbase.miexternalcommandfirstelement.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXTERNALCOMMANDFIRSTELEMENT.CAPTION"
 msgid "as first element"
 msgstr "첫번째 요소로"
 
-#: tfrmoptionstoolbar.miexternalcommandlastelement.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXTERNALCOMMANDLASTELEMENT.CAPTION"
+#: tfrmoptionstoolbarbase.miexternalcommandlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXTERNALCOMMANDLASTELEMENT.CAPTION"
 msgid "as last element"
 msgstr "마지막 요소로"
 
-#: tfrmoptionstoolbar.miexternalcommandpriorcurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIEXTERNALCOMMANDPRIORCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miexternalcommandpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIEXTERNALCOMMANDPRIORCURRENT.CAPTION"
 msgid "just prior current selection"
 msgstr "바로 전 선택"
 
-#: tfrmoptionstoolbar.miimport.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORT.CAPTION"
+#: tfrmoptionstoolbarbase.miimport.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORT.CAPTION"
 msgid "Import..."
 msgstr "가져오기..."
 
-#: tfrmoptionstoolbar.miimportbackup.caption
+#: tfrmoptionstoolbarbase.miimportbackup.caption
 msgid "Restore a backup of Toolbar"
 msgstr "도구상자 백업 복구"
 
-#: tfrmoptionstoolbar.miimportbackupaddcurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTBACKUPADDCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miimportbackupaddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTBACKUPADDCURRENT.CAPTION"
 msgid "to add to current toolbar"
 msgstr "현재 도구상자에 추가"
 
-#: tfrmoptionstoolbar.miimportbackupaddmenucurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTBACKUPADDMENUCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miimportbackupaddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTBACKUPADDMENUCURRENT.CAPTION"
 msgid "to add to a new toolbar to current toolbar"
 msgstr "현재 도구상자에 새 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimportbackupaddmenutop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTBACKUPADDMENUTOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimportbackupaddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTBACKUPADDMENUTOP.CAPTION"
 msgid "to add to a new toolbar to top toolbar"
 msgstr "최상위 도구상자에 새 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimportbackupaddtop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTBACKUPADDTOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimportbackupaddtop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTBACKUPADDTOP.CAPTION"
 msgid "to add to top toolbar"
 msgstr "최상위 도구상자에 추가"
 
-#: tfrmoptionstoolbar.miimportbackupreplacetop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTBACKUPREPLACETOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimportbackupreplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTBACKUPREPLACETOP.CAPTION"
 msgid "to replace top toolbar"
 msgstr "최상위 도구상자 교체"
 
-#: tfrmoptionstoolbar.miimportdcbar.caption
+#: tfrmoptionstoolbarbase.miimportdcbar.caption
 msgid "from a Toolbar File (.toolbar)"
 msgstr "도구상자(.toolbar)파일로 부터"
 
-#: tfrmoptionstoolbar.miimportdcbaraddcurrent.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddcurrent.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddcurrent.caption"
 msgid "to add to current toolbar"
 msgstr "현재 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimportdcbaraddmenucurrent.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddmenucurrent.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddmenucurrent.caption"
 msgid "to add to a new toolbar to current toolbar"
 msgstr "현재 도구상자에 새로운 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimportdcbaraddmenutop.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddmenutop.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddmenutop.caption"
 msgid "to add to a new toolbar to top toolbar"
 msgstr "최상위 도구상자에 새로운 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimportdcbaraddtop.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbaraddtop.caption"
+#: tfrmoptionstoolbarbase.miimportdcbaraddtop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbaraddtop.caption"
 msgid "to add to top toolbar"
 msgstr "최상위 도구상자에 추가"
 
-#: tfrmoptionstoolbar.miimportdcbarreplacetop.caption
-msgctxt "tfrmoptionstoolbar.miimportdcbarreplacetop.caption"
+#: tfrmoptionstoolbarbase.miimportdcbarreplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.miimportdcbarreplacetop.caption"
 msgid "to replace top toolbar"
 msgstr "최상위 도구상자 교체"
 
-#: tfrmoptionstoolbar.miimportseparator.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTSEPARATOR.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miimporttcbar.caption
+#: tfrmoptionstoolbarbase.miimporttcbar.caption
 msgid "from a single TC .BAR file"
 msgstr "단일 TC.BAR 파일로 부터"
 
-#: tfrmoptionstoolbar.miimporttcbaraddcurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCBARADDCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttcbaraddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCBARADDCURRENT.CAPTION"
 msgid "to add to current toolbar"
 msgstr "현재 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttcbaraddmenucurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCBARADDMENUCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttcbaraddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCBARADDMENUCURRENT.CAPTION"
 msgid "to add to a new toolbar to current toolbar"
 msgstr "현재 도구상자에 새로운 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttcbaraddmenutop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCBARADDMENUTOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttcbaraddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCBARADDMENUTOP.CAPTION"
 msgid "to add to a new toolbar to top toolbar"
 msgstr "최상위 도구상자에 새 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttcbaraddtop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCBARADDTOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttcbaraddtop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCBARADDTOP.CAPTION"
 msgid "to add to top toolbar"
 msgstr "최상위 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttcbarreplacetop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCBARREPLACETOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttcbarreplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCBARREPLACETOP.CAPTION"
 msgid "to replace top toolbar"
 msgstr "최상위 도구상자 교체"
 
-#: tfrmoptionstoolbar.miimporttcini.caption
+#: tfrmoptionstoolbarbase.miimporttcini.caption
 msgid "from \"wincmd.ini\" of TC..."
 msgstr "TC \"wincmd.ini\"로 부터..."
 
-#: tfrmoptionstoolbar.miimporttciniaddcurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCINIADDCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttciniaddcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCINIADDCURRENT.CAPTION"
 msgid "to add to current toolbar"
 msgstr "현재 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttciniaddmenucurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCINIADDMENUCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttciniaddmenucurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCINIADDMENUCURRENT.CAPTION"
 msgid "to add to a new toolbar to current toolbar"
 msgstr "현재 도구상자에 새 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttciniaddmenutop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCINIADDMENUTOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttciniaddmenutop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCINIADDMENUTOP.CAPTION"
 msgid "to add to a new toolbar to top toolbar"
 msgstr "최상위 도구상자에 새 도구상자 추가"
 
-#: tfrmoptionstoolbar.miimporttciniaddtop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCINIADDTOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttciniaddtop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCINIADDTOP.CAPTION"
 msgid "to add to top toolbar"
 msgstr "최상위 도구상자에 추가"
 
-#: tfrmoptionstoolbar.miimporttcinireplacetop.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIIMPORTTCINIREPLACETOP.CAPTION"
+#: tfrmoptionstoolbarbase.miimporttcinireplacetop.caption
+msgctxt "tfrmoptionstoolbarbase.MIIMPORTTCINIREPLACETOP.CAPTION"
 msgid "to replace top toolbar"
 msgstr "최상위 도구상자 교체"
 
-#: tfrmoptionstoolbar.miinternalcommandaftercurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIINTERNALCOMMANDAFTERCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miinternalcommandaftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIINTERNALCOMMANDAFTERCURRENT.CAPTION"
 msgid "just after current selection"
 msgstr "현재 선택 바로 뒤"
 
-#: tfrmoptionstoolbar.miinternalcommandfirstelement.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIINTERNALCOMMANDFIRSTELEMENT.CAPTION"
+#: tfrmoptionstoolbarbase.miinternalcommandfirstelement.caption
+msgctxt "tfrmoptionstoolbarbase.MIINTERNALCOMMANDFIRSTELEMENT.CAPTION"
 msgid "as first element"
 msgstr "첫번째 요소로서"
 
-#: tfrmoptionstoolbar.miinternalcommandlastelement.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIINTERNALCOMMANDLASTELEMENT.CAPTION"
+#: tfrmoptionstoolbarbase.miinternalcommandlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.MIINTERNALCOMMANDLASTELEMENT.CAPTION"
 msgid "as last element"
 msgstr "마지막 요소로서"
 
-#: tfrmoptionstoolbar.miinternalcommandpriorcurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MIINTERNALCOMMANDPRIORCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.miinternalcommandpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MIINTERNALCOMMANDPRIORCURRENT.CAPTION"
 msgid "just prior current selection"
 msgstr "현재 선택 바로 이전"
 
-#: tfrmoptionstoolbar.misearchandreplace.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEARCHANDREPLACE.CAPTION"
+#: tfrmoptionstoolbarbase.misearchandreplace.caption
+msgctxt "tfrmoptionstoolbarbase.MISEARCHANDREPLACE.CAPTION"
 msgid "Search and replace..."
 msgstr "찾아 바꾸기..."
 
-#: tfrmoptionstoolbar.miseparator1.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator10.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR10.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator11.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR11.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator13.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR13.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator14.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR14.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator2.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator6.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR6.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator7.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR7.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator8.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR8.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparator9.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISEPARATOR9.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.miseparatoraftercurrent.caption
-msgctxt "tfrmoptionstoolbar.miseparatoraftercurrent.caption"
+#: tfrmoptionstoolbarbase.miseparatoraftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatoraftercurrent.caption"
 msgid "just after current selection"
 msgstr "현재 선택 바로 뒤"
 
-#: tfrmoptionstoolbar.miseparatorfirstitem.caption
-msgctxt "tfrmoptionstoolbar.miseparatorfirstitem.caption"
+#: tfrmoptionstoolbarbase.miseparatorfirstitem.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatorfirstitem.caption"
 msgid "as first element"
 msgstr "첫번째 요소로서"
 
-#: tfrmoptionstoolbar.miseparatorlastelement.caption
-msgctxt "tfrmoptionstoolbar.miseparatorlastelement.caption"
+#: tfrmoptionstoolbarbase.miseparatorlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatorlastelement.caption"
 msgid "as last element"
 msgstr "마지막 요소로서"
 
-#: tfrmoptionstoolbar.miseparatorpriorcurrent.caption
-msgctxt "tfrmoptionstoolbar.miseparatorpriorcurrent.caption"
+#: tfrmoptionstoolbarbase.miseparatorpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.miseparatorpriorcurrent.caption"
 msgid "just prior current selection"
 msgstr "현재 선택 바로 이전"
 
-#: tfrmoptionstoolbar.misrcrplallofall.caption
+#: tfrmoptionstoolbarbase.misrcrplallofall.caption
 msgid "in all of all the above..."
 msgstr "모든 것 위에..."
 
-#: tfrmoptionstoolbar.misrcrplclickseparator.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISRCRPLCLICKSEPARATOR.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionstoolbar.misrcrplcommands.caption
+#: tfrmoptionstoolbarbase.misrcrplcommands.caption
 msgid "in all commands..."
 msgstr "모든 명령..."
 
-#: tfrmoptionstoolbar.misrcrpliconnames.caption
+#: tfrmoptionstoolbarbase.misrcrpliconnames.caption
 msgid "in all icon names..."
 msgstr "모든 아이콘명..."
 
-#: tfrmoptionstoolbar.misrcrplparameters.caption
+#: tfrmoptionstoolbarbase.misrcrplparameters.caption
 msgid "in all parameters..."
 msgstr "모든 매개변수..."
 
-#: tfrmoptionstoolbar.misrcrplstartpath.caption
+#: tfrmoptionstoolbarbase.misrcrplstartpath.caption
 msgid "in all start path..."
 msgstr "모든 시작경로에..."
 
-#: tfrmoptionstoolbar.misubtoolbaraftercurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISUBTOOLBARAFTERCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.misubtoolbaraftercurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MISUBTOOLBARAFTERCURRENT.CAPTION"
 msgid "just after current selection"
 msgstr "현재 선택 바로 뒤"
 
-#: tfrmoptionstoolbar.misubtoolbarfirstelement.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISUBTOOLBARFIRSTELEMENT.CAPTION"
+#: tfrmoptionstoolbarbase.misubtoolbarfirstelement.caption
+msgctxt "tfrmoptionstoolbarbase.MISUBTOOLBARFIRSTELEMENT.CAPTION"
 msgid "as first element"
 msgstr "첫번째 요소로서"
 
-#: tfrmoptionstoolbar.misubtoolbarlastelement.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISUBTOOLBARLASTELEMENT.CAPTION"
+#: tfrmoptionstoolbarbase.misubtoolbarlastelement.caption
+msgctxt "tfrmoptionstoolbarbase.MISUBTOOLBARLASTELEMENT.CAPTION"
 msgid "as last element"
 msgstr "마지막 요소로서"
 
-#: tfrmoptionstoolbar.misubtoolbarpriorcurrent.caption
-msgctxt "TFRMOPTIONSTOOLBAR.MISUBTOOLBARPRIORCURRENT.CAPTION"
+#: tfrmoptionstoolbarbase.misubtoolbarpriorcurrent.caption
+msgctxt "tfrmoptionstoolbarbase.MISUBTOOLBARPRIORCURRENT.CAPTION"
 msgid "just prior current selection"
 msgstr "현재 선택 바로 이전"
 
-#: tfrmoptionstoolbar.rgtoolitemtype.caption
+#: tfrmoptionstoolbarbase.rbseparator.caption
+msgid "Separator"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.rbspace.caption
+msgid "Space"
+msgstr ""
+
+#: tfrmoptionstoolbarbase.rgtoolitemtype.caption
 msgid "Button type"
 msgstr "버튼 형태"
+
+#: tfrmoptionstoolbarextra.btnpathtoberelativetoall.caption
+msgid "Apply current settings to all configured filenames and paths"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.ckbtoolbarcommand.caption
+msgctxt "tfrmoptionstoolbarextra.ckbtoolbarcommand.caption"
+msgid "Commands"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.ckbtoolbaricons.caption
+msgctxt "tfrmoptionstoolbarextra.ckbtoolbaricons.caption"
+msgid "Icons"
+msgstr "아이콘"
+
+#: tfrmoptionstoolbarextra.ckbtoolbarstartpath.caption
+msgctxt "tfrmoptionstoolbarextra.ckbtoolbarstartpath.caption"
+msgid "Starting paths"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption
+msgctxt "tfrmoptionstoolbarextra.gbtoolbaroptionsextra.caption"
+msgid "Paths"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.lblapplysettingsfor.caption
+msgid "Do this for files and paths for:"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.lbpathtoberelativeto.caption
+msgctxt "tfrmoptionstoolbarextra.lbpathtoberelativeto.caption"
+msgid "Path to be relative to:"
+msgstr ""
+
+#: tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption
+msgctxt "tfrmoptionstoolbarextra.lbtoolbarfilenamestyle.caption"
+msgid "Way to set paths when adding elements for icons, commands and starting paths:"
+msgstr ""
 
 #: tfrmoptionstoolbase.btnrelativetoolpath.hint
 msgctxt "TFRMOPTIONSTOOLBASE.BTNRELATIVETOOLPATH.HINT"
@@ -8072,6 +8213,12 @@ msgstr ""
 msgid "With History:"
 msgstr ""
 
+#: tfrmoptionstreeviewmenucolor.btfont.caption
+#, fuzzy
+msgctxt "tfrmoptionstreeviewmenucolor.btfont.caption"
+msgid "..."
+msgstr "..."
+
 #: tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption
 #, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption"
@@ -8146,6 +8293,10 @@ msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.cbkusagekeyboardshortcut.caption
 msgid "Use and display keyboard shortcut for choosing items"
+msgstr ""
+
+#: tfrmoptionstreeviewmenucolor.gbfont.caption
+msgid "Font"
 msgstr ""
 
 #: tfrmoptionstreeviewmenucolor.gblayoutandcolors.caption
@@ -8343,6 +8494,30 @@ msgstr "압축기:"
 msgid "Time:"
 msgstr "시간:"
 
+#: tfrmprintsetup.caption
+msgid "Print configuration"
+msgstr ""
+
+#: tfrmprintsetup.gbmargins.caption
+msgid "Margins (mm)"
+msgstr ""
+
+#: tfrmprintsetup.lblbottom.caption
+msgid "&Bottom:"
+msgstr ""
+
+#: tfrmprintsetup.lblleft.caption
+msgid "&Left:"
+msgstr ""
+
+#: tfrmprintsetup.lblright.caption
+msgid "&Right:"
+msgstr ""
+
+#: tfrmprintsetup.lbltop.caption
+msgid "&Top:"
+msgstr ""
+
 #: tfrmquicksearch.btncancel.caption
 msgctxt "TFRMQUICKSEARCH.BTNCANCEL.CAPTION"
 msgid "X"
@@ -8425,10 +8600,12 @@ msgid "Plugin"
 msgstr "플러그인"
 
 #: tfrmsearchplugin.headercontrol.sections[1].text
+msgctxt "tfrmsearchplugin.headercontrol.sections[1].text"
 msgid "Field"
 msgstr "필드"
 
 #: tfrmsearchplugin.headercontrol.sections[2].text
+msgctxt "tfrmsearchplugin.headercontrol.sections[2].text"
 msgid "Operator"
 msgstr "연산자"
 
@@ -8445,29 +8622,159 @@ msgstr "AND (모두 일치) (&A)"
 msgid "&OR (any match)"
 msgstr "OR (하나라도 일치) (&O)"
 
-#: tfrmselecttextrange.btppanel.cancelbutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.CANCELBUTTON.CAPTION"
-msgid "Cancel"
-msgstr "취소"
+#: tfrmselectduplicates.btnapply.caption
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnapply.caption"
+msgid "&Apply"
+msgstr "적용(&A)"
 
-#: tfrmselecttextrange.btppanel.closebutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.CLOSEBUTTON.CAPTION"
-msgid "&Close"
-msgstr "종료(&C)"
+#: tfrmselectduplicates.btncancel.caption
+#, fuzzy
+msgctxt "tfrmselectduplicates.btncancel.caption"
+msgid "&Cancel"
+msgstr "취소(&C)"
 
-#: tfrmselecttextrange.btppanel.helpbutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.HELPBUTTON.CAPTION"
-msgid "&Help"
-msgstr "도움말(&H)"
+#: tfrmselectduplicates.btnexcludemask.hint
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnexcludemask.hint"
+msgid "Template..."
+msgstr "템플릿..."
 
-#: tfrmselecttextrange.btppanel.okbutton.caption
-msgctxt "TFRMSELECTTEXTRANGE.BTPPANEL.OKBUTTON.CAPTION"
+#: tfrmselectduplicates.btnincludemask.hint
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnincludemask.hint"
+msgid "Template..."
+msgstr "템플릿..."
+
+#: tfrmselectduplicates.btnok.caption
+#, fuzzy
+msgctxt "tfrmselectduplicates.btnok.caption"
 msgid "&OK"
 msgstr "확인(&O)"
+
+#: tfrmselectduplicates.caption
+msgid "Select duplicate files"
+msgstr ""
+
+#: tfrmselectduplicates.chkleaveunselected.caption
+msgid "&Leave at least one file in each group unselected:"
+msgstr ""
+
+#: tfrmselectduplicates.cmbincludemask.text
+#, fuzzy
+msgctxt "tfrmselectduplicates.cmbincludemask.text"
+msgid "*"
+msgstr "*"
+
+#: tfrmselectduplicates.lblexcludemask.caption
+msgid "&Remove selection by name/extension:"
+msgstr ""
+
+#: tfrmselectduplicates.lblfirstmethod.caption
+msgid "&1."
+msgstr ""
+
+#: tfrmselectduplicates.lblincludemask.caption
+msgid "Select by &name/extension:"
+msgstr ""
+
+#: tfrmselectduplicates.lblsecondmethod.caption
+msgid "&2."
+msgstr ""
+
+#: tfrmselectpathrange.buttonpanel.cancelbutton.caption
+msgctxt "tfrmselectpathrange.buttonpanel.cancelbutton.caption"
+msgid "&Cancel"
+msgstr "취소(C)"
+
+#: tfrmselectpathrange.buttonpanel.okbutton.caption
+msgctxt "tfrmselectpathrange.buttonpanel.okbutton.caption"
+msgid "&OK"
+msgstr "확인(O)"
+
+#: tfrmselectpathrange.edseparator.editlabel.caption
+msgid "Sep&arator"
+msgstr ""
+
+#: tfrmselectpathrange.gbcountfrom.caption
+msgid "Count from"
+msgstr ""
+
+#: tfrmselectpathrange.lblresult.caption
+msgctxt "tfrmselectpathrange.lblresult.caption"
+msgid "Result:"
+msgstr ""
+
+#: tfrmselectpathrange.lblselectdirectories.caption
+msgid "&Select the directories to insert (you may select more than one)"
+msgstr ""
+
+#: tfrmselectpathrange.rbfirstfromend.caption
+msgctxt "tfrmselectpathrange.rbfirstfromend.caption"
+msgid "The en&d"
+msgstr ""
+
+#: tfrmselectpathrange.rbfirstfromstart.caption
+msgctxt "tfrmselectpathrange.rbfirstfromstart.caption"
+msgid "The sta&rt"
+msgstr ""
+
+#: tfrmselecttextrange.buttonpanel.cancelbutton.caption
+msgctxt "tfrmselecttextrange.buttonpanel.cancelbutton.caption"
+msgid "&Cancel"
+msgstr "취소(C)"
+
+#: tfrmselecttextrange.buttonpanel.okbutton.caption
+msgctxt "tfrmselecttextrange.buttonpanel.okbutton.caption"
+msgid "&OK"
+msgstr "확인(O)"
+
+#: tfrmselecttextrange.gbcountfirstfrom.caption
+msgid "Count first from"
+msgstr ""
+
+#: tfrmselecttextrange.gbcountlastfrom.caption
+msgid "Count last from"
+msgstr ""
+
+#: tfrmselecttextrange.gbrangedescription.caption
+msgid "Range description"
+msgstr ""
+
+#: tfrmselecttextrange.lblresult.caption
+msgctxt "tfrmselecttextrange.lblresult.caption"
+msgid "Result:"
+msgstr ""
 
 #: tfrmselecttextrange.lblselecttext.caption
 msgid "&Select the characters to insert:"
 msgstr "문자 삽입 선택(&S)"
+
+#: tfrmselecttextrange.rbdescriptionfirstlast.caption
+msgid "[&First:Last]"
+msgstr ""
+
+#: tfrmselecttextrange.rbdescriptionfirstlength.caption
+msgid "[First,&Length]"
+msgstr ""
+
+#: tfrmselecttextrange.rbfirstfromend.caption
+msgctxt "tfrmselecttextrange.rbfirstfromend.caption"
+msgid "The en&d"
+msgstr ""
+
+#: tfrmselecttextrange.rbfirstfromstart.caption
+msgctxt "tfrmselecttextrange.rbfirstfromstart.caption"
+msgid "The sta&rt"
+msgstr ""
+
+#: tfrmselecttextrange.rblastfromend.caption
+msgid "The &end"
+msgstr ""
+
+#: tfrmselecttextrange.rblastfromstart.caption
+msgid "The s&tart"
+msgstr ""
 
 #: tfrmsetfileproperties.btncancel.caption
 msgctxt "TFRMSETFILEPROPERTIES.BTNCANCEL.CAPTION"
@@ -8610,6 +8917,43 @@ msgctxt "TFRMSETFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "쓰기"
 
+#: tfrmsetfileproperties.zvcreationdatetime.textfornulldate
+msgctxt "tfrmsetfileproperties.zvcreationdatetime.textfornulldate"
+msgid " "
+msgstr ""
+
+#: tfrmsetfileproperties.zvlastaccessdatetime.textfornulldate
+msgctxt "tfrmsetfileproperties.zvlastaccessdatetime.textfornulldate"
+msgid " "
+msgstr ""
+
+#: tfrmsetfileproperties.zvlastwritedatetime.textfornulldate
+msgctxt "tfrmsetfileproperties.zvlastwritedatetime.textfornulldate"
+msgid " "
+msgstr ""
+
+#: tfrmsortanything.btnsort.caption
+msgid "&Sort"
+msgstr "정렬"
+
+#: tfrmsortanything.buttonpanel.cancelbutton.caption
+msgctxt "tfrmsortanything.buttonpanel.cancelbutton.caption"
+msgid "&Cancel"
+msgstr "취소(C)"
+
+#: tfrmsortanything.buttonpanel.okbutton.caption
+msgctxt "tfrmsortanything.buttonpanel.okbutton.caption"
+msgid "&OK"
+msgstr "확인(O)"
+
+#: tfrmsortanything.caption
+msgid "frmSortAnything"
+msgstr ""
+
+#: tfrmsortanything.lblsortanything.caption
+msgid "Drag and drop elements to sort them"
+msgstr ""
+
 #: tfrmsplitter.btnrelativeftchoice.hint
 msgctxt "TFRMSPLITTER.BTNRELATIVEFTCHOICE.HINT"
 msgid "Some functions to select appropriate path"
@@ -8736,6 +9080,18 @@ msgctxt "TFRMSYMLINK.LBLLINKTOCREATE.CAPTION"
 msgid "&Link name"
 msgstr "링크명(&L)"
 
+#: tfrmsyncdirsdlg.actdeleteboth.caption
+msgid "Delete on both sides"
+msgstr ""
+
+#: tfrmsyncdirsdlg.actdeleteleft.caption
+msgid "<- Delete left"
+msgstr ""
+
+#: tfrmsyncdirsdlg.actdeleteright.caption
+msgid "-> Delete right"
+msgstr ""
+
 #: tfrmsyncdirsdlg.actselectclear.caption
 msgid "Remove selection"
 msgstr ""
@@ -8756,6 +9112,14 @@ msgstr ""
 msgid "Select for copying <- (right to left)"
 msgstr ""
 
+#: tfrmsyncdirsdlg.actselectdeleteboth.caption
+msgid "Select for deleting <-> (both)"
+msgstr ""
+
+#: tfrmsyncdirsdlg.actselectdeleteleft.caption
+msgid "Select for deleting <- (left)"
+msgstr ""
+
 #: tfrmsyncdirsdlg.actselectdeleteright.caption
 msgid "Select for deleting -> (right)"
 msgstr ""
@@ -8770,15 +9134,11 @@ msgctxt "TFRMSYNCDIRSDLG.BTNCOMPARE.CAPTION"
 msgid "Compare"
 msgstr "비교"
 
-#: tfrmsyncdirsdlg.btnseldir1.caption
-msgctxt "TFRMSYNCDIRSDLG.BTNSELDIR1.CAPTION"
-msgid ">>"
-msgstr ">>"
-
-#: tfrmsyncdirsdlg.btnseldir2.caption
-msgctxt "TFRMSYNCDIRSDLG.BTNSELDIR2.CAPTION"
-msgid ">>"
-msgstr ">>"
+#: tfrmsyncdirsdlg.btnsearchtemplate.hint
+#, fuzzy
+msgctxt "tfrmsyncdirsdlg.btnsearchtemplate.hint"
+msgid "Template..."
+msgstr "템플릿..."
 
 #: tfrmsyncdirsdlg.btnsynchronize.caption
 msgctxt "tfrmsyncdirsdlg.btnsynchronize.caption"
@@ -8790,8 +9150,10 @@ msgid "Synchronize directories"
 msgstr "폴더 동기화"
 
 #: tfrmsyncdirsdlg.cbextfilter.text
+#, fuzzy
+#| msgid "*.*"
 msgctxt "TFRMSYNCDIRSDLG.CBEXTFILTER.TEXT"
-msgid "*.*"
+msgid "*"
 msgstr "*.*"
 
 #: tfrmsyncdirsdlg.chkasymmetric.caption
@@ -9090,6 +9452,10 @@ msgstr "뷰어 정보..."
 msgid "Displays the About message"
 msgstr "정보 메시지 화면 표시"
 
+#: tfrmviewer.actautoreload.caption
+msgid "Auto Reload"
+msgstr ""
+
 #: tfrmviewer.actchangeencoding.caption
 msgid "Change encoding"
 msgstr ""
@@ -9207,6 +9573,14 @@ msgstr "파일 이동"
 msgctxt "tfrmviewer.actpreview.caption"
 msgid "Preview"
 msgstr "미리보기"
+
+#: tfrmviewer.actprint.caption
+msgid "P&rint..."
+msgstr ""
+
+#: tfrmviewer.actprintsetup.caption
+msgid "Print &setup..."
+msgstr ""
 
 #: tfrmviewer.actreload.caption
 msgctxt "TFRMVIEWER.ACTRELOAD.CAPTION"
@@ -9328,6 +9702,10 @@ msgctxt "tfrmviewer.actshowaswraptext.caption"
 msgid "Show as &Wrap text"
 msgstr "텍스트 줄바꿈 표시(&W)"
 
+#: tfrmviewer.actshowcaret.caption
+msgid "Show text c&ursor"
+msgstr ""
+
 #: tfrmviewer.actshowgraphics.caption
 #, fuzzy
 msgctxt "tfrmviewer.actshowgraphics.caption"
@@ -9365,11 +9743,21 @@ msgctxt "tfrmviewer.actzoomin.caption"
 msgid "Zoom In"
 msgstr "확대"
 
+#: tfrmviewer.actzoomin.hint
+msgctxt "tfrmviewer.actzoomin.hint"
+msgid "Zoom In"
+msgstr ""
+
 #: tfrmviewer.actzoomout.caption
 #, fuzzy
 msgctxt "tfrmviewer.actzoomout.caption"
 msgid "Zoom Out"
 msgstr "축소"
+
+#: tfrmviewer.actzoomout.hint
+msgctxt "tfrmviewer.actzoomout.hint"
+msgid "Zoom Out"
+msgstr ""
 
 #: tfrmviewer.btncuttuimage.hint
 msgctxt "TFRMVIEWER.BTNCUTTUIMAGE.HINT"
@@ -9381,32 +9769,33 @@ msgctxt "TFRMVIEWER.BTNFULLSCREEN.HINT"
 msgid "Full Screen"
 msgstr "전체화면"
 
-#: tfrmviewer.btngifmove.caption
-msgctxt "TFRMVIEWER.BTNGIFMOVE.CAPTION"
-msgid "||"
-msgstr "||"
-
-#: tfrmviewer.btngiftobmp.caption
-msgid "S"
-msgstr "S"
+#: tfrmviewer.btngiftobmp.hint
+msgid "Export Frame"
+msgstr ""
 
 #: tfrmviewer.btnhightlight.hint
 msgctxt "TFRMVIEWER.BTNHIGHTLIGHT.HINT"
 msgid "Highlight"
 msgstr "하이라이트"
 
-#: tfrmviewer.btnnextgifframe.caption
-msgid "||>"
-msgstr "||>"
+#: tfrmviewer.btnnextgifframe.hint
+msgid "Next Frame"
+msgstr ""
 
 #: tfrmviewer.btnpaint.hint
 msgctxt "TFRMVIEWER.BTNPAINT.HINT"
 msgid "Paint"
 msgstr "색칠"
 
-#: tfrmviewer.btnprevgifframe.caption
-msgid "<||"
-msgstr "<||"
+#: tfrmviewer.btnpenwidth.caption
+#, fuzzy
+msgctxt "tfrmviewer.btnpenwidth.caption"
+msgid "1"
+msgstr "1"
+
+#: tfrmviewer.btnprevgifframe.hint
+msgid "Previous Frame"
+msgstr ""
 
 #: tfrmviewer.btnredeye.hint
 msgid "Red Eyes"
@@ -9416,6 +9805,12 @@ msgstr "적목현상"
 msgctxt "TFRMVIEWER.BTNRESIZE.HINT"
 msgid "Resize"
 msgstr "크기 변경"
+
+#: tfrmviewer.btnslideshow.caption
+#, fuzzy
+msgctxt "tfrmviewer.btnslideshow.caption"
+msgid "Slide Show"
+msgstr "슬라이드쇼"
 
 #: tfrmviewer.btnundo.hint
 msgctxt "TFRMVIEWER.BTNUNDO.HINT"
@@ -9427,44 +9822,6 @@ msgctxt "TFRMVIEWER.CAPTION"
 msgid "Viewer"
 msgstr "뷰어"
 
-#: tfrmviewer.cbslideshow.caption
-msgctxt "TFRMVIEWER.CBSLIDESHOW.CAPTION"
-msgid "Slide Show"
-msgstr "슬라이드쇼"
-
-#: tfrmviewer.comboboxpaint.text
-msgid "Pen"
-msgstr "펜"
-
-#: tfrmviewer.comboboxwidth.text
-msgctxt "TFRMVIEWER.COMBOBOXWIDTH.TEXT"
-msgid "1"
-msgstr "1"
-
-#: tfrmviewer.gboxhightlight.caption
-msgctxt "TFRMVIEWER.GBOXHIGHTLIGHT.CAPTION"
-msgid "Highlight"
-msgstr "하이라이트"
-
-#: tfrmviewer.gboxpaint.caption
-msgctxt "TFRMVIEWER.GBOXPAINT.CAPTION"
-msgid "Paint"
-msgstr "색칠"
-
-#: tfrmviewer.gboxslideshow.caption
-msgctxt "TFRMVIEWER.GBOXSLIDESHOW.CAPTION"
-msgid "Slide Show"
-msgstr "슬라이드쇼"
-
-#: tfrmviewer.gboxview.caption
-msgctxt "TFRMVIEWER.GBOXVIEW.CAPTION"
-msgid "View"
-msgstr "보기"
-
-#: tfrmviewer.lblhightlight.caption
-msgid "0x0"
-msgstr "0x0"
-
 #: tfrmviewer.miabout.caption
 msgctxt "TFRMVIEWER.MIABOUT.CAPTION"
 msgid "About"
@@ -9474,6 +9831,10 @@ msgstr "정보"
 msgctxt "TFRMVIEWER.MIEDIT.CAPTION"
 msgid "&Edit"
 msgstr "편집(&E)"
+
+#: tfrmviewer.miellipse.caption
+msgid "Ellipse"
+msgstr ""
 
 #: tfrmviewer.miencoding.caption
 msgctxt "TFRMVIEWER.MIENCODING.CAPTION"
@@ -9489,9 +9850,15 @@ msgstr "파일(&F)"
 msgid "&Image"
 msgstr "이미지(&I)"
 
-#: tfrmviewer.miprint.caption
-msgid "Print..."
-msgstr "인쇄..."
+#: tfrmviewer.mipen.caption
+#, fuzzy
+msgctxt "tfrmviewer.mipen.caption"
+msgid "Pen"
+msgstr "펜"
+
+#: tfrmviewer.mirect.caption
+msgid "Rect"
+msgstr ""
 
 #: tfrmviewer.mirotate.caption
 msgctxt "TFRMVIEWER.MIROTATE.CAPTION"
@@ -9617,10 +9984,54 @@ msgstr ""
 msgid "&Pause all"
 msgstr ""
 
+#: tgiocopymoveoperationoptionsui.cbfollowlinks.caption
+#, fuzzy
+msgctxt "tgiocopymoveoperationoptionsui.cbfollowlinks.caption"
+msgid "Fo&llow links"
+msgstr "링크 연결(&L)"
+
+#: tgiocopymoveoperationoptionsui.lbldirectoryexists.caption
+#, fuzzy
+msgctxt "tgiocopymoveoperationoptionsui.lbldirectoryexists.caption"
+msgid "When dir&ectory exists"
+msgstr "폴더가 존재할 때(&E)"
+
+#: tgiocopymoveoperationoptionsui.lblfileexists.caption
+#, fuzzy
+msgctxt "tgiocopymoveoperationoptionsui.lblfileexists.caption"
+msgid "When file exists"
+msgstr "파일이 있을 때"
+
 #: tmultiarchivecopyoperationoptionsui.lblfileexists.caption
 msgctxt "TMULTIARCHIVECOPYOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "파일이 있을 때"
+
+#: ttfrmconfirmcommandline.btncancel.caption
+#, fuzzy
+msgctxt "ttfrmconfirmcommandline.btncancel.caption"
+msgid "&Cancel"
+msgstr "취소(&C)"
+
+#: ttfrmconfirmcommandline.btnok.caption
+#, fuzzy
+msgctxt "ttfrmconfirmcommandline.btnok.caption"
+msgid "&OK"
+msgstr "확인(&O)"
+
+#: ttfrmconfirmcommandline.lblecommandline.editlabel.caption
+msgid "Command line:"
+msgstr ""
+
+#: ttfrmconfirmcommandline.lbleparameters.editlabel.caption
+#, fuzzy
+msgctxt "ttfrmconfirmcommandline.lbleparameters.editlabel.caption"
+msgid "Parameters:"
+msgstr "매개변수:"
+
+#: ttfrmconfirmcommandline.lblestartpath.editlabel.caption
+msgid "Start path:"
+msgstr ""
 
 #: twcxarchivecopyoperationoptionsui.lblfileexists.caption
 msgctxt "TWCXARCHIVECOPYOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
@@ -9641,6 +10052,50 @@ msgstr "백그라운드 실행(연결 분리)"
 msgctxt "TWFXPLUGINCOPYMOVEOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "파일이 있을 때"
+
+#: uaccentsutils.rsstraccents
+msgid "á;â;à;å;ã;ä;ç;é;ê;è;ë;í;î;ì;ï;ñ;ó;ô;ò;ø;õ;ö;ú;û;ù;ü;ÿ;Á;Â;À;Å;Ã;Ä;Ç;É;Ê;È;Ë;Í;Í;Ì;Ï;Ñ;Ó;Ô;Ø;Õ;Ö;ß;Ú;Û;Ù;Ü;Ÿ;¿;¡;œ;æ;Æ;Œ"
+msgstr ""
+
+#: uaccentsutils.rsstraccentsstripped
+msgid "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;E;E;I;I;I;I;N;O;O;O;O;O;B;U;U;U;U;Y;?;!;oe;ae;AE;OE"
+msgstr ""
+
+#: uadministrator.rselevationrequired
+msgid "You need to provide administrator permission"
+msgstr ""
+
+#: uadministrator.rselevationrequiredcreate
+msgid "to create this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequireddelete
+msgid "to delete this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredgetattributes
+msgid "to get attributes of this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredhardlink
+msgid "to create this hard link:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredopen
+msgid "to open this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredrename
+msgid "to rename this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredsetattributes
+msgid "to set attributes of this object:"
+msgstr ""
+
+#: uadministrator.rselevationrequiredsymlink
+msgid "to create this symbolic link:"
+msgstr ""
 
 #: uexifreader.rsdatetimeoriginal
 msgid "Date taken"
@@ -9911,6 +10366,10 @@ msgstr "덧붙이기(&P)"
 #: ulng.rsdlgbuttonautorenamesource
 msgid "A&uto-rename source files"
 msgstr "자동-이름변경 소스 파일(&U)"
+
+#: ulng.rsdlgbuttonautorenametarget
+msgid "A&uto-rename target files"
+msgstr ""
 
 #: ulng.rsdlgbuttoncancel
 msgctxt "ulng.rsdlgbuttoncancel"
@@ -10192,6 +10651,14 @@ msgstr ""
 msgid "Legacy DC .tab files"
 msgstr ""
 
+#: ulng.rsfilterlibraries
+msgid "Library files"
+msgstr ""
+
+#: ulng.rsfilterpluginfiles
+msgid "Plugin files"
+msgstr ""
+
 #: ulng.rsfilterstatus
 msgid "FILTER"
 msgstr "필터"
@@ -10263,6 +10730,47 @@ msgstr ""
 msgid "Begin at"
 msgstr "시작점"
 
+#: ulng.rsfontusageconsole
+msgid "&Console Font"
+msgstr "콘솔 글꼴(&C)"
+
+#: ulng.rsfontusageeditor
+msgid "&Editor Font"
+msgstr "편집기 글꼴(&E)"
+
+#: ulng.rsfontusagefunctionbuttons
+msgid "Function Buttons Font"
+msgstr ""
+
+#: ulng.rsfontusagelog
+msgid "&Log Font"
+msgstr "로그 글꼴(&L)"
+
+#: ulng.rsfontusagemain
+msgid "Main &Font"
+msgstr "주 글꼴(&F)"
+
+#: ulng.rsfontusagepathedit
+msgid "Path Font"
+msgstr ""
+
+#: ulng.rsfontusagesearchresults
+msgid "Search Results Font"
+msgstr ""
+
+#: ulng.rsfontusagetreeviewmenu
+msgid "Tree View Menu Font"
+msgstr ""
+
+#: ulng.rsfontusageviewer
+msgid "&Viewer Font"
+msgstr "뷰어 글꼴(&V)"
+
+#: ulng.rsfontusageviewerbook
+msgctxt "ulng.rsfontusageviewerbook"
+msgid "Viewer&Book Font"
+msgstr "뷰어책 글꼴(&B)"
+
 #: ulng.rsfreemsg
 #, fuzzy
 msgid "%s of %s free"
@@ -10296,6 +10804,7 @@ msgid "Creation date/time"
 msgstr "날짜/시간 생성"
 
 #: ulng.rsfuncext
+msgctxt "ulng.rsfuncext"
 msgid "Extension"
 msgstr "확장자"
 
@@ -10390,6 +10899,11 @@ msgstr "파일 찾기"
 #: ulng.rshotkeycategorymain
 msgid "Main"
 msgstr "주요정보"
+
+#: ulng.rshotkeycategorymultirename
+msgctxt "ulng.rshotkeycategorymultirename"
+msgid "Multi-Rename Tool"
+msgstr "여러개 파일명 바꾸기"
 
 #: ulng.rshotkeycategorysyncdirs
 msgid "Synchronize Directories"
@@ -11384,6 +11898,7 @@ msgid "Below is a preview. You may move cursor and select files to get immediate
 msgstr "아래는 미리보기임. 커서를 움직이거 파일을 선택하여 실제 설정을 확인할 수 있습니다."
 
 #: ulng.rsmsgpassword
+msgctxt "ulng.rsmsgpassword"
 msgid "Password:"
 msgstr "비밀번호:"
 
@@ -11410,6 +11925,10 @@ msgstr "%s 삭제(&D)"
 #: ulng.rsmsgpresetalreadyexists
 msgid "Preset \"%s\" already exists. Overwrite?"
 msgstr "\"%s\" 프리셋이 존재함. 덮어쓸까요?"
+
+#: ulng.rsmsgpresetconfigdelete
+msgid "Are you sure you want to delete preset \"%s\"?"
+msgstr ""
 
 #: ulng.rsmsgproblemexecutingcommand
 msgid "Problem executing command (%s)"
@@ -11450,6 +11969,10 @@ msgstr ""
 #: ulng.rsmsgrestartforapplychanges
 msgid "Please, restart Double Commander in order to apply changes"
 msgstr "변경된 설정을 적용하려면 더블커맨더를 재실행하세요."
+
+#: ulng.rsmsgscriptcantfindlibrary
+msgid "ERROR: Problem loading Lua library file \"%s\""
+msgstr ""
 
 #: ulng.rsmsgsekectfiletype
 msgid "Select to which file type to add extension \"%s\""
@@ -11660,6 +12183,7 @@ msgid "<NO NAME>"
 msgstr "<파일명 없음: No NAME>"
 
 #: ulng.rsmsgusername
+msgctxt "ulng.rsmsgusername"
 msgid "User name:"
 msgstr "사용자 명:"
 
@@ -11687,6 +12211,10 @@ msgstr "볼률 레이블:"
 msgid "Please enter the volume size:"
 msgstr "볼륨 크기를 입력하세요:"
 
+#: ulng.rsmsgwanttoconfigurelibrarylocation
+msgid "Do you want to configure Lua library location?"
+msgstr ""
+
 #: ulng.rsmsgwipefldr
 msgid "Wipe %d selected files/directories?"
 msgstr "%d 선택된 파일/폴더를 완전삭제(휴지통X)할까요?"
@@ -11709,9 +12237,213 @@ msgstr ""
 msgid "Do auto-rename to \"name (1).ext\", \"name (2).ext\" etc.?"
 msgstr ""
 
+#: ulng.rsmulrencounter
+msgctxt "ulng.rsmulrencounter"
+msgid "Counter"
+msgstr "일련 번호"
+
+#: ulng.rsmulrendate
+msgctxt "ulng.rsmulrendate"
+msgid "Date"
+msgstr "날짜"
+
+#: ulng.rsmulrendefaultpresetname
+msgid "Preset name"
+msgstr ""
+
+#: ulng.rsmulrendefinevariablename
+msgid "Define variable name"
+msgstr ""
+
+#: ulng.rsmulrendefinevariablevalue
+msgid "Define variable value"
+msgstr ""
+
+#: ulng.rsmulrenenternameforvar
+msgid "Enter variable name"
+msgstr ""
+
+#: ulng.rsmulrenentervalueforvar
+msgid "Enter value for variable \"%s\""
+msgstr ""
+
+#: ulng.rsmulrenexitmodifiedpresetoptions
+msgid "Ignore, just save as the [Last One];Prompt user to confirm if we save it;Save automatically"
+msgstr ""
+
+#: ulng.rsmulrenextension
+msgctxt "ulng.rsmulrenextension"
+msgid "Extension"
+msgstr "확장자"
+
+#: ulng.rsmulrenfilename
+msgctxt "ulng.rsmulrenfilename"
+msgid "Name"
+msgstr "파일명"
+
 #: ulng.rsmulrenfilenamestylelist
 msgid "No change;UPPERCASE;lowercase;First char uppercase;First Char Of Every Word Uppercase;"
 msgstr "변화없음;대문자;소문자;첫번째 문자 대문자;모든 단어의 첫번째는 대문자;"
+
+#: ulng.rsmulrenlastpreset
+msgid "[The last used]"
+msgstr ""
+
+#: ulng.rsmulrenlaunchbehavioroptions
+msgid "Last masks under [Last One] preset;Last preset;New fresh masks"
+msgstr ""
+
+#: ulng.rsmulrenlogstart
+msgctxt "ulng.rsmulrenlogstart"
+msgid "Multi-Rename Tool"
+msgstr "여러개 파일명 바꾸기"
+
+#: ulng.rsmulrenmaskcharatposx
+msgid "Character at position x"
+msgstr "문자 위치 x"
+
+#: ulng.rsmulrenmaskcharatposxtoy
+msgid "Characters from position x to y"
+msgstr "문자 위치 x에서 y"
+
+#: ulng.rsmulrenmaskcompletedate
+msgid "Complete date"
+msgstr ""
+
+#: ulng.rsmulrenmaskcompletetime
+msgid "Complete time"
+msgstr ""
+
+#: ulng.rsmulrenmaskcounter
+msgctxt "ulng.rsmulrenmaskcounter"
+msgid "Counter"
+msgstr "일련 번호"
+
+#: ulng.rsmulrenmaskday
+msgid "Day"
+msgstr "일자"
+
+#: ulng.rsmulrenmaskday2digits
+msgid "Day (2 digits)"
+msgstr "일자( 2 didgits)"
+
+#: ulng.rsmulrenmaskdowabrev
+msgid "Day of the week (short, e.g., \"mon\")"
+msgstr "요일(짧게,예,\"월\")"
+
+#: ulng.rsmulrenmaskdowcomplete
+msgid "Day of the week (long, e.g., \"monday\")"
+msgstr "요일(길게, 예, \"월요일\")"
+
+#: ulng.rsmulrenmaskextension
+msgctxt "ulng.rsmulrenmaskextension"
+msgid "Extension"
+msgstr "확장자"
+
+#: ulng.rsmulrenmaskfullname
+msgid "Complete filename with path and extension"
+msgstr ""
+
+#: ulng.rsmulrenmaskfullnamecharatposxtoy
+msgid "Complete filename, char from pos x to y"
+msgstr ""
+
+#: ulng.rsmulrenmaskguid
+msgid "GUID"
+msgstr ""
+
+#: ulng.rsmulrenmaskhour
+msgid "Hour"
+msgstr "시간"
+
+#: ulng.rsmulrenmaskhour2digits
+msgid "Hour (2 digits)"
+msgstr "시간 ( 2자리)"
+
+#: ulng.rsmulrenmaskmin
+msgid "Minute"
+msgstr "분"
+
+#: ulng.rsmulrenmaskmin2digits
+msgid "Minute (2 digits)"
+msgstr "분 (2자리)"
+
+#: ulng.rsmulrenmaskmonth
+msgid "Month"
+msgstr "월"
+
+#: ulng.rsmulrenmaskmonth2digits
+msgid "Month (2 digits)"
+msgstr "월 (2자리)"
+
+#: ulng.rsmulrenmaskmonthabrev
+msgid "Month name (short, e.g., \"jan\")"
+msgstr "월 (짧게, 예, \"jan\")"
+
+#: ulng.rsmulrenmaskmonthcomplete
+msgid "Month name (long, e.g., \"january\")"
+msgstr "월 (길게, 예, \"january\")"
+
+#: ulng.rsmulrenmaskname
+msgctxt "ulng.rsmulrenmaskname"
+msgid "Name"
+msgstr "파일명"
+
+#: ulng.rsmulrenmaskparent
+msgid "Parent folder(s)"
+msgstr ""
+
+#: ulng.rsmulrenmasksec
+msgid "Second"
+msgstr "초"
+
+#: ulng.rsmulrenmasksec2digits
+msgid "Second (2 digits)"
+msgstr "초 (2자리)"
+
+#: ulng.rsmulrenmaskvaronthefly
+msgid "Variable on the fly"
+msgstr ""
+
+#: ulng.rsmulrenmaskyear2digits
+msgid "Year (2 digits)"
+msgstr "년 (2 자리)"
+
+#: ulng.rsmulrenmaskyear4digits
+msgid "Year (4 digits)"
+msgstr "년 (4 자리)"
+
+#: ulng.rsmulrenplugins
+msgctxt "ulng.rsmulrenplugins"
+msgid "Plugins"
+msgstr "플러그인"
+
+#: ulng.rsmulrenpromptforsavedpresetname
+msgid "Save preset as"
+msgstr ""
+
+#: ulng.rsmulrenpromptnewnameexists
+msgid "Preset name already exists. Overwrite?"
+msgstr ""
+
+#: ulng.rsmulrenpromptnewpresetname
+msgid "Enter new preset name"
+msgstr ""
+
+#: ulng.rsmulrensavemodifiedpreset
+msgid ""
+"\"%s\" preset has been modified.\n"
+"Do you want to save it now?\n"
+msgstr ""
+
+#: ulng.rsmulrensortingpresets
+msgid "Sorting presets"
+msgstr ""
+
+#: ulng.rsmulrentime
+msgctxt "ulng.rsmulrentime"
+msgid "Time"
+msgstr "시각"
 
 #: ulng.rsmulrenwarningduplicate
 msgid "Warning, duplicate names!"
@@ -12324,6 +13056,10 @@ msgctxt "ulng.rsoptionseditordirectoryhotlist"
 msgid "Directory Hotlist"
 msgstr "폴더 바로 가기"
 
+#: ulng.rsoptionseditordirectoryhotlistextra
+msgid "Directory Hotlist Extra"
+msgstr ""
+
 #: ulng.rsoptionseditordraganddrop
 msgid "Drag & drop"
 msgstr "드래그 & 드롭"
@@ -12441,6 +13177,11 @@ msgstr "기타설정"
 msgid "Mouse"
 msgstr "마우스"
 
+#: ulng.rsoptionseditormultirename
+msgctxt "ulng.rsoptionseditormultirename"
+msgid "Multi-Rename Tool"
+msgstr "여러개 파일명 바꾸기"
+
 #: ulng.rsoptionseditoroptionschanged
 msgid ""
 "Options have changed in \"%s\"\n"
@@ -12466,6 +13207,14 @@ msgstr "명령 프롬프트"
 #: ulng.rsoptionseditortoolbar
 msgid "Toolbar"
 msgstr "도구상자"
+
+#: ulng.rsoptionseditortoolbarextra
+msgid "Toolbar Extra"
+msgstr ""
+
+#: ulng.rsoptionseditortoolbarmiddle
+msgid "Toolbar Middle"
+msgstr ""
 
 #: ulng.rsoptionseditortools
 msgctxt "ulng.rsoptionseditortools"
@@ -12577,7 +13326,9 @@ msgid "sort by name and show first;sort like files and show first;sort like file
 msgstr "이름 정렬하고 먼저 보여주기; 파일 정렬하고 먼저 보여주기; 파일로 정렬"
 
 #: ulng.rsoptsortmethod
-msgid "Alphabetical, considering accents;Natural sorting: alphabetical and numbers"
+#, fuzzy
+#| msgid "Alphabetical, considering accents;Natural sorting: alphabetical and numbers"
+msgid "Alphabetical, considering accents;Alphabetical with special characters sort;Natural sorting: alphabetical and numbers;Natural with special characters sort"
 msgstr "알파벳순, 액센트 고려하기;자연 정렬; 알파벳 숫자순 정렬"
 
 #: ulng.rsopttabsposition
@@ -12790,6 +13541,10 @@ msgstr ""
 msgid "Select a directory"
 msgstr "폴더(디렉토리) 선택"
 
+#: ulng.rsselectduplicatemethod
+msgid "Newest;Oldest;Largest;Smallest;First in group;Last in group"
+msgstr ""
+
 #: ulng.rsselectyoufindfileswindow
 msgid "Select your window"
 msgstr ""
@@ -12830,6 +13585,7 @@ msgid "False"
 msgstr ""
 
 #: ulng.rssimplewordfilename
+msgctxt "ulng.rssimplewordfilename"
 msgid "Filename"
 msgstr "파일명"
 
@@ -12855,6 +13611,10 @@ msgstr ""
 
 #: ulng.rssimplewordtrue
 msgid "True"
+msgstr ""
+
+#: ulng.rssimplewordvariable
+msgid "Variable"
 msgstr ""
 
 #: ulng.rssimplewordworkdir
@@ -12911,14 +13671,6 @@ msgstr ""
 #: ulng.rssplitseldir
 msgid "Select directory:"
 msgstr "폴더 선택:"
-
-#: ulng.rsstraccents
-msgid "á;â;à;å;ã;ä;ç;é;ê;è;ë;í;î;ì;ï;ñ;ó;ô;ò;ø;õ;ö;ú;û;ù;ü;ÿ;Á;Â;À;Å;Ã;Ä;Ç;É;Ê;È;Ë;Í;Í;Ì;Ï;Ñ;Ó;Ô;Ø;Õ;Ö;ß;Ú;Û;Ù;Ü;Ÿ;¿;¡;œ;æ;Æ;Œ"
-msgstr ""
-
-#: ulng.rsstraccentsstripped
-msgid "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;E;E;I;I;I;I;N;O;O;O;O;O;B;U;U;U;U;Y;?;!;oe;ae;AE;OE"
-msgstr ""
 
 #: ulng.rsstrpreviewjustpreview
 msgid "Just preview"
@@ -13126,6 +13878,14 @@ msgstr "\"%\"변수와 도움말"
 #: ulng.rsvarinputparam
 msgid "Will request request user to enter a parameter with a default suggested value"
 msgstr "요청된 사용자 기본 제시된 값으로 매개변수 입력이 요청됨"
+
+#: ulng.rsvarlastdircurrentpath
+msgid "Last directory of panel's path"
+msgstr ""
+
+#: ulng.rsvarlastdirofpath
+msgid "Last directory of file's path"
+msgstr ""
 
 #: ulng.rsvarleftpanel
 msgid "Left panel"

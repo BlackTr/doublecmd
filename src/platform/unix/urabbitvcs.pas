@@ -68,7 +68,7 @@ var
 implementation
 
 uses
-  dbus, fpjson, jsonparser, jsonscanner, unix,
+  dbus, fpjson, jsonparser, jsonscanner, unix, baseunix,
   uGlobs, uGlobsPaths, uMyUnix, uPython
 {$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   , uGObject2
@@ -102,7 +102,7 @@ begin
     Result := False;
 end;
 
-function CheckService(const PythonScript: String): Boolean;
+function CheckRabbit: Boolean;
 var
   service_exists: dbus_bool_t;
 begin
@@ -110,17 +110,25 @@ begin
   // Check if RabbitVCS service is running
   service_exists := dbus_bus_name_has_owner(conn, RabbitVCSAddress, @error);
   if CheckError('Cannot query RabbitVCS on DBUS', @error) then
-    Exit(False);
+    Result:= False
+  else
+    Result:= (service_exists <> 0);
+end;
 
-  Result:= service_exists <> 0;
+function CheckService: Boolean;
+var
+  pyValue: PPyObject;
+begin
+  Result:= CheckRabbit;
   if Result then
     Print('Service found running')
-  else
-    begin
-      Result:= fpSystemStatus(PythonExe + ' ' + PythonScript) = 0;
-      if Result then
-        Print('Service successfully started');
-    end;
+  else begin
+    // Try to start RabbitVCS service
+    pyValue:= PythonRunFunction(PythonModule, 'StartService');
+    Py_XDECREF(pyValue);
+    Result:= CheckRabbit;
+    if Result then Print('Service successfully started');
+  end;
 end;
 
 function CheckStatus(Path: String; Recurse: Boolean32;
@@ -325,6 +333,31 @@ begin
   end;
 end;
 
+function CheckPackage: Boolean;
+const
+  PythonVersion: array[0..2] of String = ('2.7', '3.8', '3.9');
+var
+  Index: Integer;
+  Debian: Boolean;
+  PackageFormat: String = '/usr/lib/python%s/';
+begin
+  Debian:= fpAccess('/etc/debian_version', F_OK) = 0;
+  if Debian then
+    PackageFormat+= 'dist-packages/rabbitvcs'
+  else begin
+    PackageFormat+= 'site-packages/rabbitvcs';
+  end;
+  for Index:= 0 to High(PythonVersion) do
+  begin
+    if (fpAccess(Format(PackageFormat, [PythonVersion[Index]]), F_OK) = 0) then
+    begin
+      Result:= PythonInitialize(PythonVersion[Index]);
+      Exit;
+    end;
+  end;
+  Result:= False;
+end;
+
 function CheckVersion: Boolean;
 var
   ATemp: AnsiString;
@@ -347,11 +380,15 @@ begin
       ATemp:= PyStringToString(pyVersion);
       AVersion:= ATemp.Split(['.']);
       Print('Version ' + ATemp);
-      if (Length(AVersion) > 2) then
+      if (Length(AVersion) > 1) then
       begin
         Major:= StrToIntDef(AVersion[0], 0);
         Minor:= StrToIntDef(AVersion[1], 0);
-        Micro:= StrToIntDef(AVersion[2], 0);
+        if (Length(AVersion) > 2) then
+          Micro:= StrToIntDef(AVersion[2], 0)
+        else begin
+          Micro:= 0;
+        end;
         // RabbitVCS migrated to GTK3 from version 0.17.1
         RabbitGtk3:= (Major > 0) or (Minor > 17) or ((Minor = 17) and (Micro > 0));
 {$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
@@ -379,28 +416,23 @@ begin
 end;
 
 procedure Initialize;
-var
-  PythonPath: String;
 begin
   dbus_error_init(@error);
   conn := dbus_bus_get(DBUS_BUS_SESSION, @error);
   if CheckError('Cannot acquire connection to DBUS session bus', @error) then
     Exit;
-  if HasPython then
+  if CheckPackage then
   begin
     if not CheckVersion then Exit;
-    PythonPath:= gpExePath + 'scripts';
-    RabbitVCS:= CheckService(PythonPath + PathDelim + MODULE_NAME + '.py');
-    if RabbitVCS then begin
-      PythonAddModulePath(PythonPath);
-      PythonModule:= PythonLoadModule(MODULE_NAME);
-      RabbitVCS:= Assigned(PythonModule);
-    end;
+    PythonAddModulePath(gpExePath + 'scripts');
+    PythonModule:= PythonLoadModule(MODULE_NAME);
+    RabbitVCS:= Assigned(PythonModule) and CheckService;
   end;
 end;
 
 procedure Finalize;
 begin
+  PythonFinalize;
   if Assigned(conn) then dbus_connection_unref(conn);
 end;
 

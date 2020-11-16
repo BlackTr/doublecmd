@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Build-in Editor using SynEdit and his Highlighters
 
-   Copyright (C) 2006-2018  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2020  Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -163,6 +163,7 @@ type
     sEncodingOut,
     sOriginalText: String;
     FWaitData: TWaitData;
+    FElevate: TDuplicates;
     FCommands: TFormCommands;
     FMultiCaret: TSynPluginMultiCaret;
 
@@ -184,6 +185,8 @@ type
     Function OpenFileNewTab(const sFileName:String):Integer;
     }
     destructor Destroy; override;
+
+    procedure AfterConstruction; override;
     {en
        Opens a file.
        @returns(@true if successful)
@@ -237,8 +240,8 @@ implementation
 
 uses
   Clipbrd, dmCommonData, dmHigh, SynEditTypes, LCLType, LConvEncoding,
-  uLng, uShowMsg, fEditSearch, uGlobs, fOptions, DCClassesUtf8,
-  uOSUtils, uConvEncoding, fOptionsToolsEditor, uDCUtils, uClipboard;
+  uLng, uShowMsg, fEditSearch, uGlobs, fOptions, DCClassesUtf8, uAdministrator,
+  uOSUtils, uConvEncoding, fOptionsToolsEditor, uDCUtils, uClipboard, uFindFiles;
 
 procedure ShowEditor(const sFileName: String; WaitData: TWaitData = nil);
 var
@@ -266,8 +269,10 @@ procedure TfrmEditor.FormCreate(Sender: TObject);
 var
   i:Integer;
   mi:TMenuItem;
-  EncodingsList: TStringList;
   HMEditor: THMForm;
+  miOther: TMenuItem = nil;
+  EncodingsList: TStringList;
+  Options: TTextSearchOptions;
 begin
   InitPropStorage(Self);
 
@@ -275,19 +280,30 @@ begin
 
   LoadGlobalOptions;
 
-// update menu highlighting
+  // update menu highlighting
   miHighlight.Clear;
-  for i:=0 to dmHighl.SynHighlighterList.Count - 1 do
-    begin
-      mi:=TMenuItem.Create(miHighlight);
-      mi.Caption:=TSynCustomHighlighter(dmHighl.SynHighlighterList.Objects[i]).LanguageName;
-      mi.Tag:=i;
-//      mi.Name:='miHigh'+IntToStr(i);
-      mi.Enabled:=True;
-      mi.OnClick:=@SetHighLighter;
-      miHighlight.Add(mi);
+  for i:= 0 to dmHighl.SynHighlighterList.Count - 1 do
+  begin
+    mi:= TMenuItem.Create(miHighlight);
+    mi.Caption:= TSynCustomHighlighter(dmHighl.SynHighlighterList.Objects[i]).LanguageName;
+    mi.Tag:= i;
+    mi.Enabled:= True;
+    mi.OnClick:=@SetHighLighter;
+
+    if not TSynCustomHighlighter(dmHighl.SynHighlighterList.Objects[i]).Other then
+      miHighlight.Add(mi)
+    else begin
+      if (miOther = nil) then
+      begin
+        miOther:= TMenuItem.Create(miHighlight);
+        miOther.Caption:= rsDlgButtonOther;
+      end;
+      miOther.Add(mi);
     end;
-// update menu encoding
+  end;
+  if Assigned(miOther) then
+    miHighlight.Add(miOther);
+  // update menu encoding
   miEncodingIn.Clear;
   miEncodingOut.Clear;
   EncodingsList:= TStringList.Create;
@@ -315,10 +331,23 @@ begin
   EncodingsList.Free;
   // if we already search text then use last searched text
   if not gFirstTextSearch then
+  begin
+    for I:= 0 to glsSearchHistory.Count - 1 do
     begin
-      if glsSearchHistory.Count > 0 then
-        sSearchText:= glsSearchHistory[0];
+      Options:= TTextSearchOptions(UInt32(UIntPtr(glsSearchHistory.Objects[I])));
+
+      if (tsoHex in Options) then
+        Continue;
+
+      if (tsoMatchCase in Options) then
+        bSearchCaseSensitive:= True;
+      if (tsoRegExpr in Options) then
+        bSearchRegExp:= True;
+
+      sSearchText:= glsSearchHistory[I];
+      Break;
     end;
+  end;
 
   FixFormIcon(Handle);
 
@@ -334,6 +363,7 @@ begin
   Editor.Options:= gEditorSynEditOptions;
   FontOptionsToFont(gFonts[dcfEditor], Editor.Font);
   Editor.TabWidth := gEditorSynEditTabWidth;
+  Editor.RightEdge := gEditorSynEditRightEdge;
 end;
 
 procedure TfrmEditor.actExecute(Sender: TObject);
@@ -350,7 +380,7 @@ procedure TfrmEditor.EditorMouseWheelDown(Sender: TObject; Shift: TShiftState;
 var
    t:integer;
 begin
-  if (Shift=[ssCtrl])and(gFonts[dcfEditor].Size>MIN_FONT_SIZE_EDITOR) then
+  if (Shift=[ssCtrl])and(gFonts[dcfEditor].Size > gFonts[dcfEditor].MinValue) then
   begin
     t:=Editor.TopLine;
     gFonts[dcfEditor].Size:=gFonts[dcfEditor].Size-1;
@@ -367,7 +397,7 @@ procedure TfrmEditor.EditorMouseWheelUp(Sender: TObject; Shift: TShiftState;
 var
    t:integer;
 begin
-  if (Shift=[ssCtrl])and(gFonts[dcfEditor].Size<MAX_FONT_SIZE_EDITOR) then
+  if (Shift=[ssCtrl])and(gFonts[dcfEditor].Size < gFonts[dcfEditor].MaxValue) then
   begin
     t:=Editor.TopLine;
     gFonts[dcfEditor].Size:=gFonts[dcfEditor].Size+1;
@@ -379,152 +409,168 @@ begin
 
 end;
 
-
 function TfrmEditor.OpenFile(const aFileName: String): Boolean;
 var
   Buffer: AnsiString;
-  Reader: TFileStreamEx;
+  Reader: TFileStreamUAC;
   Highlighter: TSynCustomHighlighter;
 begin
-  Result := False;
+  PushPop(FElevate);
   try
-    Reader := TFileStreamEx.Create(aFileName, fmOpenRead or fmShareDenyNone);
+    Result := False;
     try
-      SetLength(sOriginalText, Reader.Size);
-      Reader.Read(Pointer(sOriginalText)^, Length(sOriginalText));
-    finally
-      Reader.Free;
-    end;
+      Reader := TFileStreamUAC.Create(aFileName, fmOpenRead or fmShareDenyNone);
+      try
+        SetLength(sOriginalText, Reader.Size);
+        Reader.Read(Pointer(sOriginalText)^, Length(sOriginalText));
+      finally
+        Reader.Free;
+      end;
 
-    // Try to detect encoding by first 4 kb of text
-    Buffer := Copy(sOriginalText, 1, 4096);
-    sEncodingIn := DetectEncoding(Buffer);
-    ChooseEncoding(miEncodingIn, sEncodingIn);
-    sEncodingOut := sEncodingIn; // by default
-    ChooseEncoding(miEncodingOut, sEncodingOut);
+      // Try to detect encoding by first 4 kb of text
+      Buffer := Copy(sOriginalText, 1, 4096);
+      sEncodingIn := DetectEncoding(Buffer);
+      ChooseEncoding(miEncodingIn, sEncodingIn);
+      sEncodingOut := sEncodingIn; // by default
+      ChooseEncoding(miEncodingOut, sEncodingOut);
 
-    // Try to guess line break style
-    with Editor.Lines do
-    begin
-      if (sEncodingIn <> EncodingUCS2LE) and (sEncodingIn <> EncodingUCS2BE) then
-        TextLineBreakStyle := GuessLineBreakStyle(Buffer)
+      // Try to guess line break style
+      with Editor.Lines do
+      begin
+        if (sEncodingIn <> EncodingUTF16LE) and (sEncodingIn <> EncodingUTF16BE) then
+          TextLineBreakStyle := GuessLineBreakStyle(Buffer)
+        else begin
+          sOriginalText := Copy(sOriginalText, 3, MaxInt); // Skip BOM
+          TextLineBreakStyle := GuessLineBreakStyle(ConvertEncoding(Buffer, sEncodingIn, EncodingUTF8));
+        end;
+
+        case TextLineBreakStyle of
+          tlbsCRLF: actEditLineEndCrLf.Checked := True;
+          tlbsCR:   actEditLineEndCr.Checked := True;
+          tlbsLF:   actEditLineEndLf.Checked := True;
+        end;
+      end;
+
+      // Convert encoding if needed
+      if sEncodingIn = EncodingUTF8 then
+        Buffer := sOriginalText
       else begin
-        sOriginalText := Copy(sOriginalText, 3, MaxInt); // Skip BOM
-        TextLineBreakStyle := GuessLineBreakStyle(ConvertEncoding(Buffer, sEncodingIn, EncodingUTF8));
+        Buffer := ConvertEncoding(sOriginalText, sEncodingIn, EncodingUTF8);
       end;
 
-      case TextLineBreakStyle of
-        tlbsCRLF: actEditLineEndCrLf.Checked := True;
-        tlbsCR:   actEditLineEndCr.Checked := True;
-        tlbsLF:   actEditLineEndLf.Checked := True;
-      end;
+      // Load text into editor
+      Editor.Lines.Text := Buffer;
+
+      // Add empty line if needed
+      if (Length(Buffer) > 0) and (Buffer[Length(Buffer)] in [#10, #13]) then
+        Editor.Lines.Add(EmptyStr);
+
+      Result := True;
+    except
+      on E: EFCreateError do
+        begin
+          DCDebug(E.Message);
+          msgError(rsMsgErrECreate + ' ' + aFileName);
+          Exit;
+        end;
+      on E: EFOpenError do
+        begin
+          DCDebug(E.Message);
+          msgError(rsMsgErrEOpen + ' ' + aFileName);
+          Exit;
+        end;
+      on E: EReadError do
+        begin
+          DCDebug(E.Message);
+          msgError(rsMsgErrERead + ' ' + aFileName);
+          Exit;
+        end;
     end;
 
-    // Convert encoding if needed
-    if sEncodingIn = EncodingUTF8 then
-      Buffer := sOriginalText
-    else begin
-      Buffer := ConvertEncoding(sOriginalText, sEncodingIn, EncodingUTF8);
-    end;
-
-    // Load text into editor
-    Editor.Lines.Text := Buffer;
-
-    // Add empty line if needed
-    if (Length(Buffer) > 0) and (Buffer[Length(Buffer)] in [#10, #13]) then
-      Editor.Lines.Add(EmptyStr);
-
-    Result := True;
-  except
-    on E: EFCreateError do
-      begin
-        DCDebug(E.Message);
-        msgError(rsMsgErrECreate + ' ' + aFileName);
-        Exit;
-      end;
-    on E: EFOpenError do
-      begin
-        DCDebug(E.Message);
-        msgError(rsMsgErrEOpen + ' ' + aFileName);
-        Exit;
-      end;
-    on E: EReadError do
-      begin
-        DCDebug(E.Message);
-        msgError(rsMsgErrERead + ' ' + aFileName);
-        Exit;
-      end;
+    // set up highlighter
+    Highlighter := dmHighl.GetHighlighter(Editor, ExtractFileExt(aFileName));
+    UpdateHighlighter(Highlighter);
+    FileName := aFileName;
+    bChanged := False;
+    bNoname := False;
+    UpdateStatus;
+  finally
+    PushPop(FElevate);
   end;
-
-  // set up highlighter
-  Highlighter := dmHighl.GetHighlighter(Editor, ExtractFileExt(aFileName));
-  UpdateHighlighter(Highlighter);
-  FileName := aFileName;
-  bChanged := False;
-  bNoname := False;
-  UpdateStatus;
 end;
 
 function TfrmEditor.SaveFile(const aFileName: String): Boolean;
 var
+  Mode: LongWord;
   TextOut: String;
   Encoding: String;
-  Writer: TFileStreamEx;
+  Writer: TFileStreamUAC;
 begin
-  Result := False;
+  PushPop(FElevate);
   try
-    Writer := TFileStreamEx.Create(aFileName, fmCreate);
+    Result := False;
     try
-      Encoding := NormalizeEncoding(sEncodingOut);
-      // If file is empty and encoding with BOM then write only BOM
-      if (Editor.Lines.Count = 0) then
-      begin
-        if (Encoding = EncodingUTF8BOM) then
-          Writer.WriteBuffer(UTF8BOM, SizeOf(UTF8BOM))
-        else if (Encoding = EncodingUCS2LE) then
-          Writer.WriteBuffer(UTF16LEBOM, SizeOf(UTF16LEBOM))
-        else if (Encoding = EncodingUCS2BE) then
-          Writer.WriteBuffer(UTF16BEBOM, SizeOf(UTF16BEBOM));
-      end
+      if not FileExistsUAC(AFileName) then
+        Mode:= fmCreate
       else begin
-        TextOut := EmptyStr;
-        if (Encoding = EncodingUCS2LE) then
-          TextOut := UTF16LEBOM
-        else if (Encoding = EncodingUCS2BE) then begin
-          TextOut := UTF16BEBOM
-        end;
-        TextOut += ConvertEncoding(Editor.Lines[0], EncodingUTF8, sEncodingOut);
-        Writer.WriteBuffer(Pointer(TextOut)^, Length(TextOut));
-
-        // If file has only one line then write it without line break
-        if Editor.Lines.Count > 1 then
-        begin
-          TextOut := TextLineBreakValue[Editor.Lines.TextLineBreakStyle];
-          TextOut += GetTextRange(Editor.Lines, 1, Editor.Lines.Count - 2);
-          // Special case for UTF-8 and UTF-8 with BOM
-          if (Encoding <> EncodingUTF8) and (Encoding <> EncodingUTF8BOM) then begin
-            TextOut:= ConvertEncoding(TextOut, EncodingUTF8, sEncodingOut);
-          end;
-          Writer.WriteBuffer(Pointer(TextOut)^, Length(TextOut));
-          // Write last line without line break
-          TextOut:= Editor.Lines[Editor.Lines.Count - 1];
-          // Special case for UTF-8 and UTF-8 with BOM
-          if (Encoding <> EncodingUTF8) and (Encoding <> EncodingUTF8BOM) then begin
-            TextOut:= ConvertEncoding(TextOut, EncodingUTF8, sEncodingOut);
-          end;
-          Writer.WriteBuffer(Pointer(TextOut)^, Length(TextOut));
-        end;
+        Mode:= fmOpenWrite or fmShareDenyWrite;
       end;
-    finally
-      Writer.Free;
-    end;
+      Writer := TFileStreamUAC.Create(aFileName, Mode);
+      try
+        Encoding := NormalizeEncoding(sEncodingOut);
+        // If file is empty and encoding with BOM then write only BOM
+        if (Editor.Lines.Count = 0) then
+        begin
+          if (Encoding = EncodingUTF8BOM) then
+            Writer.WriteBuffer(UTF8BOM, SizeOf(UTF8BOM))
+          else if (Encoding = EncodingUTF16LE) then
+            Writer.WriteBuffer(UTF16LEBOM, SizeOf(UTF16LEBOM))
+          else if (Encoding = EncodingUTF16BE) then
+            Writer.WriteBuffer(UTF16BEBOM, SizeOf(UTF16BEBOM));
+        end
+        else begin
+          TextOut := EmptyStr;
+          if (Encoding = EncodingUTF16LE) then
+            TextOut := UTF16LEBOM
+          else if (Encoding = EncodingUTF16BE) then begin
+            TextOut := UTF16BEBOM
+          end;
+          TextOut += ConvertEncoding(Editor.Lines[0], EncodingUTF8, sEncodingOut);
+          Writer.WriteBuffer(Pointer(TextOut)^, Length(TextOut));
 
-    Editor.Modified := False; // needed for the undo stack
-    Editor.MarkTextAsSaved;
-    Result := True;
-  except
-    on E: Exception do
-      msgError(rsMsgErrSaveFile + ' ' + aFileName + LineEnding + E.Message);
+          // If file has only one line then write it without line break
+          if Editor.Lines.Count > 1 then
+          begin
+            TextOut := TextLineBreakValue[Editor.Lines.TextLineBreakStyle];
+            TextOut += GetTextRange(Editor.Lines, 1, Editor.Lines.Count - 2);
+            // Special case for UTF-8 and UTF-8 with BOM
+            if (Encoding <> EncodingUTF8) and (Encoding <> EncodingUTF8BOM) then begin
+              TextOut:= ConvertEncoding(TextOut, EncodingUTF8, sEncodingOut);
+            end;
+            Writer.WriteBuffer(Pointer(TextOut)^, Length(TextOut));
+            // Write last line without line break
+            TextOut:= Editor.Lines[Editor.Lines.Count - 1];
+            // Special case for UTF-8 and UTF-8 with BOM
+            if (Encoding <> EncodingUTF8) and (Encoding <> EncodingUTF8BOM) then begin
+              TextOut:= ConvertEncoding(TextOut, EncodingUTF8, sEncodingOut);
+            end;
+            Writer.WriteBuffer(Pointer(TextOut)^, Length(TextOut));
+          end;
+        end;
+        if (Mode <> fmCreate) then Writer.Size:= Writer.Position;
+      finally
+        Writer.Free;
+      end;
+
+      Editor.Modified := False; // needed for the undo stack
+      Editor.MarkTextAsSaved;
+      Result := True;
+    except
+      on E: Exception do
+        msgError(rsMsgErrSaveFile + ' ' + aFileName + LineEnding + E.Message);
+    end;
+  finally
+    PushPop(FElevate);
   end;
 end;
 
@@ -545,6 +591,13 @@ begin
   if Assigned(FWaitData) then FWaitData.Done;
 end;
 
+procedure TfrmEditor.AfterConstruction;
+begin
+  inherited AfterConstruction;
+  tbToolBar.ImagesWidth:= gToolIconsSize;
+  tbToolBar.SetButtonSize(gToolIconsSize + ScaleX(6, 96),
+                          gToolIconsSize + ScaleY(6, 96));
+end;
 
 procedure TfrmEditor.EditorReplaceText(Sender: TObject; const ASearch,
   AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction );
@@ -659,13 +712,17 @@ begin
 end;
 
 procedure TfrmEditor.UpdateStatus;
+const
+  BreakStyle: array[TTextLineBreakStyle] of String = ('LF', 'CRLF', 'CR');
 begin
   if bChanged then
-    StatusBar.Panels[0].Text:='*'
-  else
-    StatusBar.Panels[0].Text:='';
-  StatusBar.Panels[1].Text:=Format('%d:%d',[Editor.CaretX, Editor.CaretY]);
-//  StatusBar.Panels[2].Text:=IntToStr(Length(Editor.Lines.Text));
+    StatusBar.Panels[0].Text:= '*'
+  else begin
+    StatusBar.Panels[0].Text:= '';
+  end;
+  StatusBar.Panels[1].Text:= Format('%d:%d',[Editor.CaretX, Editor.CaretY]);
+  StatusBar.Panels[2].Text:= sEncodingIn;
+  StatusBar.Panels[3].Text:= BreakStyle[Editor.Lines.TextLineBreakStyle];
 end;
 
 procedure TfrmEditor.SetEncodingIn(Sender: TObject);
@@ -674,6 +731,7 @@ begin
   sEncodingOut:= sEncodingIn;
   ChooseEncoding(miEncodingOut, sEncodingOut);
   Editor.Lines.Text:= ConvertEncoding(sOriginalText, sEncodingIn, EncodingUTF8);
+  UpdateStatus;
 end;
 
 procedure TfrmEditor.SetEncodingOut(Sender: TObject);
@@ -691,7 +749,7 @@ end;
 procedure TfrmEditor.UpdateHighlighter(Highlighter: TSynCustomHighlighter);
 begin
   dmHighl.SetHighlighter(Editor, Highlighter);
-  StatusBar.Panels[3].Text:= Highlighter.LanguageName;
+  StatusBar.Panels[4].Text:= Highlighter.LanguageName;
 end;
 
 procedure TfrmEditor.FormCloseQuery(Sender: TObject;
@@ -868,16 +926,19 @@ end;
 procedure TfrmEditor.cm_EditLineEndCr(const Params:array of string);
 begin
   Editor.Lines.TextLineBreakStyle:= tlbsCR;
+  UpdateStatus;
 end;
 
 procedure TfrmEditor.cm_EditLineEndCrLf(const Params:array of string);
 begin
   Editor.Lines.TextLineBreakStyle:= tlbsCRLF;
+  UpdateStatus;
 end;
 
 procedure TfrmEditor.cm_EditLineEndLf(const Params:array of string);
 begin
   Editor.Lines.TextLineBreakStyle:= tlbsLF;
+  UpdateStatus;
 end;
 
 procedure TfrmEditor.cm_About(const Params:array of string);

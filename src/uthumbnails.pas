@@ -41,8 +41,9 @@ type
     function RemovePreview(const FullPathToFile: String): Boolean;
   public
     class procedure CompactCache;
-    class procedure RegisterProvider(Provider: TCreatePreviewHandler);
+    class function RegisterProvider(Provider: TCreatePreviewHandler): Integer;
     class function GetPreviewScaleSize(aWidth, aHeight: Integer): TSize;
+    class function GetPreviewFromProvider(const aFileName: String; aSize: TSize; aSkip: Integer): TBitmap;
   end;
 
 implementation
@@ -96,9 +97,9 @@ begin
   with FBitmap do
   begin
     SetSize(gThumbSize.cx, gThumbSize.cy);
-    Canvas.Brush.Color:= clWhite;
+    Canvas.Brush.Color:= clWindow;
     Canvas.FillRect(Canvas.ClipRect);
-    Canvas.Font.Color:= clBlack;
+    Canvas.Font.Color:= clWindowText;
     Canvas.Font.Size := gThumbSize.cy div 16;
     tFile:= mbFileOpen(FFileName, fmOpenRead or fmShareDenyNone);
     if (tFile <> feInvalidHandle) then
@@ -339,10 +340,11 @@ begin
   aFileList.Free;
 end;
 
-class procedure TThumbnailManager.RegisterProvider(Provider: TCreatePreviewHandler);
+class function TThumbnailManager.RegisterProvider(Provider: TCreatePreviewHandler): Integer;
 begin
   SetLength(FProviderList, Length(FProviderList) + 1);
   FProviderList[High(FProviderList)]:= Provider;
+  Result:= High(FProviderList);
 end;
 
 class function TThumbnailManager.GetPreviewScaleSize(aWidth, aHeight: Integer): TSize;
@@ -362,6 +364,21 @@ begin
       Result.cy:= gThumbSize.cy;
       Result.cx:= Result.cy * aWidth div aHeight;
     end;
+end;
+
+class function TThumbnailManager.GetPreviewFromProvider(const aFileName: String; aSize: TSize; aSkip: Integer): TBitmap;
+var
+  Index: Integer;
+begin
+  for Index:= Low(FProviderList) to High(FProviderList) do
+  begin
+    if (Index <> aSkip) then
+    begin
+      Result:= FProviderList[Index](aFileName, aSize);
+      if Assigned(Result) then Exit;
+    end;
+  end;
+  Result:= nil;
 end;
 
 end.

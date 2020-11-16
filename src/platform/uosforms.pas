@@ -116,6 +116,9 @@ function ShowOpenIconDialog(Owner: TCustomControl; var sFileName : String) : Boo
 procedure ShowOpenWithDialog(TheOwner: TComponent; const FileList: TStringList);
 {$ENDIF}
 
+function GetControlHandle(AWindow: TWinControl): HWND;
+function GetWindowHandle(AWindow: TWinControl): HWND;
+
 implementation
 
 uses
@@ -125,19 +128,22 @@ uses
   , ComObj, fMain, DCOSUtils, uOSUtils, uFileSystemFileSource
   , uTotalCommander, FileUtil, Windows, ShlObj, uShlObjAdditional
   , uWinNetFileSource, uVfsModule, uLng, uMyWindows, DCStrUtils
-  , uListGetPreviewBitmap, uThumbnailProvider, uDCReadSVG, uFileSourceUtil
-  , Dialogs, Clipbrd, uShowMsg
+  , uDCReadSVG, uFileSourceUtil, uGdiPlusJPEG, uListGetPreviewBitmap
+  , Dialogs, Clipbrd, uShowMsg, uDebug, JwaDbt, uThumbnailProvider
+    {$IFDEF LCLQT5}
+    , qt5, qtwidgets, uDarkStyle
+    {$ENDIF}
   {$ENDIF}
   {$IFDEF UNIX}
   , BaseUnix, fFileProperties, uJpegThumb
     {$IF NOT DEFINED(DARWIN)}
     , uDCReadSVG, uMagickWand, uGio, uGioFileSource, uVfsModule, uVideoThumb
-    , uDCReadWebP
+    , uDCReadWebP, uFolderThumb
     {$ELSE}
     , MacOSAll, fMain, uQuickLook, uMyDarwin, uShowMsg, uLng
     {$ENDIF}
     {$IF NOT DEFINED(DARWIN)}
-    , fOpenWith, uKde
+    , fOpenWith
     {$ENDIF}
     {$IF DEFINED(LCLQT) and not DEFINED(DARWIN)}
     , qt4, qtwidgets
@@ -145,7 +151,8 @@ uses
     {$IF DEFINED(LCLGTK2)}
     , gtk2
     {$ENDIF}
-  {$ENDIF};
+  {$ENDIF}
+  , uTurboJPEG;
 
 { TAloneForm }
 
@@ -361,6 +368,28 @@ var
   ShellContextMenu : TShellContextMenu = nil;
 
 {$IFDEF MSWINDOWS}
+
+var
+  OldWProc: WNDPROC;
+
+function MyWndProc(hWnd: HWND; uiMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall;
+begin
+  if (uiMsg = WM_SETTINGCHANGE) and (lParam <> 0) and (StrComp('Environment', {%H-}PAnsiChar(lParam)) = 0) then
+  begin
+    UpdateEnvironment;
+    DCDebug('WM_SETTINGCHANGE:Environment');
+  end;
+
+  if (uiMsg = WM_DEVICECHANGE) and (wParam = DBT_DEVNODES_CHANGED) and (lParam = 0) then
+  begin
+    Screen.UpdateMonitors; // Refresh monitor list
+    DCDebug('WM_DEVICECHANGE:DBT_DEVNODES_CHANGED');
+  end;
+
+  Result := CallWindowProc(OldWProc, hWnd, uiMsg, wParam, lParam);
+end;
+
+{$IF DEFINED(LCLWIN32)}
 procedure ActivateHandler(Self, Sender: TObject);
 var
   I: Integer = 0;
@@ -376,6 +405,16 @@ begin
       CustomFormsZOrdered[I].BringToFront;
   end;
 end;
+{$ELSEIF DEFINED(LCLQT5)}
+procedure ScreenFormEvent(Self, Sender: TObject; Form: TCustomForm);
+var
+  Handle: HWND;
+begin
+  Handle:= GetWindowHandle(Form);
+  AllowDarkModeForWindow(Handle, True);
+  RefreshTitleBarThemeColor(Handle);
+end;
+{$ENDIF}
 
 procedure MenuHandler(Self, Sender: TObject);
 var
@@ -514,6 +553,7 @@ var
   Handler: TMethod;
   MenuItem: TMenuItem;
 begin
+{$IF DEFINED(LCLWIN32)}
   Handler.Code:= @ActivateHandler;
   Handler.Data:= MainForm;
   // Setup application OnActivate handler
@@ -521,12 +561,23 @@ begin
   // Disable application button on taskbar
   with Widgetset do
   SetWindowLong(AppHandle, GWL_EXSTYLE, GetWindowLong(AppHandle, GWL_EXSTYLE) or WS_EX_TOOLWINDOW);
-  // Emulate Total Commander window
-  CreateTotalCommanderWindow(MainForm.Handle);
+{$ELSEIF DEFINED(LCLQT5)}
+  if g_darkModeEnabled then
+  begin
+    Handler.Data:= MainForm;
+    Handler.Code:= @ScreenFormEvent;
+    Screen.AddHandlerFormVisibleChanged(TScreenFormEvent(Handler), True);
+  end;
+{$ENDIF}
   // Register network file source
   RegisterVirtualFileSource(rsVfsNetwork, TWinNetFileSource);
-  if (Win32MajorVersion > 5) and IsUserAdmin then // if run under administrator
+  if (IsUserAdmin = dupAccept) then // if run under administrator
     MainForm.Caption:= MainForm.Caption + ' - Administrator';
+
+  // Add main window message handler
+  {$PUSH}{$HINTS OFF}
+  OldWProc := WNDPROC(SetWindowLongPtr(GetWindowHandle(Application.MainForm), GWL_WNDPROC, LONG_PTR(@MyWndProc)));
+  {$POP}
 
   with frmMain do
   begin
@@ -798,12 +849,32 @@ begin
     FreeAndNil(opdDialog);
 end;
 
+function GetControlHandle(AWindow: TWinControl): HWND;
+{$IF DEFINED(MSWINDOWS) and DEFINED(LCLQT5)}
+begin
+  Result:= HWND(QWidget_winId(TQtWidget(AWindow.Handle).GetContainerWidget));
+end;
+{$ELSE}
+begin
+  Result:= AWindow.Handle;
+end;
+{$ENDIF}
+
+function GetWindowHandle(AWindow: TWinControl): HWND;
+{$IF DEFINED(MSWINDOWS) and DEFINED(LCLQT5)}
+begin
+  Result:= Windows.GetAncestor(HWND(QWidget_winId(TQtWidget(AWindow.Handle).GetContainerWidget)), GA_ROOT);
+end;
+{$ELSE}
+begin
+  Result:= AWindow.Handle;
+end;
+{$ENDIF}
+
 {$IF DEFINED(UNIX) AND NOT DEFINED(DARWIN)}
 procedure ShowOpenWithDialog(TheOwner: TComponent; const FileList: TStringList);
 begin
-  if not (UseKde and uKde.ShowOpenWithDialog(FileList)) then begin
-    fOpenWith.ShowOpenWithDlg(TheOwner, FileList);
-  end;
+  fOpenWith.ShowOpenWithDlg(TheOwner, FileList);
 end;
 {$ENDIF}
 

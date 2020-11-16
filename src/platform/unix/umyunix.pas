@@ -158,21 +158,6 @@ function getgrgid(gid: gid_t): PGroupRecord; cdecl; external libc name 'getgrgid
             fields of the record in the group database that matches the group name)
 }
 function getgrnam(name: PChar): PGroupRecord; cdecl; external libc name 'getgrnam';
-{en
-   The getenv() function searches the environment list to find the
-   environment variable name, and returns a pointer to the corresponding
-   value string.
-}
-function getenv(name: PAnsiChar): PAnsiChar; cdecl; external libc name 'getenv';
-{en
-   Change or add an environment variable
-   @param(name Environment variable name)
-   @param(value Environment variable value)
-   @param(overwrite Overwrite environment variable if exist)
-   @returns(The function returns zero on success, or -1 if there was
-            insufficient space in the environment)
-}
-function setenv(const name, value: PChar; overwrite: LongInt): LongInt; cdecl; external libc name 'setenv';
 
 function fpSystemStatus(Command: string): cint;
 
@@ -190,6 +175,7 @@ function FileIsUnixExecutable(const Filename: String): Boolean;
    @returns(Mount point of file system)
 }
 function FindMountPointPath(const FileName: String): String;
+function FindExecutableInSystemPath(var FileName: String): Boolean;
 function ExecutableInSystemPath(const FileName: String): Boolean;
 function GetDefaultAppCmd(const FileName: String): String;
 function GetFileMimeType(const FileName: String): String;
@@ -413,20 +399,32 @@ begin
   end;
 end;
 
-function ExecutableInSystemPath(const FileName: String): Boolean;
+function FindExecutableInSystemPath(var FileName: String): Boolean;
 var
   I: Integer;
-  Path: String;
+  Path, FullName: String;
   Value: TDynamicStringArray;
 begin
   Path:= GetEnvironmentVariable('PATH');
   Value:= SplitString(Path, PathSeparator);
   for I:= Low(Value) to High(Value) do
   begin
-    if fpAccess(IncludeTrailingPathDelimiter(Value[I]) + FileName, X_OK) = 0 then
+    FullName:= IncludeTrailingPathDelimiter(Value[I]) + FileName;
+    if fpAccess(FullName, X_OK) = 0 then
+    begin
+      FileName:= FullName;
       Exit(True);
+    end;
   end;
   Result:= False;
+end;
+
+function ExecutableInSystemPath(const FileName: String): Boolean;
+var
+  FullName: String;
+begin
+  FullName:= FileName;
+  Result:= FindExecutableInSystemPath(FullName);
 end;
 
 function GetDefaultAppCmd(const FileName: String): String;

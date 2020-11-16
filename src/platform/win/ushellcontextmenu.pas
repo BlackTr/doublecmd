@@ -55,7 +55,7 @@ type
   TShellContextMenu = class
   private
     FOnClose: TNotifyEvent;
-    FParent: TWinControl;
+    FParent: HWND;
     FFiles: TFiles;
     FBackground: boolean;
     FShellMenu1: IContextMenu;
@@ -76,7 +76,7 @@ implementation
 uses
   graphtype, intfgraphics, Graphics, uPixMapManager, Dialogs, uLng, uMyWindows,
   uShellExecute, fMain, uDCUtils, uFormCommands, DCOSUtils, uOSUtils, uShowMsg,
-  uExts, uFileSystemFileSource, DCConvertEncoding, LazUTF8;
+  uExts, uFileSystemFileSource, DCConvertEncoding, LazUTF8, uOSForms, uGraphics;
 
 const
   USER_CMD_ID = $1000;
@@ -287,9 +287,6 @@ var
   sAct: String;
   iMenuPositionInsertion: integer = 0;
   Always_Expanded_Action_Count: integer = 0;
-  liiSource: TLazIntfImage = nil;
-  liiDestination: TLazIntfImage = nil;
-  ImgFormatDescription: TRawImageDescription;
   bSeparatorAlreadyInserted: boolean;
 
   function GetMeTheBitmapForThis(ImageRequiredIndex: PtrInt): TBitmap;
@@ -302,22 +299,7 @@ var
     Result.Canvas.FillRect(0, 0, gIconsSize, gIconsSize);
     PixMapManager.DrawBitmap(ImageRequiredIndex, Result.Canvas, 0, 0);
 
-    if Result.PixelFormat <> pf32bit then
-    begin
-      liiSource := Result.CreateIntfImage;
-      liiDestination := TLazIntfImage.Create(gIconsSize, gIconsSize);
-      try
-        ImgFormatDescription.Init_BPP32_B8G8R8A8_BIO_TTB(gIconsSize, gIconsSize);
-        liiDestination.DataDescription := ImgFormatDescription;
-        liiDestination.CopyPixels(liiSource);
-        Result.FreeImage;
-        Result.PixelFormat := pf32bit;
-        Result.LoadFromIntfImage(liiDestination);
-      finally
-        liiDestination.Free;
-        liiSource.Free;
-      end;
-    end;
+    if Result.PixelFormat <> pf32bit then BitmapConvert(Result);
   end;
 
   procedure LocalInsertMenuSeparator;
@@ -447,19 +429,7 @@ begin
 
             if paramExtActionList.ExtActionCommand[I].IconBitmap.PixelFormat <> pf32bit then
             begin
-              liiSource := paramExtActionList.ExtActionCommand[I].IconBitmap.CreateIntfImage;
-              liiDestination := TLazIntfImage.Create(gIconsSize, gIconsSize);
-              try
-                ImgFormatDescription.Init_BPP32_B8G8R8A8_BIO_TTB(gIconsSize, gIconsSize);
-                liiDestination.DataDescription := ImgFormatDescription;
-                liiDestination.CopyPixels(liiSource);
-                paramExtActionList.ExtActionCommand[I].IconBitmap.FreeImage;
-                paramExtActionList.ExtActionCommand[I].IconBitmap.PixelFormat := pf32bit;
-                paramExtActionList.ExtActionCommand[I].IconBitmap.LoadFromIntfImage(liiDestination);
-              finally
-                liiDestination.Free;
-                liiSource.Free;
-              end;
+              BitmapConvert(paramExtActionList.ExtActionCommand[I].IconBitmap);
             end;
           end;
 
@@ -511,11 +481,11 @@ constructor TShellContextMenu.Create(Parent: TWinControl; var Files: TFiles; Bac
 var
   UFlags: UINT = CMF_EXPLORE;
 begin
+  FParent:= GetWindowHandle(Parent);
   // Replace window procedure
-  {$PUSH}{$HINTS OFF}
-  OldWProc := WNDPROC(SetWindowLongPtr(Parent.Handle, GWL_WNDPROC, LONG_PTR(@MyWndProc)));
-  {$POP}
-  FParent := Parent;
+{$PUSH}{$HINTS OFF}
+  OldWProc := WNDPROC(SetWindowLongPtr(FParent, GWL_WNDPROC, LONG_PTR(@MyWndProc)));
+{$POP}
   FFiles := Files;
   FBackground := Background;
   FShellMenu := 0;
@@ -553,7 +523,7 @@ destructor TShellContextMenu.Destroy;
 begin
   // Restore window procedure
   {$PUSH}{$HINTS OFF}
-  SetWindowLongPtr(FParent.Handle, GWL_WNDPROC, LONG_PTR(@OldWProc));
+  SetWindowLongPtr(FParent, GWL_WNDPROC, LONG_PTR(@OldWProc));
   {$POP}
   // Free global variables
   ShellMenu2 := nil;
@@ -662,7 +632,7 @@ begin
             { /Actions submenu }
           end;
           //------------------------------------------------------------------------------
-          cmd := UINT(TrackPopupMenu(FShellMenu, TPM_LEFTALIGN or TPM_LEFTBUTTON or TPM_RIGHTBUTTON or TPM_RETURNCMD, X, Y, 0, FParent.Handle, nil));
+          cmd := UINT(TrackPopupMenu(FShellMenu, TPM_LEFTALIGN or TPM_LEFTBUTTON or TPM_RIGHTBUTTON or TPM_RETURNCMD, X, Y, 0, FParent, nil));
         finally
           if hActionsSubMenu <> 0 then
             DestroyMenu(hActionsSubMenu);
@@ -710,7 +680,7 @@ begin
           end
           else if SameText(sVerb, sCmdVerbPaste) or SameText(sVerb, sCmdVerbDelete) then
           begin
-            TShellThread.Create(FParent.Handle, FShellMenu1, sVerb).Start;
+            TShellThread.Create(FParent, FShellMenu1, sVerb).Start;
             bHandled := True;
           end;
         end;
@@ -729,7 +699,7 @@ begin
           with cmici do
           begin
             cbSize := SizeOf(cmici);
-            hwnd := FParent.Handle;
+            hwnd := FParent;
             fMask := CMIC_MASK_UNICODE;
             {$PUSH}{$HINTS OFF}
             lpVerb  := PAnsiChar(PtrUInt(cmd - 1));
@@ -760,7 +730,7 @@ begin
         if FBackground then
         begin
           if SameText(UserSelectedCommand.CommandName, 'cm_PasteFromClipboard') then
-            TShellThread.Create(FParent.Handle, FShellMenu1, sCmdVerbPaste).Start
+            TShellThread.Create(FParent, FShellMenu1, sCmdVerbPaste).Start
           else
             FormCommands.ExecuteCommand(UserSelectedCommand.CommandName, []);
           bHandled := True;

@@ -50,6 +50,9 @@ var
 
 function CeRawToUtf8(const Source: String): RawByteString;
 
+function CeUtf8ToUtf16(const Source: String): UnicodeString;
+function CeUtf16ToUtf8(const Source: UnicodeString): RawByteString;
+
 {$IF DEFINED(MSWINDOWS)}
 function CeTryEncode(const aValue: UnicodeString; aCodePage: Cardinal;
                      aAllowBestFit: Boolean; out aResult: AnsiString): Boolean;
@@ -68,6 +71,8 @@ uses
   iconvenc_dyn
     {$IF DEFINED(DARWIN)}
     , MacOSAll, CocoaAll
+    {$ELSE}
+    , UnixCP
     {$ENDIF}
   {$ELSEIF DEFINED(MSWINDOWS)}
   Windows
@@ -141,6 +146,62 @@ begin
   until False;
   Result:= CeSysToUtf8(Source);
 end;
+
+function CeUtf8ToUtf16(const Source: String): UnicodeString;
+{$IF DEFINED(MSWINDOWS)}
+var
+  L: SizeUInt;
+begin
+  L:= Length(Source);
+  if L = 0 then Exit('');
+  SetLength(Result, L + 1);
+  // wide chars of UTF-16 <= bytes of UTF-8 string
+  SetLength(Result, MultiByteToWideChar(CP_UTF8, 0, PAnsiChar(Source), L, PWideChar(Result), L + 1));
+end;
+{$ELSE}
+var
+  L: SizeUInt;
+begin
+  L:= Length(Source);
+  if L = 0 then Exit('');
+  SetLength(Result, L + 1);
+  L:= Utf8ToUnicode(PUnicodeChar(Result), L + 1, PAnsiChar(Source), L);
+  if L > 0 then
+    SetLength(Result, L - 1)
+  else begin
+    SetLength(Result, 0);
+  end;
+end;
+{$ENDIF}
+
+function CeUtf16ToUtf8(const Source: UnicodeString): RawByteString;
+{$IF DEFINED(MSWINDOWS)}
+var
+  L: SizeUInt;
+begin
+  L:= Length(Source);
+  if (L = 0) then Exit('');
+  SetLength(Result, L * 3);
+  // bytes of UTF-8 <= 3 * wide chars of UTF-16 string
+  // e.g. %11100000 10100000 10000000 (UTF-8) is $0800 (UTF-16)
+  SetLength(Result, WideCharToMultiByte(CP_UTF8, 0,
+    PWideChar(Source), L, PAnsiChar(Result), Length(Result), nil, nil));
+end;
+{$ELSE}
+var
+  L: SizeUInt;
+begin
+  L:= Length(Source);
+  if (L = 0) then Exit('');
+  SetLength(Result, L * 3);
+  L:= UnicodeToUtf8(PAnsiChar(Result), Length(Result) + 1, PUnicodeChar(Source), L);
+  if L > 0 then
+    SetLength(Result, L - 1)
+  else begin
+    SetLength(Result, 0);
+  end;
+end;
+{$ENDIF}
 
 function Dummy(const Source: String): RawByteString;
 begin
@@ -367,6 +428,31 @@ begin
   Result:= TryLoadLib('libiconv.dylib', Error);
   IconvLibFound:= IconvLibFound or Result;
 end;
+{$ELSEIF DEFINED(FPC_HAS_CPSTRING)}
+var
+  AManager : TUnicodeStringManager;
+
+function GetStandardCodePage(const stdcp: TStandardCodePageEnum): TSystemCodePage;
+begin
+  Result:= UnixCP.GetSystemCodepage;
+end;
+
+procedure SetStdIOCodePage(var T: Text); inline;
+begin
+  case TextRec(T).Mode of
+    fmInput: TextRec(T).CodePage:= GetStandardCodePage(scpConsoleInput);
+    fmOutput: TextRec(T).CodePage:= GetStandardCodePage(scpConsoleOutput);
+  end;
+end;
+
+procedure SetStdIOCodePages; inline;
+begin
+  SetStdIOCodePage(Input);
+  SetStdIOCodePage(Output);
+  SetStdIOCodePage(ErrOutput);
+  SetStdIOCodePage(StdOut);
+  SetStdIOCodePage(StdErr);
+end;
 {$ENDIF}
 
 function FindEncoding: Boolean;
@@ -459,6 +545,30 @@ begin
   CeAnsiToUtf8:= @Dummy;
   CeUtf8ToAnsi:= @Dummy;
 
+{$IF DEFINED(FPC_HAS_CPSTRING) and NOT DEFINED(DARWIN)}
+  {
+   If locale does not exists then nl_langinfo (called by cwstring unit)
+   returns ANSI_X3.4-1968 (CP_ASCII) as system encoding. Try to find correct
+   encoding by using environment variables LC_ALL, LC_CTYPE, LANG in this case.
+  }
+  if DefaultFileSystemCodePage = CP_ASCII then
+  begin
+    DefaultFileSystemCodePage:= UnixCP.GetSystemCodepage;
+    // Use CP_UTF8 if cannot determine system encoding
+    if DefaultFileSystemCodePage = CP_ASCII then
+      DefaultFileSystemCodePage:= CP_UTF8
+    else begin
+      GetWideStringManager(AManager);
+      AManager.GetStandardCodePageProc:= @GetStandardCodePage;
+      SetWideStringManager(AManager);
+    end;
+    SetStdIOCodePages;
+    FileSystemCodePage:= DefaultFileSystemCodePage;
+    DefaultSystemCodePage:= DefaultFileSystemCodePage;
+    DefaultRTLFileSystemCodePage:= DefaultFileSystemCodePage;
+  end;
+{$ENDIF}
+
   // Try to get system encoding and initialize Iconv library
   if not (GetSystemEncoding and InitIconv(Error)) then
     WriteLn(Error)
@@ -489,6 +599,12 @@ begin
         CeSysToUtf8:= @Sys2UTF8;
       end;
     end;
+  WriteLn('SystemLocale ', SystemLocale);
+  WriteLn('SystemLanguage ', SystemLanguage);
+  WriteLn('SystemEncoding ', SystemEncoding);
+  WriteLn('DefaultSystemCodePage ', DefaultSystemCodePage);
+  WriteLn('DefaultFileSystemCodePage ', DefaultFileSystemCodePage);
+  WriteLn('DefaultRTLFileSystemCodePage ', DefaultRTLFileSystemCodePage);
 end;
 
 {$ELSE}

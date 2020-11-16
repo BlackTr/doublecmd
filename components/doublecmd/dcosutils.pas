@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains platform dependent functions dealing with operating system.
 
-    Copyright (C) 2006-2018 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2020 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,11 +22,19 @@
 unit DCOSUtils;
  
 {$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 
 uses
-  SysUtils, Classes, DynLibs, DCClassesUtf8, DCBasicTypes, DCConvertEncoding;
+  SysUtils, Classes, DynLibs, DCClassesUtf8, DCBasicTypes, DCConvertEncoding
+{$IFDEF UNIX}
+  , BaseUnix, DCUnix
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  , Windows
+{$ENDIF}
+  ;
 
 const
   fmOpenSync    = $10000;
@@ -43,12 +51,36 @@ type
     MappedFile : Pointer;
   end;
 
+  TFileAttributeData = packed record
+    Size: Int64;
+{$IF DEFINED(UNIX)}
+    FindData: BaseUnix.Stat;
+    property Attr: TUnixMode read FindData.st_mode;
+    property PlatformTime: TUnixTime read FindData.st_ctime;
+    property LastWriteTime: TUnixTime read FindData.st_mtime;
+    property LastAccessTime: TUnixTime read FindData.st_atime;
+{$ELSE}
+    case Boolean of
+      True: (
+        FindData: Windows.TWin32FileAttributeData;
+        );
+      False: (
+        Attr: TFileAttrs;
+        PlatformTime: DCBasicTypes.TFileTime;
+        LastAccessTime: DCBasicTypes.TFileTime;
+        LastWriteTime: DCBasicTypes.TFileTime;
+        );
+{$ENDIF}
+  end;
+
   TCopyAttributesOption = (caoCopyAttributes,
                            caoCopyTime,
                            caoCopyOwnership,
                            caoCopyPermissions,
                            caoRemoveReadOnlyAttr);
   TCopyAttributesOptions = set of TCopyAttributesOption;
+  TCopyAttributesResult = array[TCopyAttributesOption] of Integer;
+  PCopyAttributesResult = ^TCopyAttributesResult;
 
 const
   faInvalidAttributes: TFileAttrs = TFileAttrs(-1);
@@ -72,6 +104,12 @@ function FPS_ISLNK(iAttr: TFileAttrs) : Boolean;
    @returns(@true if file is executable, @false otherwise)
 }
 function FileIsExeLib(const sFileName : String) : Boolean;
+{en
+   Is file console executable
+   @param(sFileName File name)
+   @returns(@true if file is console executable, @false otherwise)
+}
+function FileIsConsoleExe(const FileName: String): Boolean;
 {en
    Copies a file attributes (attributes, date/time, owner & group, permissions).
    @param(sSrc String expression that specifies the name of the file to be copied)
@@ -140,21 +178,27 @@ function mbFileSetTime(const FileName: String;
 function mbFileExists(const FileName: String): Boolean;
 function mbFileAccess(const FileName: String; Mode: Word): Boolean;
 function mbFileGetAttr(const FileName: String): TFileAttrs; overload;
-function mbFileSetAttr(const FileName: String; Attr: TFileAttrs) : LongInt;
+function mbFileGetAttr(const FileName: String; out Attr: TFileAttributeData): Boolean; overload;
+function mbFileSetAttr(const FileName: String; Attr: TFileAttrs): Boolean;
 {en
    If any operation in Options is performed and does not succeed it is included
    in the result set. If all performed operations succeed the function returns empty set.
    For example for Options=[caoCopyTime, caoCopyOwnership] setting ownership
    doesn't succeed then the function returns [caoCopyOwnership].
 }
-function mbFileCopyAttr(const sSrc, sDst: String; Options: TCopyAttributesOptions): TCopyAttributesOptions;
+function mbFileCopyAttr(const sSrc, sDst: String;
+                       Options: TCopyAttributesOptions;
+                       Errors: PCopyAttributesResult = nil): TCopyAttributesOptions;
 // Returns True on success.
 function mbFileSetReadOnly(const FileName: String; ReadOnly: Boolean): Boolean;
 function mbDeleteFile(const FileName: String): Boolean;
 
 function mbRenameFile(const OldName: String; NewName: String): Boolean;
 function mbFileSize(const FileName: String): Int64;
+function FileGetSize(Handle: System.THandle): Int64;
 function FileFlush(Handle: System.THandle): Boolean;
+function FileFlushData(Handle: System.THandle): Boolean;
+function FileAllocate(Handle: System.THandle; Size: Int64): Boolean;
 { Directory handling functions}
 function mbGetCurrentDir: String;
 function mbSetCurrentDir(const NewDir: String): Boolean;
@@ -180,6 +224,8 @@ function mbGetEnvironmentString(Index : Integer) : String;
    them with the values defined for the current user
 }
 function mbExpandEnvironmentStrings(const FileName: String): String;
+function mbGetEnvironmentVariable(const sName: String): String;
+function mbSetEnvironmentVariable(const sName, sValue: String): Boolean;
 function mbSysErrorMessage: String; overload; inline;
 function mbSysErrorMessage(ErrorCode: Integer): String; overload;
 {en
@@ -188,7 +234,25 @@ function mbSysErrorMessage(ErrorCode: Integer): String; overload;
 function mbGetModuleName(Address: Pointer = nil): String;
 function mbLoadLibrary(const Name: String): TLibHandle;
 function SafeGetProcAddress(Lib: TLibHandle; const ProcName: AnsiString): Pointer;
-
+{en
+   Reads the concrete file's name that the link points to.
+   If the link points to a link then it's resolved recursively
+   until a valid file name that is not a link is found.
+   @param(PathToLink Name of symbolic link (absolute path))
+   @returns(The absolute filename the symbolic link name is pointing to,
+            or an empty string when the link is invalid or
+            the file it points to does not exist.)
+}
+function mbReadAllLinks(const PathToLink : String) : String;
+{en
+   If PathToLink points to a link then it returns file that the link points to (recursively).
+   If PathToLink does not point to a link then PathToLink value is returned.
+}
+function mbCheckReadLinks(const PathToLink : String) : String;
+{en
+   Same as mbFileGetAttr, but dereferences any encountered links.
+}
+function mbFileGetAttrNoLinks(const FileName: String): TFileAttrs;
 {en
    Create a hard link to a file
    @param(Path Name of file)
@@ -211,14 +275,21 @@ function CreateSymLink(const Path, LinkName: string) : Boolean;
 }
 function ReadSymLink(const LinkName : String) : String;
 
+{en
+   Sets the last-error code for the calling thread
+}
+procedure SetLastOSError(LastError: Integer);
+
+function GetTickCountEx: UInt64;
+
 implementation
 
 uses
 {$IF DEFINED(MSWINDOWS)}
-  Windows, DCDateTimeUtils, DCWindows, DCNtfsLinks,
+  DCDateTimeUtils, DCWindows, DCNtfsLinks,
 {$ENDIF}
 {$IF DEFINED(UNIX)}
-  BaseUnix, Unix, dl, DCUnix,
+  Unix, dl,
 {$ENDIF}
   DCStrUtils, LazUTF8;
 
@@ -260,6 +331,7 @@ const
 
 var
   CurrentDirectory: String;
+  PerformanceFrequency: LARGE_INTEGER;
 {$ELSEIF DEFINED(UNIX)}
 const
 
@@ -337,6 +409,38 @@ begin
   end;
 end;
 
+function FileIsConsoleExe(const FileName: String): Boolean;
+{$IF DEFINED(UNIX)}
+begin
+  Result:= True;
+end;
+{$ELSE}
+var
+  fsFileStream: TFileStreamEx;
+begin
+  Result:= False;
+  try
+    fsFileStream:= TFileStreamEx.Create(FileName, fmOpenRead or fmShareDenyNone);
+    try
+      if fsFileStream.ReadWord = IMAGE_DOS_SIGNATURE then
+      begin
+        fsFileStream.Seek(60, soBeginning);
+        fsFileStream.Seek(fsFileStream.ReadDWord, soBeginning);
+        if fsFileStream.ReadDWord = IMAGE_NT_SIGNATURE then
+        begin
+          fsFileStream.Seek(88, soCurrent);
+          Result:= (fsFileStream.ReadWord = IMAGE_SUBSYSTEM_WINDOWS_CUI);
+        end;
+      end;
+    finally
+      fsFileStream.Free;
+    end;
+  except
+    Result:= False;
+  end;
+end;
+{$ENDIF}
+
 function FileIsReadOnly(iAttr: TFileAttrs): Boolean;
 {$IFDEF MSWINDOWS}
 begin
@@ -348,7 +452,9 @@ begin
 end;
 {$ENDIF}
 
-function mbFileCopyAttr(const sSrc, sDst: String; Options: TCopyAttributesOptions): TCopyAttributesOptions;
+function mbFileCopyAttr(const sSrc, sDst: String;
+  Options: TCopyAttributesOptions; Errors: PCopyAttributesResult
+  ): TCopyAttributesOptions;
 {$IFDEF MSWINDOWS}
 var
   Attr : TFileAttrs;
@@ -363,18 +469,26 @@ begin
     begin
       if (caoRemoveReadOnlyAttr in Options) and ((Attr and faReadOnly) <> 0) then
         Attr := (Attr and not faReadOnly);
-      if mbFileSetAttr(sDst, Attr) <> 0 then
+      if not mbFileSetAttr(sDst, Attr) then
+      begin
         Include(Result, caoCopyAttributes);
+        if Assigned(Errors) then Errors^[caoCopyAttributes]:= GetLastOSError;
+      end;
     end
-    else
+    else begin
       Include(Result, caoCopyAttributes);
+      if Assigned(Errors) then Errors^[caoCopyAttributes]:= GetLastOSError;
+    end;
   end;
 
   if caoCopyTime in Options then
   begin
     if not (mbFileGetTime(sSrc, ModificationTime, CreationTime, LastAccessTime) and
             mbFileSetTime(sDst, ModificationTime, CreationTime, LastAccessTime)) then
+    begin
       Include(Result, caoCopyTime);
+      if Assigned(Errors) then Errors^[caoCopyTime]:= GetLastOSError;
+    end;
   end;
 
   if caoCopyPermissions in Options then
@@ -382,17 +496,27 @@ begin
     if not CopyNtfsPermissions(sSrc, sDst) then
     begin
       Include(Result, caoCopyPermissions);
+      if Assigned(Errors) then Errors^[caoCopyPermissions]:= GetLastOSError;
     end;
   end;
 end;
 {$ELSE}  // *nix
 var
+  Option: TCopyAttributesOption;
   StatInfo : BaseUnix.Stat;
   utb : BaseUnix.TUTimBuf;
   mode : TMode;
 begin
-  if fpLStat(UTF8ToSys(sSrc), StatInfo) >= 0 then
+  if fpLStat(UTF8ToSys(sSrc), StatInfo) < 0 then
   begin
+    Result := Options;
+    if Assigned(Errors) then
+    begin
+      for Option in Result do
+        Errors^[Option]:= GetLastOSError;
+    end;
+  end
+  else begin
     Result := [];
     if FPS_ISLNK(StatInfo.st_mode) then
     begin
@@ -402,6 +526,7 @@ begin
         if fpLChown(sDst, StatInfo.st_uid, StatInfo.st_gid) = -1 then
         begin
           Include(Result, caoCopyOwnership);
+          if Assigned(Errors) then Errors^[caoCopyOwnership]:= GetLastOSError;
         end;
       end;
     end
@@ -412,7 +537,10 @@ begin
         utb.actime  := time_t(StatInfo.st_atime);  // last access time
         utb.modtime := time_t(StatInfo.st_mtime);  // last modification time
         if fputime(UTF8ToSys(sDst), @utb) <> 0 then
+        begin
           Include(Result, caoCopyTime);
+          if Assigned(Errors) then Errors^[caoCopyTime]:= GetLastOSError;
+        end;
       end;
 
       if caoCopyOwnership in Options then
@@ -420,6 +548,7 @@ begin
         if fpChown(PChar(UTF8ToSys(sDst)), StatInfo.st_uid, StatInfo.st_gid) = -1 then
         begin
           Include(Result, caoCopyOwnership);
+          if Assigned(Errors) then Errors^[caoCopyOwnership]:= GetLastOSError;
         end;
       end;
 
@@ -431,12 +560,11 @@ begin
         if fpChmod(UTF8ToSys(sDst), mode) = -1 then
         begin
           Include(Result, caoCopyAttributes);
+          if Assigned(Errors) then Errors^[caoCopyAttributes]:= GetLastOSError;
         end;
       end;
     end;
-  end
-  else
-    Result := Options;
+  end;
 end;
 {$ENDIF}
 
@@ -849,17 +977,54 @@ begin
 end;
 {$ENDIF}
 
-function mbFileSetAttr(const FileName: String; Attr: TFileAttrs): LongInt;
+function mbFileGetAttr(const FileName: String; out Attr: TFileAttributeData): Boolean;
 {$IFDEF MSWINDOWS}
+var
+  Handle: THandle;
+  fInfoLevelId: FINDEX_INFO_LEVELS;
+  FileInfo: Windows.TWin32FindDataW;
 begin
-  if SetFileAttributesW(PWideChar(UTF16LongName(FileName)), Attr) then
-    Result:= 0
-  else
-    Result:= GetLastError;
+  if CheckWin32Version(6, 1) then
+    fInfoLevelId:= FindExInfoBasic
+  else begin
+    fInfoLevelId:= FindExInfoStandard;
+  end;
+  Handle:= FindFirstFileExW(PWideChar(UTF16LongName(FileName)), fInfoLevelId,
+                            @FileInfo, FindExSearchNameMatch, nil, 0);
+  Result:= Handle <> INVALID_HANDLE_VALUE;
+  if Result then
+  begin
+    FindClose(Handle);
+    // If a reparse point tag is not a name surrogate then remove reparse point attribute
+    // Fixes bug: http://doublecmd.sourceforge.net/mantisbt/view.php?id=531
+    if (FileInfo.dwFileAttributes and FILE_ATTRIBUTE_REPARSE_POINT <> 0) then
+    begin
+      if (FileInfo.dwReserved0 and $20000000 = 0) then
+        FileInfo.dwFileAttributes-= FILE_ATTRIBUTE_REPARSE_POINT;
+    end;
+    Int64Rec(Attr.Size).Lo:= FileInfo.nFileSizeLow;
+    Int64Rec(Attr.Size).Hi:= FileInfo.nFileSizeHigh;
+    Move(FileInfo, Attr.FindData, SizeOf(TWin32FileAttributeData));
+  end;
 end;
 {$ELSE}
 begin
-  Result:= fpchmod(UTF8ToSys(FileName), Attr);
+  Result:= fpLStat(UTF8ToSys(FileName), Attr.FindData) >= 0;
+  if Result then
+  begin
+    Attr.Size:= Attr.FindData.st_size;
+  end;
+end;
+{$ENDIF}
+
+function mbFileSetAttr(const FileName: String; Attr: TFileAttrs): Boolean;
+{$IFDEF MSWINDOWS}
+begin
+  Result:= SetFileAttributesW(PWideChar(UTF16LongName(FileName)), Attr);
+end;
+{$ELSE}
+begin
+  Result:= fpchmod(UTF8ToSys(FileName), Attr) = 0;
 end;
 {$ENDIF}
 
@@ -1026,6 +1191,22 @@ begin
 end;
 {$ENDIF}
 
+function FileGetSize(Handle: System.THandle): Int64;
+{$IFDEF MSWINDOWS}
+begin
+  Int64Rec(Result).Lo := GetFileSize(Handle, @Int64Rec(Result).Hi);
+end;
+{$ELSE}
+var
+  Info: BaseUnix.Stat;
+begin
+  if fpFStat(Handle, Info) < 0 then
+    Result := -1
+  else
+    Result := Info.st_size;
+end;
+{$ENDIF}
+
 function FileFlush(Handle: System.THandle): Boolean; inline;
 {$IFDEF MSWINDOWS}
 begin
@@ -1036,7 +1217,46 @@ begin
   Result:= (fpfsync(Handle) = 0);
 end;  
 {$ENDIF}
-  
+
+function FileFlushData(Handle: System.THandle): Boolean; inline;
+{$IF DEFINED(LINUX)}
+begin
+  Result:= (fpFDataSync(Handle) = 0);
+end;
+{$ELSE}
+begin
+  Result:= FileFlush(Handle);
+end;
+{$ENDIF}
+
+function FileAllocate(Handle: System.THandle; Size: Int64): Boolean;
+{$IF DEFINED(LINUX)}
+var
+  Ret: cint;
+  Sta: TStat;
+begin
+  if (Size > 0) then
+  begin
+    repeat
+      Ret:= fpFStat(Handle, Sta);
+    until (Ret <> -1) or (fpgeterrno <> ESysEINTR);
+    if (Ret = 0) and (Sta.st_size < Size) then
+    begin
+      // New size should be aligned to block size
+      Sta.st_size:= (Size + Sta.st_blksize - 1) and not (Sta.st_blksize - 1);
+      repeat
+        Ret:= fpFAllocate(Handle, 0, 0, Sta.st_size);
+      until (Ret <> -1) or (fpgeterrno <> ESysEINTR) or (fpgeterrno <> ESysEAGAIN);
+    end;
+  end;
+  Result:= FileTruncate(Handle, Size);
+end;
+{$ELSE}
+begin
+  Result:= FileTruncate(Handle, Size);
+end;
+{$ENDIF}
+
 function mbGetCurrentDir: String;
 {$IFDEF MSWINDOWS}
 var
@@ -1275,6 +1495,55 @@ begin
 end;
 {$ENDIF}
 
+function mbGetEnvironmentVariable(const sName: String): String;
+{$IFDEF MSWINDOWS}
+var
+  wsName: UnicodeString;
+  smallBuf: array[0..1023] of WideChar;
+  largeBuf: PWideChar;
+  dwResult: DWORD;
+begin
+  Result := EmptyStr;
+  wsName := UTF8Decode(sName);
+  dwResult := GetEnvironmentVariableW(PWideChar(wsName), @smallBuf[0], Length(smallBuf));
+  if dwResult > Length(smallBuf) then
+  begin
+    // Buffer not large enough.
+    largeBuf := GetMem(SizeOf(WideChar) * dwResult);
+    if Assigned(largeBuf) then
+    try
+      dwResult := GetEnvironmentVariableW(PWideChar(wsName), largeBuf, dwResult);
+      if dwResult > 0 then
+        Result := UTF16ToUTF8(UnicodeString(largeBuf));
+    finally
+      FreeMem(largeBuf);
+    end;
+  end
+  else if dwResult > 0 then
+    Result := UTF16ToUTF8(UnicodeString(smallBuf));
+end;
+{$ELSE}
+begin
+  Result:= CeSysToUtf8(getenv(PAnsiChar(CeUtf8ToSys(sName))));
+end;
+{$ENDIF}
+
+function mbSetEnvironmentVariable(const sName, sValue: String): Boolean;
+{$IFDEF MSWINDOWS}
+var
+  wsName,
+  wsValue: UnicodeString;
+begin
+  wsName:= UTF8Decode(sName);
+  wsValue:= UTF8Decode(sValue);
+  Result:= SetEnvironmentVariableW(PWideChar(wsName), PWideChar(wsValue));
+end;
+{$ELSE}
+begin
+  Result:= (setenv(PAnsiChar(CeUtf8ToSys(sName)), PAnsiChar(CeUtf8ToSys(sValue)), 1) = 0);
+end;
+{$ENDIF}
+
 function mbSysErrorMessage: String;
 begin
   Result := mbSysErrorMessage(GetLastOSError);
@@ -1347,6 +1616,92 @@ begin
   if (Result = nil) then raise Exception.Create(ProcName);
 end;
 
+function mbReadAllLinks(const PathToLink: String) : String;
+var
+  Attrs: TFileAttrs;
+  LinkTargets: TStringList;  // A list of encountered filenames (for detecting cycles)
+
+  function mbReadAllLinksRec(const PathToLink: String): String;
+  begin
+    Result := ReadSymLink(PathToLink);
+    if Result <> '' then
+    begin
+      if GetPathType(Result) <> ptAbsolute then
+        Result := GetAbsoluteFileName(ExtractFilePath(PathToLink), Result);
+
+      if LinkTargets.IndexOf(Result) >= 0 then
+      begin
+        // Link already encountered - links form a cycle.
+        Result := '';
+{$IFDEF UNIX}
+        fpseterrno(ESysELOOP);
+{$ENDIF}
+        Exit;
+      end;
+
+      Attrs := mbFileGetAttr(Result);
+      if (Attrs <> faInvalidAttributes) then
+      begin
+        if FPS_ISLNK(Attrs) then
+        begin
+          // Points to a link - read recursively.
+          LinkTargets.Add(Result);
+          Result := mbReadAllLinksRec(Result);
+        end;
+        // else points to a file/dir
+      end
+      else
+      begin
+        Result := '';  // Target of link doesn't exist
+{$IFDEF UNIX}
+        fpseterrno(ESysENOENT);
+{$ENDIF}
+      end;
+    end;
+  end;
+
+begin
+  LinkTargets := TStringList.Create;
+  try
+    Result := mbReadAllLinksRec(PathToLink);
+  finally
+    FreeAndNil(LinkTargets);
+  end;
+end;
+
+function mbCheckReadLinks(const PathToLink : String): String;
+var
+  Attrs: TFileAttrs;
+begin
+  Attrs := mbFileGetAttr(PathToLink);
+  if (Attrs <> faInvalidAttributes) and FPS_ISLNK(Attrs) then
+    Result := mbReadAllLinks(PathToLink)
+  else
+    Result := PathToLink;
+end;
+
+function mbFileGetAttrNoLinks(const FileName: String): TFileAttrs;
+{$IFDEF UNIX}
+var
+  Info: BaseUnix.Stat;
+begin
+  if fpStat(UTF8ToSys(FileName), Info) >= 0 then
+    Result := Info.st_mode
+  else
+    Result := faInvalidAttributes;
+end;
+{$ELSE}
+var
+  LinkTarget: String;
+begin
+  LinkTarget := mbReadAllLinks(FileName);
+  if LinkTarget <> '' then
+    Result := mbFileGetAttr(LinkTarget)
+  else
+    Result := faInvalidAttributes;
+end;
+{$ENDIF}
+
 function CreateHardLink(const Path, LinkName: String) : Boolean;
 {$IFDEF MSWINDOWS}
 var
@@ -1392,6 +1747,35 @@ end;
 begin
   Result := SysToUTF8(fpReadlink(UTF8ToSys(LinkName)));
 end;
+{$ENDIF}
+
+procedure SetLastOSError(LastError: Integer);
+{$IFDEF MSWINDOWS}
+begin
+  SetLastError(UInt32(LastError));
+end;
+{$ELSE}
+begin
+  fpseterrno(LastError);
+end;
+{$ENDIF}
+
+function GetTickCountEx: UInt64;
+begin
+{$IF DEFINED(MSWINDOWS)}
+  if QueryPerformanceCounter(PLARGE_INTEGER(@Result)) then
+    Result:= Result div PerformanceFrequency.QuadPart
+  else
+{$ENDIF}
+  begin
+    Result:= SysUtils.GetTickCount64;
+  end;
+end;
+
+{$IFDEF MSWINDOWS}
+initialization
+  if QueryPerformanceFrequency(@PerformanceFrequency) then
+    PerformanceFrequency.QuadPart := PerformanceFrequency.QuadPart div 1000;
 {$ENDIF}
 
 end.

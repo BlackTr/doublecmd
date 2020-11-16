@@ -6,9 +6,9 @@ unit uWcxArchiveFileSource;
 interface
 
 uses
-  Classes, SysUtils, contnrs, syncobjs, StringHashList,
+  Classes, SysUtils, contnrs, syncobjs, DCStringHashListUtf8,
   WcxPlugin, uWCXmodule, uFile, uFileSourceProperty, uFileSourceOperationTypes,
-  uArchiveFileSource, uFileProperty, uFileSource, uFileSourceOperation;
+  uArchiveFileSource, uFileProperty, uFileSource, uFileSourceOperation, uClassesEx;
 
 type
 
@@ -19,11 +19,11 @@ type
   IWcxArchiveFileSource = interface(IArchiveFileSource)
     ['{DB32E8A8-486B-4053-9448-4C145C1A33FA}']
 
-    function GetArcFileList: TObjectList;
+    function GetArcFileList: TThreadObjectList;
     function GetPluginCapabilities: PtrInt;
     function GetWcxModule: TWcxModule;
 
-    property ArchiveFileList: TObjectList read GetArcFileList;
+    property ArchiveFileList: TThreadObjectList read GetArcFileList;
     property PluginCapabilities: PtrInt read GetPluginCapabilities;
     property WcxModule: TWCXModule read GetWcxModule;
   end;
@@ -34,14 +34,14 @@ type
   private
     FModuleFileName: String;
     FPluginCapabilities: PtrInt;
-    FArcFileList : TObjectList;
+    FArcFileList : TThreadObjectList;
     FWcxModule: TWCXModule;
     FOpenResult: LongInt;
 
     procedure SetCryptCallback;
     function ReadArchive(anArchiveHandle: TArcHandle = 0): Boolean;
 
-    function GetArcFileList: TObjectList;
+    function GetArcFileList: TThreadObjectList;
     function GetPluginCapabilities: PtrInt;
     function GetWcxModule: TWcxModule;
 
@@ -114,15 +114,14 @@ type
                                        anArchiveFileName: String;
                                        bIncludeHidden: Boolean = False): IWcxArchiveFileSource;
     {en
-       Returns @true if there is a plugin registered for the archive type
-       (only extension is checked).
+       Returns @true if there is a plugin registered for the archive name.
     }
-    class function CheckPluginByExt(anArchiveType: String): Boolean;
+    class function CheckPluginByName(const anArchiveFileName: String): Boolean;
 
     function GetConnection(Operation: TFileSourceOperation): TFileSourceConnection; override;
     procedure RemoveOperationFromQueue(Operation: TFileSourceOperation); override;
 
-    property ArchiveFileList: TObjectList read FArcFileList;
+    property ArchiveFileList: TThreadObjectList read FArcFileList;
     property PluginCapabilities: PtrInt read FPluginCapabilities;
     property WcxModule: TWCXModule read FWcxModule;
   end;
@@ -144,8 +143,8 @@ type
 implementation
 
 uses
-  LazUTF8, uDebug, DCStrUtils, uDCUtils, uGlobs, DCOSUtils, uShowMsg,
-  DCDateTimeUtils, uLng, uLog,
+  LazUTF8, uDebug, DCStrUtils, uGlobs, DCOSUtils,
+  DCDateTimeUtils, uMasks,
   DCConvertEncoding,
   DCFileAttributes,
   FileUtil, uCryptProc,
@@ -264,12 +263,13 @@ class function TWcxArchiveFileSource.CreateByArchiveSign(
 var
   I: Integer;
   ModuleFileName: String;
-  WcxPlugin: TWcxModule;
   bFound: Boolean = False;
   lOpenResult: LongInt;
   anArchiveHandle: TArcHandle = 0;
+  WcxPlugin, WcxPrevious: TWcxModule;
 begin
   Result := nil;
+  WcxPrevious := nil;
 
   // Check if there is a registered plugin for the archive file by content.
   for I := 0 to gWCXPlugins.Count - 1 do
@@ -279,25 +279,29 @@ begin
       ModuleFileName := gWCXPlugins.FileName[I];
       WcxPlugin := gWCXPlugins.LoadModule(ModuleFileName);
       if Assigned(WcxPlugin) then
+      begin
+        if ((gWCXPlugins.Flags[I] and PK_CAPS_BY_CONTENT) = PK_CAPS_BY_CONTENT) then
         begin
-          if ((gWCXPlugins.Flags[I] and PK_CAPS_BY_CONTENT) = PK_CAPS_BY_CONTENT) then
+          if (WcxPlugin <> WcxPrevious) then
+          begin
+            WcxPrevious:= WcxPlugin;
+            if WcxPlugin.WcxCanYouHandleThisFile(anArchiveFileName) then
             begin
-              if WcxPlugin.WcxCanYouHandleThisFile(anArchiveFileName) then
+              anArchiveHandle:= WcxPlugin.OpenArchiveHandle(anArchiveFileName, PK_OM_LIST, lOpenResult);
+              if (anArchiveHandle <> 0) and (lOpenResult = E_SUCCESS) then
               begin
-                anArchiveHandle:= WcxPlugin.OpenArchiveHandle(anArchiveFileName, PK_OM_LIST, lOpenResult);
-                if (anArchiveHandle <> 0) and (lOpenResult = E_SUCCESS) then
-                begin
-                  bFound:= True;
-                  Break;
-                end;
+                bFound:= True;
+                Break;
               end;
-            end
-          else if ((gWCXPlugins.Flags[I] and PK_CAPS_HIDE) = PK_CAPS_HIDE) then
-            begin
-              bFound:= SameText(ExtractOnlyFileExt(anArchiveFileName), gWCXPlugins.Ext[I]);
-              if bFound then Break;
             end;
+          end;
+        end
+        else if ((gWCXPlugins.Flags[I] and PK_CAPS_HIDE) = PK_CAPS_HIDE) then
+        begin
+          bFound:= MatchesMask(anArchiveFileName, AllFilesMask + ExtensionSeparator + gWCXPlugins.Ext[I]);
+          if bFound then Break;
         end;
+      end;
     end;
   end;
   if bFound then
@@ -324,7 +328,7 @@ begin
   // Check if there is a registered plugin for the extension of the archive file name.
   for i := 0 to gWCXPlugins.Count - 1 do
   begin
-    if SameText(anArchiveType, gWCXPlugins.Ext[i]) and (gWCXPlugins.Enabled[i]) and
+    if (gWCXPlugins.Enabled[i]) and SameText(anArchiveType, gWCXPlugins.Ext[i]) and
        ((bIncludeHidden) or ((gWCXPlugins.Flags[I] and PK_CAPS_HIDE) <> PK_CAPS_HIDE)) then
     begin
       ModuleFileName := gWCXPlugins.FileName[I];
@@ -343,19 +347,42 @@ end;
 class function TWcxArchiveFileSource.CreateByArchiveName(
   anArchiveFileSource: IFileSource; anArchiveFileName: String;
   bIncludeHidden: Boolean): IWcxArchiveFileSource;
-begin
-  Result:= CreateByArchiveType(anArchiveFileSource, anArchiveFileName,
-                               ExtractOnlyFileExt(anArchiveFileName),
-                               bIncludeHidden);
-end;
-
-class function TWcxArchiveFileSource.CheckPluginByExt(anArchiveType: String): Boolean;
 var
   i: Integer;
+  aMask: String;
+  ModuleFileName: String;
+begin
+  Result := nil;
+
+  // Check if there is a registered plugin for the archive file name.
+  for i := 0 to gWCXPlugins.Count - 1 do
+  begin
+    aMask:= AllFilesMask + ExtensionSeparator + gWCXPlugins.Ext[i];
+    if (gWCXPlugins.Enabled[i]) and MatchesMask(anArchiveFileName, aMask) and
+       ((bIncludeHidden) or ((gWCXPlugins.Flags[I] and PK_CAPS_HIDE) <> PK_CAPS_HIDE)) then
+    begin
+      ModuleFileName := gWCXPlugins.FileName[I];
+
+      Result := TWcxArchiveFileSource.Create(anArchiveFileSource,
+                                             anArchiveFileName,
+                                             ModuleFileName,
+                                             gWCXPlugins.Flags[I]);
+
+      DCDebug('Found registered plugin ' + ModuleFileName + ' for archive ' + anArchiveFileName);
+      break;
+    end;
+  end;
+end;
+
+class function TWcxArchiveFileSource.CheckPluginByName(const anArchiveFileName: String): Boolean;
+var
+  i: Integer;
+  aMask: String;
 begin
   for i := 0 to gWCXPlugins.Count - 1 do
   begin
-    if SameText(anArchiveType, gWCXPlugins.Ext[i]) and (gWCXPlugins.Enabled[i]) then
+    aMask:= AllFilesMask + ExtensionSeparator + gWCXPlugins.Ext[i];
+    if (gWCXPlugins.Enabled[i]) and MatchesMask(anArchiveFileName, aMask) then
       Exit(True);
   end;
   Result := False;
@@ -372,7 +399,7 @@ begin
 
   FModuleFileName := aWcxPluginFileName;
   FPluginCapabilities := aWcxPluginCapabilities;
-  FArcFileList := TObjectList.Create(True);
+  FArcFileList := TThreadObjectList.Create;
   FWcxModule := gWCXPlugins.LoadModule(FModuleFileName);
 
   if not Assigned(FWcxModule) then
@@ -399,7 +426,7 @@ begin
   inherited Create(anArchiveFileSource, anArchiveFileName);
 
   FPluginCapabilities := aWcxPluginCapabilities;
-  FArcFileList := TObjectList.Create(True);
+  FArcFileList := TThreadObjectList.Create;
   FWcxModule := aWcxPluginModule;
 
   FOperationsClasses[fsoCopyIn]  := TWcxArchiveCopyInOperation.GetOperationClass;
@@ -455,7 +482,7 @@ begin
     end;
 
     // Set name after assigning Attributes property, because it is used to get extension.
-    Name := ExtractFileName(WcxHeader.FileName);
+    Name := ExtractFileNameEx(WcxHeader.FileName);
   end;
 end;
 
@@ -486,6 +513,7 @@ end;
 function TWcxArchiveFileSource.SetCurrentWorkingDirectory(NewDir: String): Boolean;
 var
   I: Integer;
+  AFileList: TList;
   Header: TWCXHeader;
 begin
   Result := False;
@@ -496,15 +524,20 @@ begin
 
     NewDir := IncludeTrailingPathDelimiter(NewDir);
 
-    // Search file list for a directory with name NewDir.
-    for I := 0 to FArcFileList.Count - 1 do
-    begin
-      Header := TWCXHeader(FArcFileList.Items[I]);
-      if FPS_ISDIR(Header.FileAttr) and (Length(Header.FileName) > 0) then
+    AFileList:= FArcFileList.LockList;
+    try
+      // Search file list for a directory with name NewDir.
+      for I := 0 to AFileList.Count - 1 do
       begin
-        if NewDir = IncludeTrailingPathDelimiter(GetRootDir() + Header.FileName) then
-          Exit(True);
+        Header := TWCXHeader(AFileList.Items[I]);
+        if FPS_ISDIR(Header.FileAttr) and (Length(Header.FileName) > 0) then
+        begin
+          if NewDir = IncludeTrailingPathDelimiter(GetRootDir() + Header.FileName) then
+            Exit(True);
+        end;
       end;
+    finally
+      FArcFileList.UnlockList;
     end;
   end;
 end;
@@ -521,7 +554,7 @@ begin
   FWcxModule.WcxSetCryptCallback(0, AFlags, @CryptProcA, @CryptProcW);
 end;
 
-function TWcxArchiveFileSource.GetArcFileList: TObjectList;
+function TWcxArchiveFileSource.GetArcFileList: TThreadObjectList;
 begin
   Result := FArcFileList;
 end;
@@ -607,7 +640,7 @@ end;
 
 function TWcxArchiveFileSource.ReadArchive(anArchiveHandle: TArcHandle): Boolean;
 
-  procedure CollectDirs(Path: PAnsiChar; var DirsList: TStringHashList);
+  procedure CollectDirs(Path: PAnsiChar; var DirsList: TStringHashListUtf8);
   var
     I : Integer;
     Dir : AnsiString;
@@ -632,9 +665,11 @@ function TWcxArchiveFileSource.ReadArchive(anArchiveHandle: TArcHandle): Boolean
 var
   ArcHandle : TArcHandle;
   Header: TWCXHeader;
-  AllDirsList, ExistsDirList : TStringHashList;
+  AFileList: TList;
+  AllDirsList, ExistsDirList : TStringHashListUtf8;
   I : Integer;
   NameLength: Integer;
+  ArchiveTime: LongInt;
 begin
   Result:= False;
 
@@ -657,12 +692,14 @@ begin
 
   DCDebug('Get File List');
   (*Get File List*)
-  FArcFileList.Clear;
-  ExistsDirList := TStringHashList.Create(True);
-  AllDirsList := TStringHashList.Create(True);
-
+  AFileList:= FArcFileList.LockList;
   try
-    while (WcxModule.ReadWCXHeader(ArcHandle, Header) = E_SUCCESS) do
+    AFileList.Clear;
+    ExistsDirList := TStringHashListUtf8.Create(True);
+    AllDirsList := TStringHashListUtf8.Create(True);
+
+    try
+      while (WcxModule.ReadWCXHeader(ArcHandle, Header) = E_SUCCESS) do
       begin
         // Some plugins end directories with path delimiter.
         // And not set directory attribute. So delete path
@@ -690,7 +727,7 @@ begin
 
         //**********************************************************************
 
-        FArcFileList.Add(Header);
+        AFileList.Add(Header);
 
         // get next file
         FOpenResult := WcxModule.WcxProcessFile(ArcHandle, PK_SKIP, EmptyStr, EmptyStr);
@@ -698,6 +735,8 @@ begin
         // Check for errors
         if FOpenResult <> E_SUCCESS then Exit;
       end; // while
+
+      ArchiveTime:= FileTimeToWcxFileTime(mbFileAge(ArchiveFileName));
 
       (* if plugin does not give a list of folders *)
       for I := 0 to AllDirsList.Count - 1 do
@@ -710,25 +749,24 @@ begin
             Header.FileName := AllDirsList.List[I]^.Key;
             Header.ArcName  := ArchiveFileName;
             Header.FileAttr := GENERIC_ATTRIBUTE_FOLDER;
-{$IFDEF MSWINDOWS}
-            WinToDosTime(mbFileAge(ArchiveFileName), Header.FileTime);
-{$ELSE}
-{$PUSH}{$R-}
-            Header.FileTime := LongInt(mbFileAge(ArchiveFileName));
-{$POP}
-{$ENDIF}
-            FArcFileList.Add(Header);
+            Header.FileTime := ArchiveTime;
+
+            AFileList.Add(Header);
           except
             FreeAndNil(Header);
           end;
         end;
       end;
 
-    Result:= True;
+      Result:= True;
+    finally
+      AllDirsList.Free;
+      ExistsDirList.Free;
+      WcxModule.CloseArchive(ArcHandle);
+    end;
+
   finally
-    AllDirsList.Free;
-    ExistsDirList.Free;
-    WcxModule.CloseArchive(ArcHandle);
+    FArcFileList.UnlockList;
   end;
 end;
 

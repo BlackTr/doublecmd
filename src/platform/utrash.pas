@@ -45,7 +45,7 @@ implementation
 uses
   DCOSUtils, DCStrUtils,
   {$IF DEFINED(MSWINDOWS)}
-  Windows, ShellApi, Win32Int, InterfaceBase, uMyWindows
+  Windows, ShellApi, uMyWindows
   {$ELSEIF DEFINED(UNIX)}
   BaseUnix, uMyUnix, uOSUtils, FileUtil
     {$IFDEF DARWIN}
@@ -93,7 +93,6 @@ begin
 
   wsFileName:= wsFileName + #0;
   FillChar(FileOp, SizeOf(FileOp), 0);
-  FileOp.Wnd := TWin32Widgetset(Widgetset).AppHandle;
   FileOp.wFunc := FO_DELETE;
   FileOp.pFrom := PWideChar(wsFileName);
   // Move without question

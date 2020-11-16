@@ -134,7 +134,7 @@ begin
       if gDirBrackets and (AFile.IsDirectory or AFile.IsLinkToDirectory) then
         S:= '..' + gFolderPostfix
       else begin
-        S:= '...';
+        S:= '..';
       end;
       Index:= ACanvas.TextFitInfo(AFileName, ATargetWidth - ACanvas.TextWidth(S));
       Result:= UTF8Copy(AFileName, 1, Index) + S;
@@ -144,7 +144,7 @@ end;
 { FitOtherCellText }
 function FitOtherCellText(const sStringToFit:String; ACanvas:TCanvas; ATargetWidth: Integer): String;
 const
-  ELLIPSIS = '...';
+  ELLIPSIS = '..';
 var
   Index: Integer;
   AMaxWidth: Integer;
@@ -543,7 +543,11 @@ begin
 end;
 
 procedure TFileViewWithGrid.DisplayFileListChanged;
+var
+  ScrollTo: Boolean;
 begin
+  ScrollTo := IsActiveFileVisible;
+
   // Update grid col and row count
   dgPanel.SetColRowCount(FFiles.Count);
 
@@ -551,11 +555,11 @@ begin
   dgPanel.CalculateColumnWidth;
   SetFilesDisplayItems;
 
-  if SetActiveFileNow(RequestedActiveFile, FLastTopRowIndex) then
+  if SetActiveFileNow(RequestedActiveFile, True, FLastTopRowIndex) then
     RequestedActiveFile := ''
   else
     // Requested file was not found, restore position to last active file.
-    SetActiveFileNow(LastActiveFile, FLastTopRowIndex);
+    SetActiveFileNow(LastActiveFile, ScrollTo, FLastTopRowIndex);
 
   Notify([fvnVisibleFilePropertiesChanged]);
 

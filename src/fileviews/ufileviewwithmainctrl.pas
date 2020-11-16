@@ -801,6 +801,7 @@ begin
             begin
               InvertFileSelection(AFile, False);
               DoSelectionChanged(FileIndex);
+              FMainControlMouseDown:= False;
             end
             //  If mark with left button enable
             else if (gMouseSelectionButton = 0) then
@@ -811,8 +812,10 @@ begin
           end;
         end;//of mouse selection handler
       end;
-    else
-      SetActiveFile(FileIndex);
+      else begin
+        SetActiveFile(FileIndex);
+        Exit;
+      end;
     end;
 
     { Dragging }
@@ -1208,6 +1211,12 @@ begin
   // CanFocus checks parent controls, but not parent form.
   if GetParentForm(Self).CanFocus and MainControl.CanFocus then
   begin
+    if FFocusQuickSearch then
+    begin
+      MainControl.SetFocus;
+      inherited SetFocus;
+      Exit;
+    end;
     inherited SetFocus;
     MainControl.SetFocus;
   end;
@@ -1309,7 +1318,7 @@ begin
       Exit;
 
     AFile := FFiles[FileIndex];
-    MarkFile(AFile, not FMouseSelectionLastState, False);
+    MarkFile(AFile, True, False);
     DoSelectionChanged(FileIndex);
   end;
 

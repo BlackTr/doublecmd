@@ -47,6 +47,15 @@ const
 {$ENDIF}
 
 type
+{$IF DEFINED(LINUX)}
+  TUnixTime = UIntPtr;
+  TUnixMode = Cardinal;
+{$ELSE}
+  TUnixTime = TTime;
+  TUnixMode = TMode;
+{$ENDIF}
+
+type
   PTimeStruct = ^TTimeStruct;
   TTimeStruct = record
     tm_sec:    cint;      //* Seconds.      [0-60] (1 leap second)
@@ -81,12 +90,32 @@ function fpLChown(path : String; owner : TUid; group : TGid): cInt;
 {en
    Set process group ID for job control
 }
-function setpgid(pid, pgid: pid_t): cint; cdecl; external clib name 'setpgid';
+function setpgid(pid, pgid: pid_t): cint; cdecl; external clib;
+{en
+   The getenv() function searches the environment list to find the
+   environment variable name, and returns a pointer to the corresponding
+   value string.
+}
+function getenv(name: PAnsiChar): PAnsiChar; cdecl; external clib;
+{en
+   Change or add an environment variable
+   @param(name Environment variable name)
+   @param(value Environment variable value)
+   @param(overwrite Overwrite environment variable if exist)
+   @returns(The function returns zero on success, or -1 if there was
+            insufficient space in the environment)
+}
+function setenv(const name, value: PAnsiChar; overwrite: cint): cint; cdecl; external clib;
 
 function FileLock(Handle: System.THandle; Mode: cInt): System.THandle;
 
 function fpMkTime(tm: PTimeStruct): TTime;
 function fpLocalTime(timer: PTime; tp: PTimeStruct): PTimeStruct;
+
+{$IF DEFINED(LINUX)}
+function fpFDataSync(fd: cint): cint;
+function fpFAllocate(fd: cint; mode: cint; offset, len: coff_t): cint;
+{$ENDIF}
 
 implementation
 
@@ -110,7 +139,11 @@ procedure tzset(); cdecl; external clib;
 function sysconf(name: cint): clong; cdecl; external clib;
 function mktime(tp: PTimeStruct): TTime; cdecl; external clib;
 function localtime_r(timer: PTime; tp: PTimeStruct): PTimeStruct; cdecl; external clib;
-function lchown(path : PChar; owner : TUid; group : TGid): cInt; cdecl; external clib name 'lchown';
+function lchown(path : PChar; owner : TUid; group : TGid): cInt; cdecl; external clib;
+{$IF DEFINED(LINUX)}
+function fdatasync(fd: cint): cint; cdecl; external clib;
+function fallocate(fd: cint; mode: cint; offset, len: coff_t): cint; cdecl; external clib;
+{$ENDIF}
 
 procedure FileCloseOnExecAll;
 var
@@ -187,6 +220,20 @@ begin
   Result := localtime_r(timer, tp);
   if (Result = nil) then fpseterrno(fpgetCerrno);
 end;
+
+{$IF DEFINED(LINUX)}
+function fpFDataSync(fd: cint): cint;
+begin
+  Result := fdatasync(fd);
+  if Result = -1 then fpseterrno(fpgetCerrno);
+end;
+
+function fpFAllocate(fd: cint; mode: cint; offset, len: coff_t): cint;
+begin
+  Result := fallocate(fd, mode, offset, len);
+  if Result = -1 then fpseterrno(fpgetCerrno);
+end;
+{$ENDIF}
 
 initialization
   tzset();
