@@ -3,6 +3,7 @@ doublecmd
 *.ppu
 *.compiled
 *.lps
+*.lrt
 doublecmd.res
 units/*
 install/doublecmd.app
