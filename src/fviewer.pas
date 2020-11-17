@@ -513,6 +513,7 @@ begin
   Viewer.DrawPreview.RowCount:= Viewer.FileList.Count;
   Viewer.actMoveFile.Enabled := FilesToView.Count > 1;
   Viewer.actDeleteFile.Enabled := FilesToView.Count > 1;
+  Viewer.ViewerControl.WheelScrollLines := gWheelScrollLines;
   with Viewer.ViewerControl do
   case gViewerMode of
     1: Mode:= vcmText;

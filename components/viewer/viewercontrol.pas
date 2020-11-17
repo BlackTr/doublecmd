@@ -214,6 +214,7 @@ type
   protected
     FEncoding:           TViewerEncoding;
     FViewerControlMode:  TViewerControlMode;
+    FWheelScrollLines:   Integer;
     FFileName:           String;
     FFileHandle:         THandle;
     FFileSize:           Int64;
@@ -516,6 +517,7 @@ type
     property Encoding: TViewerEncoding Read FEncoding Write SetEncoding default veAutoDetect;
     property OnPositionChanged: TNotifyEvent Read FOnPositionChanged Write FOnPositionChanged;
     property ShowCaret: Boolean read FShowCaret write SetShowCaret;
+    property WheelScrollLines: Integer read FWheelScrollLines write FWheelScrollLines;
 
     property OnClick;
     property OnMouseDown;
@@ -609,6 +611,8 @@ begin
   FColCount  := 1;
   FTabSpaces := 8;
   FMaxTextWidth := 1024;
+
+  FWheelScrollLines := 1;
 
   FLineList := TPtrIntList.Create;
 
@@ -2543,29 +2547,28 @@ begin
   Result := inherited;
   if not Result then
     // Mouse.WheelScrollLines default is 3, for touchpad it's - dangereous speed:)
-    // TODO: check source of wheel?
-    Result := Scroll(1);
+    Result := Scroll(FWheelScrollLines);
 end;
 
 function TViewerControl.DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := inherited;
   if not Result then
-  Result := Scroll(-1);    //Mouse.WheelScrollLines
+  Result := Scroll(-FWheelScrollLines);    //Mouse.WheelScrollLines
 end;
 
 function TViewerControl.DoMouseWheelLeft(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := inherited;
   if not Result then
-    Result := HScroll(-1); // TODO: settings?
+    Result := HScroll(-FWheelScrollLines);
 end;
 
 function TViewerControl.DoMouseWheelRight(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := inherited;
   if not Result then
-    Result := HScroll(1);
+    Result := HScroll(FWheelScrollLines);
 end;
 
 {$if lcl_fullversion >= 1070000}
