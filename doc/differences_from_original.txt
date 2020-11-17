@@ -23,7 +23,6 @@ differnces from original:
 TODO:
 - delete from find dialog
 - delete from sync dirs
-- fix wdx rpm to x86_64 build
 // fpc issues and cocoa?:
 - focus to fileview after switch tabs
 - focus to mainwindow after search

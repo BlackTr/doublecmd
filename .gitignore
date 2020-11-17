@@ -25,3 +25,8 @@ session.ini
 shortcuts.scf
 wfx.ini
 doublecmd.err
+plugins/wcx/cpio/cpio.app
+plugins/wcx/deb/deb.app
+plugins/wcx/rpm/rpm.app
+plugins/wcx/unrar/unrar.app
+plugins/wdx/rpm_wdx/rpm_wdx.app
