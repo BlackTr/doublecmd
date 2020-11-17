@@ -34,7 +34,7 @@ unit uDCUtils;
 interface
 
 uses
-  Classes, SysUtils, Graphics, Controls, StdCtrls, ColorBox,
+  Classes, SysUtils, Graphics, Controls, StdCtrls, ColorBox, Forms,
   {$IF DEFINED(UNIX)}
   DCBasicTypes,
   {$ENDIF}
@@ -60,6 +60,7 @@ const
 type
   TUsageOfSizeConversion = (uoscFile, uoscHeaderFooter, uoscOperation, uoscNoUnit);
 
+procedure BringMainWindowToFront();
 function GetCmdDirFromEnvVar(const sPath : String) : String;
 function SetCmdDirAsEnvVar(const sPath : String) : String;
 {en
@@ -378,6 +379,15 @@ begin
     uoscHeaderFooter: Result := cnvFormatFileSize(iSize, gHeaderFooterSizeFormat, gHeaderFooterDigits);
     uoscNoUnit: Result := IntToStr(iSize);
   end;
+end;
+
+procedure BringMainWindowToFront();
+var
+  mainForm: TForm;
+begin
+  mainForm := Application.FindComponent('frmMain') as TForm;
+  if (mainForm <> nil)
+     then mainForm.BringToFront;
 end;
 
 function cnvFormatFileSize(iSize: Int64): String;

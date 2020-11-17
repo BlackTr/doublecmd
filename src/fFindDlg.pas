@@ -1957,6 +1957,8 @@ begin
   btnStart.Default := True;
 
   CanClose := not Assigned(FFindThread);
+  if (CanClose) then
+    BringMainWindowToFront;
 end;
 
 { TfrmFindDlg.FormDestroy }

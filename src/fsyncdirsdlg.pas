@@ -1888,6 +1888,7 @@ begin
     ClearFoundItems;
     FFoundItems.Free;
   end;
+  BringMainWindowToFront;
   inherited Destroy;
 end;
 

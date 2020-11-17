@@ -158,6 +158,7 @@ procedure TfrmOptions.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
   frmOptions:= nil;
+  BringMainWindowToFront;
 end;
 
 procedure TfrmOptions.FormCloseQuery(Sender: TObject; var CanClose: boolean);

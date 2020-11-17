@@ -273,6 +273,7 @@ procedure TfrmFileOp.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
   FinalizeOperation;
+  BringMainWindowToFront;
 end;
 
 procedure TfrmFileOp.FormCreate(Sender: TObject);

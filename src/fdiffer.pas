@@ -264,7 +264,7 @@ implementation
 
 uses
   LCLType, LazFileUtils, LConvEncoding, SynEditTypes, uHash, uLng, uGlobs,
-  uShowMsg, DCClassesUtf8, dmCommonData, DCOSUtils, uConvEncoding;
+  uShowMsg, DCClassesUtf8, dmCommonData, DCOSUtils, uConvEncoding, uDCUtils;
 
 const
   HotkeysCategory = 'Differ';
@@ -775,6 +775,7 @@ end;
 procedure TfrmDiffer.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+  BringMainWindowToFront;
 end;
 
 procedure TfrmDiffer.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1183,7 +1184,7 @@ begin
         if (Encoding = EncodingUTF16LE) or (Encoding = EncodingUTF16BE) then
           AText:= Copy(AText, 3, MaxInt); // Skip BOM
       end;
-      SynDiffEdit.Lines.Text:= ConvertEncoding(AText, SynDiffEdit.Encoding, EncodingUTF8)
+      SynDiffEdit.Lines.Text:= ConvertEncoding(AText, SynDiffEdit.Encoding, EncodingUTF8);
     finally
       FreeAndNil(fsFileStream);
     end;
