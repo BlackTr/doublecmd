@@ -3,8 +3,9 @@ doublecmd
 *.ppu
 *.compiled
 *.lps
+*.lrt
 doublecmd.res
-units/i386-darwin-carbon
+units/*
 install/doublecmd.app
 install/darwin/lib
 install/darwin/release
@@ -23,3 +24,9 @@ history.xml
 session.ini
 shortcuts.scf
 wfx.ini
+doublecmd.err
+plugins/wcx/cpio/cpio.app
+plugins/wcx/deb/deb.app
+plugins/wcx/rpm/rpm.app
+plugins/wcx/unrar/unrar.app
+plugins/wdx/rpm_wdx/rpm_wdx.app
