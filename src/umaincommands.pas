@@ -1909,7 +1909,7 @@ begin
     // Default to using the file source directly.
     aFileSource := ActiveFrame.FileSource;
 
-    if PrepareData(ActiveFrame.FileSource, SelectedFiles, @OnCopyOutStateChanged) <> pdrSynchronous then
+    if PrepareData(ActiveFrame.FileSource, SelectedFiles, @OnCopyOutStateChanged, True) <> pdrSynchronous then
       Exit;
 
     try
