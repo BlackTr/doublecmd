@@ -11,6 +11,8 @@ differnces from original:
 
 [*] Srartup of dc on osx: removed old tiff reader
 [*] Speed of vertical scroll in the Viewer
+[*] don't bring main window to front if view file from archive
+[*] focus to fileview after switch tabs
 
 [-] Auto select from quick search
 [-] rpm wdx plugin removed from build - carbon?
@@ -25,4 +27,3 @@ TODO:
 - delete from find dialog
 - delete from sync dirs
 // fpc issues and cocoa?:
-- focus to fileview after switch tabs

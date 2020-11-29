@@ -2469,6 +2469,8 @@ begin
   if Assigned(QuickViewPanel) then
     Commands.cm_QuickView(['Close']);
 
+  if Assigned(ActiveFrame) then
+    ActiveFrame.SetFocus;
   UpdatePrompt;
   UpdateTreeViewPath;
 end;
