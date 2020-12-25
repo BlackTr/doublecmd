@@ -1,10 +1,11 @@
 #!/bin/sh
 
 # Set Double Commander version
-DC_VER=0.9.0
+DC_VER=1.0.0
 
 # The new package will be saved here
 PACK_DIR=$(pwd)/darwin/release
+rm -rf $PACK_DIR
 mkdir $PACK_DIR
 OLD_PWD=$(pwd)
 
@@ -24,11 +25,10 @@ cd $OLD_PWD
 # Save revision number
 DC_REVISION=$(git log -1 --format="%h")
 # Update dcrevision.inc
+mkdir -p "$BUILD_DC_TMP_DIR/units"
 echo "// Created by Git2RevisionInc"      >  $BUILD_DC_TMP_DIR/units/dcrevision.inc
 echo "const dcRevision = '$DC_REVISION';" >> $BUILD_DC_TMP_DIR/units/dcrevision.inc
-
-echo $DC_REVISION
-CPU_TARGET=i386
+#CPU_TARGET=x86_64
 
 # Set processor architecture
 if [ -z $CPU_TARGET ]; then
@@ -37,17 +37,21 @@ fi
 
 # Set widgetset
 if [ -z $lcl ]; then
-  # Use Qt4 when build 64 bit
+  # Use cocoa when build 64 bit
   if [ "$CPU_TARGET" = "x86_64" ]
     then
-      export lcl=qt
+      export lcl=cocoa
     else
       export lcl=carbon
   fi
 fi
 
+echo $DC_REVISION
+echo $CPU_TARGET
+echo $lcl
+
 # Set minimal Mac OS X target version
-export MACOSX_DEPLOYMENT_TARGET=10.5
+export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # Copy libraries
 cp -a darwin/lib/$CPU_TARGET/*.dylib         $BUILD_DC_TMP_DIR/
