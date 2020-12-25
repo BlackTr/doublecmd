@@ -1,4 +1,5 @@
 doublecmd
+!doublecmd/
 *.o
 *.ppu
 *.compiled
