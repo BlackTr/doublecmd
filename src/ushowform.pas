@@ -1033,7 +1033,7 @@ procedure PrepareToolData(FileSource1: IFileSource; var SelectedFiles1: TFiles;
                           FunctionToCall: TToolDataPreparedProc);
 begin
   with TToolDataPreparator2.Create(FunctionToCall) do
-    Prepare(FileSource1, SelectedFiles1, FileSource2, SelectedFiles2);
+    Prepare(FileSource1, SelectedFiles1, FileSource2, SelectedFiles2, True);
 end;
 
 procedure PrepareToolData(FileSource1: IFileSource; File1: TFile;

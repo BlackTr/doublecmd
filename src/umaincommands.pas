@@ -2175,7 +2175,7 @@ begin
       Exit;
     end;
 
-    if PrepareData(ActiveFrame.FileSource, SelectedFiles, @OnEditCopyOutStateChanged) <> pdrSynchronous then
+    if PrepareData(ActiveFrame.FileSource, SelectedFiles, @OnEditCopyOutStateChanged, True) <> pdrSynchronous then
       Exit;
 
     try
