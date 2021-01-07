@@ -267,7 +267,7 @@ implementation
 
 uses
   LCLType, LazFileUtils, LConvEncoding, SynEditTypes, uHash, uLng, uGlobs,
-  uShowMsg, DCClassesUtf8, dmCommonData, DCOSUtils, uConvEncoding, uDCUtils;, uAdministrator;
+  uShowMsg, DCClassesUtf8, dmCommonData, DCOSUtils, uConvEncoding, uDCUtils, uAdministrator;
 
 const
   HotkeysCategory = 'Differ';
