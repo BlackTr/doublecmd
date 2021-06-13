@@ -134,6 +134,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Зборка"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1043,6 +1048,7 @@ msgid "S&earch from caret"
 msgstr "Шу&каць ад курсора"
 
 #: tfrmeditsearchreplace.cbsearchregexp.caption
+msgctxt "tfrmeditsearchreplace.cbsearchregexp.caption"
 msgid "&Regular expressions"
 msgstr "&Рэгулярны выраз"
 
@@ -1069,6 +1075,10 @@ msgstr "&Шукаць для:"
 #: tfrmeditsearchreplace.rgsearchdirection.caption
 msgid "Direction"
 msgstr "Напрамак"
+
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
 
 #: tfrmextractdlg.caption
 msgid "Unpack files"
@@ -1548,6 +1558,10 @@ msgstr "Шукаць файлы б&ез тэксту"
 msgid "N&ot older than:"
 msgstr "Не& старэйшыя за:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "У адкрытых укладках"
@@ -1766,9 +1780,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "Шукаць"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "&Зважаць на рэгістр"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "&Рэгулярны выраз"
 
 #: tfrmfindview.chkhex.caption
 msgctxt "tfrmfindview.chkhex.caption"
@@ -2673,6 +2697,14 @@ msgstr "Уключыць/выключыць функцыю выключэння 
 #: tfrmmain.actsymlink.caption
 msgid "Create Symbolic &Link..."
 msgstr "Стварыць сімвалічную &спасылку..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -5009,6 +5041,10 @@ msgstr "Аўтаматычны водступ"
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr "Калі націснуць на клавішу <Enter>, то новы радок будзе стварацца з такім самым водступам, што і ў папярэдняга"
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr "Правая мяжа:"
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr "Пракручваць канцом радка"
@@ -5065,10 +5101,6 @@ msgstr "Майце на ўвазе, што параметр \"Разумныя �
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "Параметры ўнутранага рэдактара"
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr "Правая мяжа:"
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -6008,13 +6040,17 @@ msgstr "&Фармат даты і часу:"
 msgid "File si&ze format:"
 msgstr "Фармат па&меру файла:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr "&Гігабайтаў:"
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "&Агульны/радок стану:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
 msgid "&Kilobyte:"
@@ -8615,6 +8651,11 @@ msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr "Зборка"
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
 msgid "Free Pascal"
@@ -9588,6 +9629,10 @@ msgstr "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;
 msgid "You need to provide administrator permission"
 msgstr "Неабходна мець правы адміністратара"
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr "для стварэння гэтага аб’екта:"
@@ -10173,6 +10218,10 @@ msgstr "Файлы бібліятэк"
 #: ulng.rsfilterpluginfiles
 msgid "Plugin files"
 msgstr "Файлы ўбудоў"
+
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
+msgstr ""
 
 #: ulng.rsfilterstatus
 msgid "FILTER"
@@ -10770,6 +10819,10 @@ msgstr "Немагчыма злучыцца з серверам: \"%s\""
 msgid "Cannot copy file %s to %s"
 msgstr "Немагчыма скапіяваць файл %s у %s"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -10873,6 +10926,10 @@ msgstr "Немагчыма прызначыць уладальніка/груп�
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
 msgstr "Немагчыма прызначыць дазволы для \"%s\""
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
+msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -12792,6 +12849,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "Зарэгістравана на"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr "Змена назваў тыпаў файлаў"
@@ -13547,4 +13608,8 @@ msgstr "Колькасць замен: %d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Замен не адбылося."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

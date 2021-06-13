@@ -139,6 +139,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Bygg"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1097,6 +1102,10 @@ msgctxt "TFRMEDITSEARCHREPLACE.RGSEARCHDIRECTION.CAPTION"
 msgid "Direction"
 msgstr "Retning"
 
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
+
 #: tfrmextractdlg.caption
 msgctxt "TFRMEXTRACTDLG.CAPTION"
 msgid "Unpack files"
@@ -1582,6 +1591,10 @@ msgstr "&Finn filer, som IKKJE inneheld teksten"
 msgid "N&ot older than:"
 msgstr "&Ikkje eldre enn:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "Opn faner"
@@ -1813,9 +1826,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "Finn"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "&STORE og små bokstavar"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "&Regulære uttrykk"
 
 #: tfrmfindview.chkhex.caption
 msgctxt "tfrmfindview.chkhex.caption"
@@ -2746,6 +2769,14 @@ msgstr "Vis/ikkje vis filnamn som står i ignorér-lista"
 msgctxt "TFRMMAIN.ACTSYMLINK.CAPTION"
 msgid "Create Symbolic &Link..."
 msgstr "&Opprett symbolsk link..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -5171,6 +5202,10 @@ msgstr "Auto-innrykk"
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr "Tillat innrykk når ny linje er danna med <Enter>, med samme venstremarg som føregåande linje"
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr ""
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr "Tillat skrivemerket bak linjeslutt"
@@ -5227,10 +5262,6 @@ msgstr "Legg merke til at \"Smart tab\"-tilvalet har forrang foran pågående ta
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "Innstillingar (Intern editor, F4)"
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -6212,13 +6243,17 @@ msgstr "&Dato- og tidsformat:"
 msgid "File si&ze format:"
 msgstr "&Vis filstorleik i:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr "&Gigabyte:"
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "&Tabellhovud/fot format:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
 msgid "&Kilobyte:"
@@ -9098,6 +9133,11 @@ msgctxt "tfrmstartingsplash.lblbuild.caption"
 msgid "Build"
 msgstr "Bygg"
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "tfrmstartingsplash.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -10102,6 +10142,10 @@ msgstr "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;
 msgid "You need to provide administrator permission"
 msgstr ""
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr ""
@@ -10690,6 +10734,10 @@ msgstr ""
 
 #: ulng.rsfilterpluginfiles
 msgid "Plugin files"
+msgstr ""
+
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
 msgstr ""
 
 #: ulng.rsfilterstatus
@@ -11290,6 +11338,10 @@ msgstr "Kan ikkje kopla til server: \"%s\""
 msgid "Cannot copy file %s to %s"
 msgstr "Kan ikkje kopiera fil %s til %s"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -11393,6 +11445,10 @@ msgstr "Kan ikkje oppretta eigar/gruppe for \"%s\""
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
 msgstr "Kan ikkje innstilla skrive/leserettar for \"%s\""
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
+msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -13340,6 +13396,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "Assosiér med"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr "Omdøyp filtype-hint"
@@ -14106,4 +14166,8 @@ msgstr "Antal bytta ut: %d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Ingen utbytting er utført."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

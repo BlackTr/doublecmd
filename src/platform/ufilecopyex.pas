@@ -5,7 +5,7 @@ unit uFileCopyEx;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, DCOSUtils;
 
 const
   FILE_COPY_NO_BUFFERING = $01;
@@ -17,12 +17,13 @@ type
 
 var
   FileCopyEx: TFileCopyEx = nil;
+  CopyAttributesOptionEx: TCopyAttributesOptions = [];
 
 implementation
 
 {$IF DEFINED(MSWINDOWS)}
 uses
-  Windows, DCWindows, DCOSUtils;
+  Windows, DCWindows;
 
 type
   TCopyInfo = class
@@ -45,17 +46,23 @@ function CopyFile(const Source, Target: String; Options: UInt32;
   UpdateProgress: TFileCopyProgress; UserData: Pointer): LongBool;
 var
   ACopyInfo: TCopyInfo;
+  dwCopyFlags: DWORD = COPY_FILE_ALLOW_DECRYPTED_DESTINATION;
 begin
   ACopyInfo:= TCopyInfo.Create;
   ACopyInfo.UserData:= UserData;
   ACopyInfo.UpdateProgress:= UpdateProgress;
-  if (Options and FILE_COPY_NO_BUFFERING <> 0) then Options:= COPY_FILE_NO_BUFFERING;
-  Result:= CopyFileExW(PWideChar(UTF16LongName(Source)), PWideChar(UTF16LongName(Target)), @Progress, ACopyInfo, nil, Options) <> 0;
+  if (Options and FILE_COPY_NO_BUFFERING <> 0) then
+  begin
+    if (Win32MajorVersion > 5) then
+      dwCopyFlags:= dwCopyFlags or COPY_FILE_NO_BUFFERING;
+  end;
+  Result:= CopyFileExW(PWideChar(UTF16LongName(Source)), PWideChar(UTF16LongName(Target)), @Progress, ACopyInfo, nil, dwCopyFlags) <> 0;
   ACopyInfo.Free;
 end;
 
 initialization
   FileCopyEx:= @CopyFile;
+  CopyAttributesOptionEx:= [caoCopyTimeEx, caoCopyAttrEx];
 {$ENDIF}
 
 end.

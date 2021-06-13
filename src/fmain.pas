@@ -63,6 +63,7 @@ type
   { TfrmMain }
 
   TfrmMain = class(TAloneForm, IFormCommands)
+    actAddPlugin: TAction;
     actExtractFiles: TAction;
     actAddPathToCmdLine: TAction;
     actFileAssoc: TAction;
@@ -72,6 +73,7 @@ type
     actCopyFullNamesToClip: TAction;
     actCutToClipboard: TAction;
     actCopyToClipboard: TAction;
+    actSyncChangeDir: TAction;
     actChangeDirToRoot: TAction;
     actCountDirContent: TAction;
     actCheckSumVerify: TAction;
@@ -697,6 +699,8 @@ type
     FDropParams: TDropParams;
     FDrivesListPopup: TDrivesListPopup;
     FOperationsPanel: TOperationsPanel;
+    FSyncChangeParent: Boolean;
+    FSyncChangeDir: String;
 
     // frost_asm begin
     // mainsplitter
@@ -744,6 +748,10 @@ type
     procedure UpdateDriveToolbarSelection(DriveToolbar: TKAStoolBar; FileView: TFileView);
     procedure UpdateDriveButtonSelection(DriveButton: TSpeedButton; FileView: TFileView);
     procedure UpdateSelectedDrive(ANoteBook: TFileViewNotebook);
+{$IF DEFINED(MSWINDOWS)}
+    procedure OnDriveIconLoaded(Data: PtrInt);
+{$ENDIF}
+    procedure OnDriveGetFreeSpace(Data: PtrInt);
     procedure OnDriveWatcherEvent(EventType: TDriveWatcherEvent; const ADrive: PDrive);
     procedure AppActivate(Sender: TObject);
     procedure AppDeActivate(Sender: TObject);
@@ -880,6 +888,7 @@ type
 
 
     property Drives: TDrivesList read DrivesList;
+    property SyncChangeDir: String write FSyncChangeDir;
     property Commands: TMainCommands read FCommands implements IFormCommands;
     property SelectedPanel: TFilePanelSelect read PanelSelected write SetPanelSelected;
     property LeftTabs: TFileViewNotebook read nbLeft;
@@ -906,12 +915,15 @@ uses
   uFileSourceOperationOptionsUI, uDebug, uHotkeyManager, uFileSourceUtil, uTempFileSystemFileSource,
   Laz2_XMLRead, DCOSUtils, DCStrUtils, fOptions, fOptionsFrame, fOptionsToolbar, uClassesEx,
   uHotDir, uFileSorting, DCBasicTypes, foptionsDirectoryHotlist, uConnectionManager,
-  fOptionsToolbarBase, fOptionsToolbarMiddle
+  fOptionsToolbarBase, fOptionsToolbarMiddle, fEditor
   {$IFDEF COLUMNSFILEVIEW_VTV}
   , uColumnsFileViewVtv
   {$ELSE}
   , uColumnsFileView
   {$ENDIF}
+{$IFDEF MSWINDOWS}
+  , uNetworkThread
+{$ENDIF}
   ;
 
 const
@@ -951,6 +963,18 @@ var
 
 type
 
+  { TFreeSpaceData }
+
+  TFreeSpaceData = class
+    Path: String;
+    Result: Boolean;
+    OnFinish: TDataEvent;
+    Panel: TFilePanelSelect;
+    FileSource: IFileSource;
+    FreeSize, TotalSize : Int64;
+    procedure GetFreeSpaceInThread;
+  end;
+
   { TShellTreeView }
 
   TShellTreeView = class(ShellCtrls.TShellTreeView)
@@ -968,6 +992,15 @@ procedure HistoryIndexesFromTag(aTag: Longint; out aFileSourceIndex, aPathIndex:
 begin
   aFileSourceIndex := aTag >> 16;
   aPathIndex := aTag and ((1<<16) - 1);
+end;
+
+{ TFreeSpaceData }
+
+procedure TFreeSpaceData.GetFreeSpaceInThread;
+begin
+  Result:= FileSource.GetFreeSpace(Path, FreeSize, TotalSize);
+  if Assigned(Application) and not (AppDoNotCallAsyncQueue in Application.Flags) then
+    Application.QueueAsyncCall(OnFinish, PtrInt(Self));
 end;
 
 { TShellTreeView }
@@ -1664,6 +1697,9 @@ begin
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+var
+  Index: Integer;
+  AForm: TfrmEditor;
 begin
   if OperationsManager.OperationsCount > 0 then
   begin
@@ -1673,6 +1709,27 @@ begin
   end
   else
     CanClose := True;
+
+  if CanClose then
+  begin
+    for Index:= 0 to Screen.FormCount - 1 do
+    begin
+      if Screen.Forms[Index] is TfrmEditor then
+      begin
+        AForm:= TfrmEditor(Screen.Forms[Index]);
+        if AForm.Editor.Modified then
+        begin
+          if Assigned(AForm.OnCloseQuery) then
+          begin
+            AForm.ShowOnTop;
+            AForm.OnCloseQuery(AForm, CanClose);
+            if not CanClose then Exit;
+          end;
+        end;
+      end;
+    end;
+  end;
+
 {$IF (DEFINED(LCLQT) or DEFINED(LCLQT5)) and not DEFINED(MSWINDOWS)}
   CloseQueryResult:= CanClose;
 {$ENDIF}
@@ -4232,10 +4289,11 @@ end;
 
 function TfrmMain.FileViewBeforeChangePath(FileView: TFileView; NewFileSource: IFileSource; const NewPath: String): Boolean;
 var
+  i: Integer;
+  AFileSource: IFileSource;
   ANoteBook: TFileViewNotebook;
   Page, NewPage: TFileViewPage;
   PageAlreadyExists: Boolean = False;
-  i: Integer;
   tlsLockStateToEvaluate: TTabLockState;
 begin
   Result:= True;
@@ -4282,11 +4340,38 @@ begin
           end;
         end;
     end;
+
+    if actSyncChangeDir.Checked and (FileView = NotActiveFrame) then
+    begin
+      if not Result then
+        actSyncChangeDir.Checked:= False
+      else begin
+        if Assigned(NewFileSource) and not NewFileSource.SetCurrentWorkingDirectory(NewPath) then
+        begin
+          actSyncChangeDir.Checked:= False;
+          Exit(False);
+        end
+        else if not FSyncChangeParent then
+        begin
+          if Assigned(NewFileSource) then
+            AFileSource:= NewFileSource
+          else begin
+            AFileSource:= FileView.FileSource;
+          end;
+          if not AFileSource.FileSystemEntryExists(ExcludeTrailingBackslash(NewPath)) then
+          begin
+            actSyncChangeDir.Checked:= False;
+            Exit(False);
+          end;
+        end
+      end;
+    end;
   end;
 end;
 
 procedure TfrmMain.FileViewAfterChangePath(FileView: TFileView);
 var
+  S: String;
   Index: Integer;
   Page: TFileViewPage;
   ANoteBook : TFileViewNotebook;
@@ -4313,6 +4398,33 @@ begin
               glsDirHistory.Move(Index, 0);
             end;
             UpdateTreeViewPath;
+          end;
+
+          if actSyncChangeDir.Checked and (FileView = ActiveFrame) then
+          begin
+            S:= ExcludeTrailingBackslash(FileView.CurrentPath);
+            // Go to child directory
+            if Length(S) > Length(FSyncChangeDir) then
+            begin
+              FSyncChangeParent:= False;
+              if ExtractFileDir(S) = FSyncChangeDir then
+                NotActiveFrame.CurrentPath:= NotActiveFrame.CurrentPath + ExtractFileName(S)
+              else
+                actSyncChangeDir.Checked:= False;
+            end
+            // Go to parent directory
+            else begin
+              FSyncChangeParent:= True;
+              if S = ExtractFileDir(FSyncChangeDir) then
+                NotActiveFrame.ChangePathToParent(True)
+              else
+                actSyncChangeDir.Checked:= False;
+            end;
+            if actSyncChangeDir.Checked then
+              FSyncChangeDir:= S
+            else begin
+              FSyncChangeDir:= EmptyStr;
+            end;
           end;
 
           UpdateSelectedDrive(ANoteBook);
@@ -4389,6 +4501,7 @@ begin
 
     with ShellTreeView as TShellTreeView do
     begin
+      UpdateTreeView;
       ReadOnly := True;
       RightClickSelect := True;
       FileSortType := fstNone;
@@ -4460,13 +4573,28 @@ begin
 
   { Delete drives that in drives black list }
   for I:= DrivesList.Count - 1 downto 0 do
+  begin
+    Drive := DrivesList[I];
+    if (gDriveBlackListUnmounted and not Drive^.IsMounted) or
+       MatchesMaskList(Drive^.Path, gDriveBlackList) or
+       MatchesMaskList(Drive^.DeviceId, gDriveBlackList) then
+      DrivesList.Remove(I);
+  end;
+
+{$IF DEFINED(MSWINDOWS)}
+  if (not (cimDrive in gCustomIcons)) then
+  begin
+    for I:= DrivesList.Count - 1 downto 0 do
     begin
       Drive := DrivesList[I];
-      if (gDriveBlackListUnmounted and not Drive^.IsMounted) or
-         MatchesMaskList(Drive^.Path, gDriveBlackList) or
-         MatchesMaskList(Drive^.DeviceId, gDriveBlackList) then
-        DrivesList.Remove(I);
+      if Drive^.DriveType = dtNetwork then
+      begin
+        with TNetworkDriveLoader.Create(Drive, dskRight.GlyphSize, clBtnFace, @OnDriveIconLoaded) do
+          Start;
+      end;
     end;
+  end;
+{$ENDIF}
 
   UpdateDriveList(DrivesList);
 
@@ -4544,7 +4672,7 @@ begin
       Button := dskPanel.AddButton(ToolItem);
 
       // Set drive icon.
-      BitmapTmp := PixMapManager.GetDriveIcon(Drive, dskPanel.GlyphSize, clBtnFace);
+      BitmapTmp := PixMapManager.GetDriveIcon(Drive, dskPanel.GlyphSize, clBtnFace, False);
       Button.Glyph.Assign(BitmapTmp);
       FreeAndNil(BitmapTmp);
 
@@ -5980,6 +6108,37 @@ begin
   end;
 end;
 
+{$IF DEFINED(MSWINDOWS)}
+procedure TfrmMain.OnDriveIconLoaded(Data: PtrInt);
+var
+  ADrive: TKASDriveItem;
+  AIcon: TDriveIcon absolute Data;
+
+  procedure UpdateDriveIcon(dskPanel: TKASToolBar);
+  var
+    Index: Integer;
+  begin
+    for Index:= 0 to dskPanel.ButtonCount - 1 do
+    begin
+     if dskPanel.Buttons[Index].ToolItem is TKASDriveItem then
+     begin
+       ADrive:= TKASDriveItem(dskPanel.Buttons[Index].ToolItem);
+       if SameText(ADrive.Drive^.Path, AIcon.Drive.Path) then
+       begin
+         dskPanel.Buttons[Index].Glyph.Assign(AIcon.Bitmap);
+         Break;
+       end;
+     end;
+    end;
+  end;
+
+begin
+  UpdateDriveIcon(dskLeft);
+  UpdateDriveIcon(dskRight);
+  AIcon.Free;
+end;
+{$ENDIF}
+
 procedure TfrmMain.UpdateSelectedDrives;
 begin
   if gDriveBar1 then
@@ -6216,53 +6375,87 @@ begin
   end;
 end;
 
-procedure TfrmMain.UpdateFreeSpace(Panel: TFilePanelSelect);
+procedure TfrmMain.OnDriveGetFreeSpace(Data: PtrInt);
 var
-  FreeSize, TotalSize: Int64;
   aFileView: TFileView;
   sboxDrive: TPaintBox;
   lblDriveInfo: TLabel;
+  AData: TFreeSpaceData absolute Data;
+begin
+  if AData.Result then
+  begin
+    case AData.Panel of
+      fpLeft :
+        begin
+          sboxDrive := pbxLeftDrive;
+          aFileView := FrameLeft;
+          lblDriveInfo :=lblLeftDriveInfo;
+        end;
+      fpRight:
+        begin
+          sboxDrive := pbxRightDrive;
+          aFileView := FrameRight;
+          lblDriveInfo := lblRightDriveInfo;
+        end;
+    end;
+
+    if mbCompareFileNames(AData.Path, aFileView.CurrentPath) then
+    begin
+      if gDriveInd = True then
+      begin
+        if AData.TotalSize > 0 then
+          sboxDrive.Tag := 100 - Round((AData.FreeSize / AData.TotalSize) * 100) // Save busy percent
+        else begin
+          sboxDrive.Tag := -1;
+        end;
+        sboxDrive.Invalidate;
+      end;
+      lblDriveInfo.Hint := Format(rsFreeMsg, [cnvFormatFileSize(AData.FreeSize, uoscHeader), cnvFormatFileSize(AData.TotalSize, uoscHeader)]);
+      if gShortFormatDriveInfo then
+        lblDriveInfo.Caption := Format(rsFreeMsgShort, [cnvFormatFileSize(AData.FreeSize, uoscHeader)])
+      else begin
+        lblDriveInfo.Caption := lblDriveInfo.Hint;
+      end;
+      sboxDrive.Hint := lblDriveInfo.Hint;
+    end;
+  end;
+  AData.Free;
+end;
+
+procedure TfrmMain.UpdateFreeSpace(Panel: TFilePanelSelect);
+var
+  aFileView: TFileView;
+  sboxDrive: TPaintBox;
+  lblDriveInfo: TLabel;
+  AData: TFreeSpaceData;
 begin
   case Panel of
     fpLeft :
       begin
         sboxDrive := pbxLeftDrive;
         aFileView := FrameLeft;
-        lblDriveInfo:=lblLeftDriveInfo;
+        lblDriveInfo := lblLeftDriveInfo;
       end;
     fpRight:
       begin
         sboxDrive := pbxRightDrive;
         aFileView := FrameRight;
-        lblDriveInfo:=lblRightDriveInfo;
+        lblDriveInfo := lblRightDriveInfo;
       end;
   end;
 
-  if aFileView.FileSource.GetFreeSpace(aFileView.CurrentPath, FreeSize, TotalSize) then
-    begin
-      if gDriveInd = True then
-        begin
-          if TotalSize > 0 then
-            sboxDrive.Tag:= 100 - Round((FreeSize / TotalSize) * 100) // Save busy percent
-          else
-            sboxDrive.Tag := -1;
-          sboxDrive.Invalidate;
-        end;
-      lblDriveInfo.Hint := Format(rsFreeMsg, [cnvFormatFileSize(FreeSize, uoscHeaderFooter), cnvFormatFileSize(TotalSize, uoscHeaderFooter)]); //It's not an "operation" but most probably the closest wanted form.
-      if gShortFormatDriveInfo then
-        lblDriveInfo.Caption := Format(rsFreeMsgShort, [cnvFormatFileSize(FreeSize, uoscHeaderFooter)])
-      else
-        lblDriveInfo.Caption := lblDriveInfo.Hint;
-      sboxDrive.Hint := lblDriveInfo.Hint;
-    end
-  else
-    begin
-      lblDriveInfo.Caption := '';
-      lblDriveInfo.Hint := '';
-      sboxDrive.Hint := '';
-      sboxDrive.Tag := -1;
-      sboxDrive.Invalidate;
-    end;
+  lblDriveInfo.Caption := ' ';
+  lblDriveInfo.Hint := ' ';
+  sboxDrive.Hint := ' ';
+  sboxDrive.Tag := -1;
+  sboxDrive.Invalidate;
+
+  AData := TFreeSpaceData.Create;
+  AData.Panel := Panel;
+  AData.Path := aFileView.CurrentPath;
+  AData.OnFinish := @OnDriveGetFreeSpace;
+  AData.FileSource := aFileView.FileSource;
+  TThread.ExecuteInThread(@AData.GetFreeSpaceInThread);
 end;
 
 procedure TfrmMain.CloseNotebook(ANotebook: TFileViewNotebook);

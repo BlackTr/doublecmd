@@ -133,6 +133,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Sestavení"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1042,6 +1047,7 @@ msgid "S&earch from caret"
 msgstr "H&ledat od ukazatele"
 
 #: tfrmeditsearchreplace.cbsearchregexp.caption
+msgctxt "tfrmeditsearchreplace.cbsearchregexp.caption"
 msgid "&Regular expressions"
 msgstr "&Regulární výrazy"
 
@@ -1068,6 +1074,10 @@ msgstr "&Vyhledat:"
 #: tfrmeditsearchreplace.rgsearchdirection.caption
 msgid "Direction"
 msgstr "Směr"
+
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
 
 #: tfrmextractdlg.caption
 msgid "Unpack files"
@@ -1547,6 +1557,10 @@ msgstr "Hledat soubory NEobsahující text"
 msgid "N&ot older than:"
 msgstr "N&ení starší, než:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "Otevřené záložky"
@@ -1765,9 +1779,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "Najít"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "Rozlišovat velikost"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "&Regulární výrazy"
 
 #: tfrmfindview.chkhex.caption
 msgctxt "tfrmfindview.chkhex.caption"
@@ -2672,6 +2696,14 @@ msgstr "Povolit/zakázat použití seznamu ignorovaných souborů a složek"
 #: tfrmmain.actsymlink.caption
 msgid "Create Symbolic &Link..."
 msgstr "Vytvořit symlink..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -5004,6 +5036,10 @@ msgstr "Automatické odsazení"
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr "Po stisku <ENTER> nastaví kurzor na stejnou pozici na jaké začíná text předchozího řádku"
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr "Pravý okraj:"
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr "Nastavení kurzoru v prázdném řádku"
@@ -5060,10 +5096,6 @@ msgstr "Volba \"Smart Tab\" má přednost před klasickým tabelátorem"
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "Možnosti interního editoru"
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr "Pravý okraj:"
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -6003,13 +6035,17 @@ msgstr "&Formát data a času:"
 msgid "File si&ze format:"
 msgstr "Formát veli&kosti souboru:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr "&Gigabyte:"
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "Hlavička a patička:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
 msgid "&Kilobyte:"
@@ -8617,6 +8653,11 @@ msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr "Sestavení"
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
 msgid "Free Pascal"
@@ -9585,6 +9626,10 @@ msgstr "a;a;a;a;a;a;c;e;e;e;e;i;i;i;i;n;o;o;o;o;o;o;u;u;u;u;y;A;A;A;A;A;A;C;E;E;
 msgid "You need to provide administrator permission"
 msgstr "Pro provedení potřebujete administrátorské oprávnění"
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr "vytvoření objektu:"
@@ -10170,6 +10215,10 @@ msgstr "Knihovna souborů"
 #: ulng.rsfilterpluginfiles
 msgid "Plugin files"
 msgstr "Soubory doplňků"
+
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
+msgstr ""
 
 #: ulng.rsfilterstatus
 msgid "FILTER"
@@ -10767,6 +10816,10 @@ msgstr "Nelze se připojit k serveru: \"%s\""
 msgid "Cannot copy file %s to %s"
 msgstr "Nelze zkopírovat soubor %s do %s"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -10870,6 +10923,10 @@ msgstr "Nelze nastavit vlastníka/skupinu pro \"%s \""
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
 msgstr "Oprávnění pro \"%s\" nelze nastavit"
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
+msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -12788,6 +12845,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "Registrováno pro"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr "Přejmenovat kategorii"
@@ -13543,4 +13604,8 @@ msgstr "Počet nahrazených: %d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Žádné nahrazení se nekonalo."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

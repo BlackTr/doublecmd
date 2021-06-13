@@ -23,6 +23,9 @@ uses
   {$ENDIF}
   cwstring,
   clocale,
+  {$IFDEF DARWIN}
+  uAppleMagnifiedModeFix,
+  {$ENDIF}
   uElevation,
   {$IFDEF LINUX}
   uAppImage,
@@ -158,6 +161,7 @@ begin
 
   DCDebug('Double Commander ' + dcVersion);
   DCDebug('Revision: ' + dcRevision);
+  DCDebug('Commit: ' + dcCommit);
   DCDebug('Build: ' + dcBuildDate);
   DCDebug('Lazarus: ' + GetLazarusVersion);
   DCDebug('Free Pascal: ' + fpcVersion);

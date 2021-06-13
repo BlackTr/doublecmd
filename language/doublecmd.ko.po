@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: Double Commander 0.7.8 beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-04-22 23:08+030\n"
-"PO-Revision-Date: 2017-07-08 07:12+0900\n"
-"Last-Translator: Sangjin <comsem1104@naver.com>\n"
+"PO-Revision-Date: 2021-04-30 16:11+0900\n"
+"Last-Translator: sragin <sragin@naver.com>\n"
 "Language-Team: Language <email@address>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Native-Language: 한국어\n"
 "Language: ko\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-Poedit-Bookmarks: -1,-1,-1,-1,2932,-1,-1,-1,-1,-1\n"
 
 #: fsyncdirsdlg.rscomparingpercent
 msgid "Comparing... %d%% (ESC to cancel)"
@@ -137,6 +138,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "빌드"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -191,7 +197,7 @@ msgstr "속성 선택"
 #: tfrmattributesedit.cbarchive.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBARCHIVE.CAPTION"
 msgid "&Archive"
-msgstr "보관(&A)"
+msgstr "기록(&A)"
 
 #: tfrmattributesedit.cbcompressed.caption
 msgid "Co&mpressed"
@@ -200,7 +206,7 @@ msgstr "압축(&M)"
 #: tfrmattributesedit.cbdirectory.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBDIRECTORY.CAPTION"
 msgid "&Directory"
-msgstr "새 폴더(&D)"
+msgstr "폴더(&D)"
 
 #: tfrmattributesedit.cbencrypted.caption
 msgid "&Encrypted"
@@ -209,12 +215,12 @@ msgstr "암호화(&E)"
 #: tfrmattributesedit.cbhidden.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBHIDDEN.CAPTION"
 msgid "&Hidden"
-msgstr "감추기(&H)"
+msgstr "숨김(&H)"
 
 #: tfrmattributesedit.cbreadonly.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBREADONLY.CAPTION"
 msgid "Read o&nly"
-msgstr "읽기전용(&N)"
+msgstr "읽기 전용(&N)"
 
 #: tfrmattributesedit.cbsgid.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBSGID.CAPTION"
@@ -223,7 +229,7 @@ msgstr "SGID"
 
 #: tfrmattributesedit.cbsparse.caption
 msgid "S&parse"
-msgstr "부족한(&P)"
+msgstr ""
 
 #: tfrmattributesedit.cbsticky.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBSTICKY.CAPTION"
@@ -1099,6 +1105,10 @@ msgctxt "TFRMEDITSEARCHREPLACE.RGSEARCHDIRECTION.CAPTION"
 msgid "Direction"
 msgstr "방향"
 
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
+
 #: tfrmextractdlg.caption
 msgctxt "TFRMEXTRACTDLG.CAPTION"
 msgid "Unpack files"
@@ -1406,7 +1416,6 @@ msgid "Executable Path"
 msgstr ""
 
 #: tfrmfinddlg.actcancel.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actcancel.caption"
 msgid "C&ancel"
 msgstr "취소(&A)"
@@ -1416,7 +1425,6 @@ msgid "Cancel search and close window"
 msgstr ""
 
 #: tfrmfinddlg.actclose.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actclose.caption"
 msgid "&Close"
 msgstr "닫기(&C)"
@@ -1459,13 +1467,11 @@ msgid "Find Data"
 msgstr "자료 찾기"
 
 #: tfrmfinddlg.actlastsearch.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actlastsearch.caption"
 msgid "&Last search"
-msgstr "마지막 검색(&L)"
+msgstr "이전 검색(&L)"
 
 #: tfrmfinddlg.actnewsearch.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actnewsearch.caption"
 msgid "&New search"
 msgstr "새 검색(&N)"
@@ -1503,13 +1509,11 @@ msgid "Go to page \"Standard\""
 msgstr ""
 
 #: tfrmfinddlg.actstart.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actstart.caption"
 msgid "&Start"
 msgstr "실행(&S)"
 
 #: tfrmfinddlg.actview.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actview.caption"
 msgid "&View"
 msgstr "보기(&V)"
@@ -1557,11 +1561,11 @@ msgstr "템플릿 사용"
 #: tfrmfinddlg.caption
 msgctxt "TFRMFINDDLG.CAPTION"
 msgid "Find files"
-msgstr "찾은 파일"
+msgstr "파일 찾기"
 
 #: tfrmfinddlg.cbcasesens.caption
 msgid "Case sens&itive"
-msgstr "대소 문자 구분(&I)"
+msgstr "대소문자 구분(&I)"
 
 #: tfrmfinddlg.cbdatefrom.caption
 msgid "&Date from:"
@@ -1586,7 +1590,7 @@ msgstr "압축파일에서 찾기(&A)"
 #: tfrmfinddlg.cbfindtext.caption
 msgctxt "TFRMFINDDLG.CBFINDTEXT.CAPTION"
 msgid "Find &text in file"
-msgstr "파일의 텍스트에서 찾기(&T)"
+msgstr "파일 내용 찾기(&T)"
 
 #: tfrmfinddlg.cbfollowsymlinks.caption
 msgctxt "TFRMFINDDLG.CBFOLLOWSYMLINKS.CAPTION"
@@ -1596,15 +1600,19 @@ msgstr "심볼릭 링크 따라가기(&Y)"
 #: tfrmfinddlg.cbnotcontainingtext.caption
 msgctxt "TFRMFINDDLG.CBNOTCONTAININGTEXT.CAPTION"
 msgid "Find files N&OT containing the text"
-msgstr "문자열 포함하지 않은 파일 찾기(&O)"
+msgstr "문자열이 없는 파일 찾기(&O)"
 
 #: tfrmfinddlg.cbnotolderthan.caption
 msgid "N&ot older than:"
 msgstr "오래되지 않은(&O):"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
-msgstr ""
+msgstr "열려있는 탭에서"
 
 #: tfrmfinddlg.cbpartialnamesearch.caption
 msgid "Searc&h for part of file name"
@@ -1621,7 +1629,7 @@ msgstr "바꾸기(&P)"
 
 #: tfrmfinddlg.cbselectedfiles.caption
 msgid "Selected directories and files"
-msgstr "선택된 파일과 폴더(&F)"
+msgstr "선택된 파일과 폴더에서(&F)"
 
 #: tfrmfinddlg.cbtextregexp.caption
 msgid "Reg&ular expression"
@@ -1662,7 +1670,7 @@ msgstr ""
 #: tfrmfinddlg.chkhex.caption
 msgctxt "tfrmfinddlg.chkhex.caption"
 msgid "Hexadeci&mal"
-msgstr ""
+msgstr "16진수(&M)"
 
 #: tfrmfinddlg.cmbexcludedirectories.hint
 msgid "Enter directories names that should be excluded from search separated with \";\""
@@ -1703,7 +1711,7 @@ msgstr "값"
 #: tfrmfinddlg.gbdirectories.caption
 msgctxt "TFRMFINDDLG.GBDIRECTORIES.CAPTION"
 msgid "Directories"
-msgstr "새 폴더"
+msgstr "폴더"
 
 #: tfrmfinddlg.gbfiles.caption
 msgctxt "TFRMFINDDLG.GBFILES.CAPTION"
@@ -1829,9 +1837,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "찾기"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "대소문자 구분(&A)"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "정규식 표현(&R)"
 
 #: tfrmfindview.chkhex.caption
 msgctxt "tfrmfindview.chkhex.caption"
@@ -2077,7 +2095,7 @@ msgstr "전체 보기"
 
 #: tfrmmain.actcolumnsview.hint
 msgid "Columns View"
-msgstr "파일속성열 보기"
+msgstr "컬럼 보기"
 
 #: tfrmmain.actcomparecontents.caption
 msgid "Compare by &Contents"
@@ -2095,7 +2113,7 @@ msgstr "폴더 비교"
 
 #: tfrmmain.actconfigarchivers.caption
 msgid "Configuration of Archivers"
-msgstr ""
+msgstr "압축도구 설정"
 
 #: tfrmmain.actconfigdirhotlist.caption
 msgctxt "TFRMMAIN.ACTCONFIGDIRHOTLIST.CAPTION"
@@ -2121,11 +2139,11 @@ msgstr ""
 
 #: tfrmmain.actconfigsavepos.caption
 msgid "Save Position"
-msgstr ""
+msgstr "창위치 저장"
 
 #: tfrmmain.actconfigsavesettings.caption
 msgid "Save Settings"
-msgstr ""
+msgstr "설정 저장"
 
 #: tfrmmain.actconfigsearches.caption
 msgid "Configuration of searches"
@@ -2759,6 +2777,14 @@ msgctxt "TFRMMAIN.ACTSYMLINK.CAPTION"
 msgid "Create Symbolic &Link..."
 msgstr "바로 가기 생성(&L)..."
 
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
+
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
 msgstr "폴더 동기화..."
@@ -2827,11 +2853,11 @@ msgstr "활성보기에 방문 경로 히스토리 표시"
 
 #: tfrmmain.actviewhistorynext.caption
 msgid "Go to next entry in history"
-msgstr "히스토리 다음 항목 가기"
+msgstr "히스토리 다음 항목으로 가기"
 
 #: tfrmmain.actviewhistoryprev.caption
 msgid "Go to previous entry in history"
-msgstr "히스토리 이전 항목 가기"
+msgstr "히스토리 이전 항목으로 가기"
 
 #: tfrmmain.actviewlogfile.caption
 msgid "View log file"
@@ -3692,7 +3718,6 @@ msgid "File Path"
 msgstr "파일 경로"
 
 #: tfrmmultirenamewait.caption
-#, fuzzy
 msgctxt "tfrmmultirenamewait.caption"
 msgid "Double Commander"
 msgstr "더블 커맨더"
@@ -3904,7 +3929,7 @@ msgstr "추가(&I):"
 #: tfrmoptionsarchivers.lblarchiverarchiver.caption
 msgctxt "tfrmoptionsarchivers.lblarchiverarchiver.caption"
 msgid "Arc&hiver:"
-msgstr "압축기(&H):"
+msgstr "압축도구(&H):"
 
 #: tfrmoptionsarchivers.lblarchiverdelete.caption
 msgid "De&lete:"
@@ -3948,7 +3973,7 @@ msgstr "목록(&L):"
 
 #: tfrmoptionsarchivers.lblarchiverlistbox.caption
 msgid "Archi&vers:"
-msgstr "압축기:"
+msgstr "압축도구(&V):"
 
 #: tfrmoptionsarchivers.lblarchiverlistend.caption
 msgctxt "tfrmoptionsarchivers.lblarchiverlistend.caption"
@@ -4076,7 +4101,7 @@ msgstr "디바이스 제외리스트(&B)"
 
 #: tfrmoptionsbriefview.gbcolumns.caption
 msgid "Columns size"
-msgstr "파일속성열 제목 크기"
+msgstr "컬럼 크기"
 
 #: tfrmoptionsbriefview.gbshowfileext.caption
 msgid "Show file extensions"
@@ -4084,11 +4109,11 @@ msgstr "파일 확장자 표시"
 
 #: tfrmoptionsbriefview.rbaligned.caption
 msgid "ali&gned (with Tab)"
-msgstr "(탭)정렬(&G)"
+msgstr "탭에 맞추어(&G)"
 
 #: tfrmoptionsbriefview.rbdirectly.caption
 msgid "di&rectly after filename"
-msgstr "파일명 뒤에 폴더명(&R)"
+msgstr "파일명에 붙여서(&R)"
 
 #: tfrmoptionsbriefview.rbuseautosize.caption
 msgid "Auto"
@@ -4096,19 +4121,19 @@ msgstr "자동"
 
 #: tfrmoptionsbriefview.rbusefixedcount.caption
 msgid "Fixed columns count"
-msgstr "고정된 파일속성열 제목 세기"
+msgstr "고정된 컬럼 수"
 
 #: tfrmoptionsbriefview.rbusefixedwidth.caption
 msgid "Fixed columns width"
-msgstr "고정된 파일속성열 제목폭"
+msgstr "고정된 컬럼 폭"
 
 #: tfrmoptionscolumnsview.cbcuttexttocolwidth.caption
 msgid "Cut &text to column width"
-msgstr "파일속성열 제목 폭 텍스트 잘라내기(&T)"
+msgstr "컬럼 폭에 맞게 내용 잘라내기(&T)"
 
 #: tfrmoptionscolumnsview.cbextendcellwidth.caption
 msgid "&Extend cell width if text is not fitting into column"
-msgstr ""
+msgstr "전체 텍스트가 컬럼에 표시되지 않을 경우 컬럼 크기 확장(&E)"
 
 #: tfrmoptionscolumnsview.cbgridhorzline.caption
 msgid "&Horizontal lines"
@@ -4120,7 +4145,7 @@ msgstr "수직줄(&V)"
 
 #: tfrmoptionscolumnsview.chkautofillcolumns.caption
 msgid "A&uto fill columns"
-msgstr "자동 파일속성열 제목 채움(&U)"
+msgstr "컬럼크기를 창에 맞춤(&U)"
 
 #: tfrmoptionscolumnsview.gbshowgrid.caption
 msgid "Show grid"
@@ -4128,11 +4153,11 @@ msgstr "격자 표시"
 
 #: tfrmoptionscolumnsview.grpautosizecolumns.caption
 msgid "Auto-size columns"
-msgstr "자동 파일속성열 제목 크기"
+msgstr "컬럼 크기 자동 변경"
 
 #: tfrmoptionscolumnsview.lblautosizecolumn.caption
 msgid "Auto si&ze column:"
-msgstr "자동 파일속성열 제목 크기(&Z):"
+msgstr "자동으로 크기를 변경할 컬럼(&Z):"
 
 #: tfrmoptionsconfiguration.btnconfigapply.caption
 msgctxt "TFRMOPTIONSCONFIGURATION.BTNCONFIGAPPLY.CAPTION"
@@ -4158,7 +4183,6 @@ msgid "&File mask history"
 msgstr "찾은 파일 히스토리(&F)"
 
 #: tfrmoptionsconfiguration.chkfoldertabs.caption
-#, fuzzy
 msgctxt "tfrmoptionsconfiguration.chkfoldertabs.caption"
 msgid "Folder tabs"
 msgstr "폴더탭"
@@ -4173,10 +4197,9 @@ msgstr "검색/바꾸기 히스토리(&H)"
 
 #: tfrmoptionsconfiguration.chkwindowstate.caption
 msgid "Main window state"
-msgstr ""
+msgstr "메인창 상태"
 
 #: tfrmoptionsconfiguration.gbdirectories.caption
-#, fuzzy
 msgctxt "tfrmoptionsconfiguration.gbdirectories.caption"
 msgid "Directories"
 msgstr "폴더"
@@ -4229,7 +4252,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallallowovercolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLALLOWOVERCOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallbackcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLBACKCOLOR.CAPTION"
@@ -4239,7 +4262,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallbackcolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLBACKCOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallbackcolor2.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLBACKCOLOR2.CAPTION"
@@ -4249,7 +4272,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallbackcolor2.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLBACKCOLOR2.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallcursorcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLCURSORCOLOR.CAPTION"
@@ -4259,7 +4282,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallcursorcolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLCURSORCOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallcursortext.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLCURSORTEXT.CAPTION"
@@ -4269,7 +4292,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallcursortext.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLCURSORTEXT.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallfont.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLFONT.CAPTION"
@@ -4279,7 +4302,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallfont.hint
 msgctxt "tfrmoptionscustomcolumns.btnallfont.hint"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallforecolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLFORECOLOR.CAPTION"
@@ -4289,7 +4312,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallforecolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLFORECOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallinactivecursorcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLINACTIVECURSORCOLOR.CAPTION"
@@ -4309,7 +4332,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallinactivemarkcolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLINACTIVEMARKCOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnallmarkcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLMARKCOLOR.CAPTION"
@@ -4319,7 +4342,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnallmarkcolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLMARKCOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnalluseinactiveselcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLUSEINACTIVESELCOLOR.CAPTION"
@@ -4329,7 +4352,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnalluseinactiveselcolor.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLUSEINACTIVESELCOLOR.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnalluseinvertedselection.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLUSEINVERTEDSELECTION.CAPTION"
@@ -4339,7 +4362,7 @@ msgstr "전부"
 #: tfrmoptionscustomcolumns.btnalluseinvertedselection.hint
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNALLUSEINVERTEDSELECTION.HINT"
 msgid "Apply modification to all columns"
-msgstr "모든 파일속성열 제목에 설정 적용"
+msgstr "모든 컬럼에 설정 적용"
 
 #: tfrmoptionscustomcolumns.btnbackcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.BTNBACKCOLOR.CAPTION"
@@ -4571,11 +4594,11 @@ msgstr "저장"
 #: tfrmoptionscustomcolumns.cballowovercolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.CBALLOWOVERCOLOR.CAPTION"
 msgid "Allow Overcolor"
-msgstr "채색 허용"
+msgstr "색변경 허용"
 
 #: tfrmoptionscustomcolumns.cbapplychangeforallcolumns.caption
 msgid "When clicking to change something, change for all columns"
-msgstr "변경을 위해 클릭할 때 전체 파일 속성열 변경"
+msgstr "전체 컬럼 변경"
 
 #: tfrmoptionscustomcolumns.cbconfigcolumns.text
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.CBCONFIGCOLUMNS.TEXT"
@@ -4593,15 +4616,15 @@ msgstr "프레임커서 사용"
 
 #: tfrmoptionscustomcolumns.cbuseinactiveselcolor.caption
 msgid "Use Inactive Selection Color"
-msgstr "비활성 선택 색상 사용"
+msgstr "비활성 색상 사용"
 
 #: tfrmoptionscustomcolumns.cbuseinvertedselection.caption
 msgid "Use Inverted Selection"
-msgstr "반전 선택 사용"
+msgstr "선택시 배경색 반전"
 
 #: tfrmoptionscustomcolumns.chkusecustomview.caption
 msgid "Use custom font and color for this view"
-msgstr "이 보기를 사용자 글골과 색상 사용"
+msgstr "이 뷰에 사용자 글꼴과 색상 사용"
 
 #: tfrmoptionscustomcolumns.lblbackcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLBACKCOLOR.CAPTION"
@@ -4614,14 +4637,12 @@ msgid "Background 2:"
 msgstr "배경2:"
 
 #: tfrmoptionscustomcolumns.lblconfigcolumns.caption
-#, fuzzy
-#| msgid "Con&figure columns view:"
 msgid "&Columns view:"
-msgstr "파일속성열 제목 보기 환경설정(&F):"
+msgstr "컬럼 뷰(&C):"
 
 #: tfrmoptionscustomcolumns.lblcurrentcolumn.caption
 msgid "[Current Column Name]"
-msgstr "[현재 파일속성열 이름]"
+msgstr "[현재 컬럼 이름]"
 
 #: tfrmoptionscustomcolumns.lblcursorcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLCURSORCOLOR.CAPTION"
@@ -4631,11 +4652,11 @@ msgstr "커서 색상:"
 #: tfrmoptionscustomcolumns.lblcursortext.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLCURSORTEXT.CAPTION"
 msgid "Cursor Text:"
-msgstr "커서 글자:"
+msgstr "커서 문자:"
 
 #: tfrmoptionscustomcolumns.lblfilesystem.caption
 msgid "&File system:"
-msgstr ""
+msgstr "파일 시스템(&F)"
 
 #: tfrmoptionscustomcolumns.lblfontname.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLFONTNAME.CAPTION"
@@ -4650,7 +4671,7 @@ msgstr "크기:"
 #: tfrmoptionscustomcolumns.lblforecolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLFORECOLOR.CAPTION"
 msgid "Text Color:"
-msgstr "글자 색상:"
+msgstr "텍스트 색상:"
 
 #: tfrmoptionscustomcolumns.lblinactivecursorcolor.caption
 msgctxt "tfrmoptionscustomcolumns.lblinactivecursorcolor.caption"
@@ -4660,12 +4681,12 @@ msgstr "비활성 커서 색상:"
 #: tfrmoptionscustomcolumns.lblinactivemarkcolor.caption
 msgctxt "tfrmoptionscustomcolumns.lblinactivemarkcolor.caption"
 msgid "Inactive Mark Color:"
-msgstr "비활성 마스크 색상:"
+msgstr "비활성 마크 색상:"
 
 #: tfrmoptionscustomcolumns.lblmarkcolor.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLMARKCOLOR.CAPTION"
 msgid "Mark Color:"
-msgstr "표시 색상:"
+msgstr "마크 색상:"
 
 #: tfrmoptionscustomcolumns.lblpreviewtop.caption
 msgctxt "TFRMOPTIONSCUSTOMCOLUMNS.LBLPREVIEWTOP.CAPTION"
@@ -4687,149 +4708,142 @@ msgstr "비교후 창의 위치:"
 
 #: tfrmoptionsdirectoryhotlist.actaddactiveframedir.caption
 msgid "Add directory of the &active frame"
-msgstr ""
+msgstr "활성창의 폴더 추가(&A)"
 
 #: tfrmoptionsdirectoryhotlist.actaddbothframedir.caption
 msgid "Add &directories of the active && inactive frames"
-msgstr ""
+msgstr "활성창과 비활성창의 폴더 추가(&D)"
 
 #: tfrmoptionsdirectoryhotlist.actaddbrowseddir.caption
 msgid "Add directory I will bro&wse to"
-msgstr ""
+msgstr "추가할 폴더를 탐색창을 열어 선택(&W)"
 
 #: tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption"
 msgid "Add a copy of the selected entry"
-msgstr "선택 목록 복사 추가"
+msgstr "폴더 바로 가기 목록에서 선택한 폴더 추가"
 
 #: tfrmoptionsdirectoryhotlist.actaddselectionsfromframe.caption
 msgid "Add current &selected or active directories of active frame"
-msgstr ""
+msgstr "활성창에서 선택되거나 활성화된 폴더 추가(&S)"
 
 #: tfrmoptionsdirectoryhotlist.actaddseparator.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actaddseparator.caption"
 msgid "Add a separator"
 msgstr "구분자 추가"
 
 #: tfrmoptionsdirectoryhotlist.actaddsubmenu.caption
 msgid "Add a sub menu"
-msgstr ""
+msgstr "하위 메뉴 추가"
 
 #: tfrmoptionsdirectoryhotlist.actaddtypeddir.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actaddtypeddir.caption"
 msgid "Add directory I will type"
-msgstr "타이핑 입력할 폴더 추가"
+msgstr "추가할 폴더를 직접 타이핑"
 
 #: tfrmoptionsdirectoryhotlist.actcollapseall.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actcollapseall.caption"
 msgid "Collapse all"
-msgstr "전부 접기"
+msgstr "모두 접기"
 
 #: tfrmoptionsdirectoryhotlist.actcollapseitem.caption
 msgid "Collapse item"
-msgstr ""
+msgstr "아이템 접기"
 
 #: tfrmoptionsdirectoryhotlist.actcut.caption
 msgid "Cut selection of entries"
-msgstr ""
+msgstr "선택된 목록 잘라내기"
 
 #: tfrmoptionsdirectoryhotlist.actdeleteall.caption
 msgid "Delete all!"
-msgstr ""
+msgstr "전체 삭제!"
 
 #: tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption"
 msgid "Delete selected item"
 msgstr "선택된 항목 삭제"
 
 #: tfrmoptionsdirectoryhotlist.actdeletesubmenuandelem.caption
 msgid "Delete sub-menu and all its elements"
-msgstr ""
+msgstr "하위 메뉴와 소속된 전체 항목 삭제"
 
 #: tfrmoptionsdirectoryhotlist.actdeletesubmenukeepelem.caption
 msgid "Delete just sub-menu but keep elements"
-msgstr ""
+msgstr "하위 메뉴만 삭제하고 소속된 항목은 유지"
 
 #: tfrmoptionsdirectoryhotlist.actexpanditem.caption
 msgid "Expand item"
-msgstr ""
+msgstr "아이템 확장"
 
 #: tfrmoptionsdirectoryhotlist.actfocustreewindow.caption
 msgid "Focus tree window"
-msgstr ""
+msgstr "폴더 바로 가기 목록 포커스"
 
 #: tfrmoptionsdirectoryhotlist.actgotofirstitem.caption
 msgid "Goto first item"
-msgstr ""
+msgstr "첫 번째 아이템으로 이동"
 
 #: tfrmoptionsdirectoryhotlist.actgotolastitem.caption
 msgid "Goto last item"
-msgstr ""
+msgstr "마지막 아이템으로 이동"
 
 #: tfrmoptionsdirectoryhotlist.actgotonextitem.caption
 msgid "Go to next item"
-msgstr ""
+msgstr "다음 아이템으로 이동"
 
 #: tfrmoptionsdirectoryhotlist.actgotopreviousitem.caption
 msgid "Go to previous item"
-msgstr ""
+msgstr "이전 아이템으로 이동"
 
 #: tfrmoptionsdirectoryhotlist.actinsertactiveframedir.caption
 msgid "Insert directory of the &active frame"
-msgstr ""
+msgstr "활성창의 폴더 삽입(&A)"
 
 #: tfrmoptionsdirectoryhotlist.actinsertbothframedir.caption
 msgid "Insert &directories of the active && inactive frames"
-msgstr ""
+msgstr "활성창과 비활성창의 폴더 삽입(&D)"
 
 #: tfrmoptionsdirectoryhotlist.actinsertbrowseddir.caption
 msgid "Insert directory I will bro&wse to"
-msgstr ""
+msgstr "삽입할 폴더를 탐색창을 열어 선택(&W)"
 
 #: tfrmoptionsdirectoryhotlist.actinsertcopyofentry.caption
 msgid "Insert a copy of the selected entry"
-msgstr ""
+msgstr "폴더 바로 가기 목록에서 선택한 폴더 삽입"
 
 #: tfrmoptionsdirectoryhotlist.actinsertselectionsfromframe.caption
 msgid "Insert current &selected or active directories of active frame"
-msgstr ""
+msgstr "활성창에서 선택되거나 활성화된 폴더 삽입(&S)"
 
 #: tfrmoptionsdirectoryhotlist.actinsertseparator.caption
 msgid "Insert a separator"
-msgstr ""
+msgstr "구분자 추가"
 
 #: tfrmoptionsdirectoryhotlist.actinsertsubmenu.caption
 msgid "Insert sub menu"
-msgstr ""
+msgstr "하위 메뉴 추가"
 
 #: tfrmoptionsdirectoryhotlist.actinserttypeddir.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actinserttypeddir.caption"
 msgid "Insert directory I will type"
-msgstr "타이핑 입력할 폴더 삽입"
+msgstr "삽입할 폴더를 직접 타이핑"
 
 #: tfrmoptionsdirectoryhotlist.actmovetonext.caption
 msgid "Move to next"
-msgstr ""
+msgstr "다음으로 옮기기"
 
 #: tfrmoptionsdirectoryhotlist.actmovetoprevious.caption
 msgid "Move to previous"
-msgstr ""
+msgstr "이전으로 옮기기"
 
 #: tfrmoptionsdirectoryhotlist.actopenallbranches.caption
-#, fuzzy
 msgctxt "tfrmoptionsdirectoryhotlist.actopenallbranches.caption"
 msgid "Open all branches"
 msgstr "모든 하위 트리 열기"
 
 #: tfrmoptionsdirectoryhotlist.actpaste.caption
 msgid "Paste what was cut"
-msgstr ""
+msgstr "잘라낸 목록 붙여넣기"
 
 #: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpath.caption
 msgid "Search && replace in &path"
@@ -4845,66 +4859,50 @@ msgstr ""
 
 #: tfrmoptionsdirectoryhotlist.acttweakpath.caption
 msgid "Tweak path"
-msgstr ""
+msgstr "활성창 경로 수정"
 
 #: tfrmoptionsdirectoryhotlist.acttweaktargetpath.caption
 msgid "Tweak target path"
-msgstr ""
+msgstr "비활성창 경로 수정"
 
 #: tfrmoptionsdirectoryhotlist.btnadd.caption
-#, fuzzy
-#| msgid "Add..."
 msgctxt "tfrmoptionsdirectoryhotlist.btnadd.caption"
 msgid "A&dd..."
-msgstr "추가..."
+msgstr "추가(&D)..."
 
 #: tfrmoptionsdirectoryhotlist.btnbackup.caption
-#, fuzzy
-#| msgid "Backup..."
 msgctxt "tfrmoptionsdirectoryhotlist.btnbackup.caption"
 msgid "Bac&kup..."
-msgstr "백업..."
+msgstr "백업(&K)..."
 
 #: tfrmoptionsdirectoryhotlist.btndelete.caption
-#, fuzzy
-#| msgid "Delete..."
 msgctxt "tfrmoptionsdirectoryhotlist.btndelete.caption"
 msgid "De&lete..."
-msgstr "삭제..."
+msgstr "삭제(&L)..."
 
 #: tfrmoptionsdirectoryhotlist.btnexport.caption
-#, fuzzy
-#| msgid "Export..."
 msgctxt "tfrmoptionsdirectoryhotlist.btnexport.caption"
 msgid "E&xport..."
-msgstr "내보내기..."
+msgstr "내보내기(&X)..."
 
 #: tfrmoptionsdirectoryhotlist.btnhelp.caption
-#, fuzzy
-#| msgid "Help"
 msgctxt "tfrmoptionsdirectoryhotlist.btnhelp.caption"
 msgid "&Help"
-msgstr "도움말"
+msgstr "도움말(&H)"
 
 #: tfrmoptionsdirectoryhotlist.btnimport.caption
-#, fuzzy
-#| msgid "Import..."
 msgctxt "tfrmoptionsdirectoryhotlist.btnimport.caption"
 msgid "Impo&rt..."
-msgstr "가져오기..."
+msgstr "가져오기(&R)..."
 
 #: tfrmoptionsdirectoryhotlist.btninsert.caption
-#, fuzzy
-#| msgid "Insert..."
 msgctxt "tfrmoptionsdirectoryhotlist.btninsert.caption"
 msgid "&Insert..."
-msgstr "삽입..."
+msgstr "삽입(&I)..."
 
 #: tfrmoptionsdirectoryhotlist.btnmiscellaneous.caption
-#, fuzzy
-#| msgid "Miscellaneous..."
 msgid "&Miscellaneous..."
-msgstr "기타..."
+msgstr "기타(&M)..."
 
 #: tfrmoptionsdirectoryhotlist.btnrelativepath.hint
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.BTNRELATIVEPATH.HINT"
@@ -4917,36 +4915,26 @@ msgid "Some functions to select appropriate target"
 msgstr "적절한 대상 파일 선택 기능"
 
 #: tfrmoptionsdirectoryhotlist.btnsort.caption
-#, fuzzy
-#| msgid "Sort..."
 msgctxt "tfrmoptionsdirectoryhotlist.btnsort.caption"
 msgid "&Sort..."
-msgstr "정렬..."
+msgstr "정렬(&S)..."
 
 #: tfrmoptionsdirectoryhotlist.cbaddtarget.caption
-#, fuzzy
-#| msgid "When adding directory, add also target"
 msgid "&When adding directory, add also target"
-msgstr "폴더 추가할 때 대상 파일로 추가"
+msgstr "폴더 추가할 때 비활성창에도 추가(&W)"
 
 #: tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption
-#, fuzzy
-#| msgid "Always expand tree"
 msgctxt "tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption"
 msgid "Alwa&ys expand tree"
-msgstr "항상 트리 확장"
+msgstr "항상 트리 확장(&Y)"
 
 #: tfrmoptionsdirectoryhotlist.cbshowonlyvalidenv.caption
-#, fuzzy
-#| msgid "Show only valid environment variables"
 msgid "Show only &valid environment variables"
-msgstr "유효 환경변수만 보이기"
+msgstr "유효한 환경변수만 보이기(&V)"
 
 #: tfrmoptionsdirectoryhotlist.cbshowpathinpopup.caption
-#, fuzzy
-#| msgid "In popup, show [path also]"
 msgid "In pop&up, show [path also]"
-msgstr "팝업, 보이기[또한 경로]"
+msgstr "팝업에서 [경로] 보이기(&U)"
 
 #: tfrmoptionsdirectoryhotlist.cbsorthotdirpath.text
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.CBSORTHOTDIRPATH.TEXT"
@@ -4960,7 +4948,7 @@ msgstr "파일명, a-z"
 
 #: tfrmoptionsdirectoryhotlist.gbdirectoryhotlist.caption
 msgid "Directory Hotlist (reorder by drag && drop)"
-msgstr "즐겨찾기 디렉터리(드래그 && 드롭 재정렬)"
+msgstr "폴더 바로 가기(드래그 && 드롭으로 정렬)"
 
 #: tfrmoptionsdirectoryhotlist.gbhotlistotheroptions.caption
 msgctxt "tfrmoptionsdirectoryhotlist.gbhotlistotheroptions.caption"
@@ -4970,160 +4958,120 @@ msgstr "다른 옵션"
 #: tfrmoptionsdirectoryhotlist.lbledithotdirname.editlabel.caption
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.LBLEDITHOTDIRNAME.EDITLABEL.CAPTION"
 msgid "Name:"
-msgstr "파일명:"
+msgstr "바로 가기 이름:"
 
 #: tfrmoptionsdirectoryhotlist.lbledithotdirpath.editlabel.caption
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.LBLEDITHOTDIRPATH.EDITLABEL.CAPTION"
 msgid "Path:"
-msgstr "경로:"
+msgstr "활성창 경로:"
 
 #: tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption
-#, fuzzy
-#| msgid "Target:"
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.LBLEDITHOTDIRTARGET.EDITLABEL.CAPTION"
 msgid "&Target:"
-msgstr "비활성창:"
+msgstr "비활성창 경로(&T):"
 
 #: tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption
-#, fuzzy
-#| msgid "...current level of item(s) selected only"
 msgctxt "tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption"
 msgid "...current le&vel of item(s) selected only"
-msgstr "...선택된 목록 현재 레벨"
+msgstr "...아이템이 선택된 레벨만(&V)"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathexist.caption
-#, fuzzy
-#| msgid "Scan all hotdir's path to validate the ones that actually exist"
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.MIDETECTIFPATHEXIST.CAPTION"
 msgid "Scan all &hotdir's path to validate the ones that actually exist"
-msgstr "바로 가기 경로 존재여부 점검하기"
+msgstr "바로 가기 경로 유효성 점검하기"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption
-#, fuzzy
-#| msgid "Scan all hotdir's path && target to validate the ones that actually exist"
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.MIDETECTIFPATHTARGETEXIST.CAPTION"
 msgid "&Scan all hotdir's path && target to validate the ones that actually exist"
-msgstr "바로 가기 경로 && 타깃 유효성 점검하기"
+msgstr "비활성창까지 바로 가기 경로 유효성 점검하기"
 
 #: tfrmoptionsdirectoryhotlist.miexporttohotlistfile.caption
-#, fuzzy
-#| msgid "to a Directory Hotlist file (.hotlist)"
 msgid "to a Directory &Hotlist file (.hotlist)"
-msgstr "폴더 바로 가기 목록 파일(.hotlist)"
+msgstr "폴더 바로 가기 파일 (.hotlist)(&H)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption
-#, fuzzy
-#| msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption"
 msgid "to a \"wincmd.ini\" of TC (&keep existing)"
-msgstr "TC의 \"wincmd.ini\"로 (기존파일 유지)"
+msgstr "TC의 \"wincmd.ini\" (기존파일 유지)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption
-#, fuzzy
-#| msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption"
 msgid "to a \"wincmd.ini\" of TC (&erase existing)"
-msgstr "TC의 \"wincmd.ini\"로 (기존파일 삭제)"
+msgstr "TC의 \"wincmd.ini\" (기존파일 삭제)"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption
-#, fuzzy
-#| msgid "Go to configure TC related info"
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption"
 msgid "Go to &configure TC related info"
-msgstr "TC(토탈커맨더)정보와 관련된 환경설정 가기"
+msgstr "TC 관련 설정으로 이동(&C)"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption
-#, fuzzy
-#| msgid "Go to configure TC related info"
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.MIGOTOCONFIGURETCINFO2.CAPTION"
 msgid "Go to &configure TC related info"
-msgstr "TC(토탈커맨더)정보와 관련된 환경설정 가기"
+msgstr "TC 관련 설정으로 이동(&C)"
 
 #: tfrmoptionsdirectoryhotlist.mihotdirtestmenu.caption
 msgid "HotDirTestMenu"
-msgstr "바로 가기테스트메뉴"
+msgstr "바로 가기 테스트 메뉴"
 
 #: tfrmoptionsdirectoryhotlist.miimportfromhotlistfile.caption
-#, fuzzy
-#| msgid "from a Directory Hotlist file (.hotlist)"
 msgid "from a Directory &Hotlist file (.hotlist)"
-msgstr "폴더 바로 가기 파일로 부터(.hotlist)"
+msgstr "폴더 바로 가기 파일 (.hotlist)(&H)"
 
 #: tfrmoptionsdirectoryhotlist.miimporttotalcommander.caption
-#, fuzzy
-#| msgid "from \"wincmd.ini\" of TC"
 msgid "from \"&wincmd.ini\" of TC"
-msgstr "TC의 \"wincmd.ini\"로 부터"
+msgstr "TC의 \"wincmd.ini\""
 
 #: tfrmoptionsdirectoryhotlist.minavigate.caption
 msgid "&Navigate..."
-msgstr ""
+msgstr "탐색(&N)..."
 
 #: tfrmoptionsdirectoryhotlist.mirestorebackuphotlist.caption
-#, fuzzy
-#| msgid "Restore a backup of Directory Hotlist"
 msgid "&Restore a backup of Directory Hotlist"
-msgstr "폴더 바로 가기 백업에서 복구"
+msgstr "폴더 바로 가기 목록 복구(&R)"
 
 #: tfrmoptionsdirectoryhotlist.misavebackuphotlist.caption
-#, fuzzy
-#| msgid "Save a backup of current Directory Hotlist"
 msgid "&Save a backup of current Directory Hotlist"
-msgstr "현재 폴더 바로 가기 백업 저장"
+msgstr "폴더 바로 가기 목록 백업(&S)"
 
 #: tfrmoptionsdirectoryhotlist.misearchandreplace.caption
-#, fuzzy
-#| msgid "Search and replace..."
 msgctxt "tfrmoptionsdirectoryhotlist.misearchandreplace.caption"
 msgid "Search and &replace..."
-msgstr "찾아 바꾸기..."
+msgstr "찾아 바꾸기(&R)..."
 
 #: tfrmoptionsdirectoryhotlist.misorteverything.caption
-#, fuzzy
-#| msgid "...everything, from A to Z!"
 msgctxt "tfrmoptionsdirectoryhotlist.misorteverything.caption"
 msgid "...everything, from A to &Z!"
-msgstr "...A에서 Z까지 모두!"
+msgstr "...A에서 Z까지 모두!(&Z)"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglegroup.caption
-#, fuzzy
-#| msgid "...single group of item(s) only"
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup.caption"
 msgid "...single &group of item(s) only"
-msgstr "...단일 그룹 목록만"
+msgstr "...단일 그룹 목록만(&G)"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption
-#, fuzzy
-#| msgid "...content of submenu(s) selected, no sublevel"
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption"
 msgid "...&content of submenu(s) selected, no sublevel"
-msgstr "...하위메뉴 내용 선택, 하위수준 없음"
+msgstr "...선택된 하위 메뉴만, 하위 수준은 제외(&C)"
 
 #: tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption
-#, fuzzy
-#| msgid "...content of submenu(s) selected and all sublevels"
 msgctxt "tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption"
 msgid "...content of submenu(s) selected and &all sublevels"
-msgstr "..선택된 하위 메뉴 내용과 모든 하위 수준"
+msgstr "...선택된 하위 메뉴와 모든 하위 수준(&A)"
 
 #: tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption
-#, fuzzy
-#| msgid "Test resulting menu"
 msgctxt "TFRMOPTIONSDIRECTORYHOTLIST.MITESTRESULTINGHOTLISTMENU.CAPTION"
 msgid "Test resultin&g menu"
-msgstr "결과 메뉴 검증"
+msgstr "결과 메뉴 테스트(&G)"
 
 #: tfrmoptionsdirectoryhotlist.mitweakpath.caption
 msgid "Tweak &path"
-msgstr ""
+msgstr "활성창 경로 수정(&P)"
 
 #: tfrmoptionsdirectoryhotlist.mitweaktargetpath.caption
 msgid "Tweak &target path"
-msgstr ""
+msgstr "비활성창 경로 수정(&T)"
 
 #: tfrmoptionsdirectoryhotlist.rgwheretoadd.caption
-#, fuzzy
-#| msgid "Addition from main panel:"
 msgid "Addition from main panel"
 msgstr "메인창에서 추가:"
 
@@ -5208,15 +5156,19 @@ msgstr "드라이브 목록"
 
 #: tfrmoptionseditor.chkautoindent.caption
 msgid "Auto Indent"
-msgstr ""
+msgstr "자동 들여쓰기"
 
 #: tfrmoptionseditor.chkautoindent.hint
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr ""
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr ""
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
-msgstr "탈자기호(^) 줄 끝"
+msgstr "EOL 뒤로 캐럿 이동 가능"
 
 #: tfrmoptionseditor.chkscrollpastendline.hint
 msgid "Allows caret to go into empty space beyond end-of-line position"
@@ -5232,15 +5184,15 @@ msgstr ""
 
 #: tfrmoptionseditor.chksmarttabs.caption
 msgid "Smart Tabs"
-msgstr ""
+msgstr "스마트 탭"
 
 #: tfrmoptionseditor.chksmarttabs.hint
 msgid "When using <Tab> key, caret will go to the next non-space character of the previous line"
-msgstr ""
+msgstr "<탭> 키를 누르면 커서가 이전 문장을 따라 공백이 아닌 문자까지 이동함"
 
 #: tfrmoptionseditor.chktabindent.caption
 msgid "Tab indents blocks"
-msgstr ""
+msgstr "블럭 들여쓰기"
 
 #: tfrmoptionseditor.chktabindent.hint
 msgid "When active <Tab> and <Shift+Tab> act as block indent, unindent when text is selected"
@@ -5248,7 +5200,7 @@ msgstr ""
 
 #: tfrmoptionseditor.chktabstospaces.caption
 msgid "Use spaces instead tab characters"
-msgstr ""
+msgstr "탭 문자 대신 공백 문자 사용"
 
 #: tfrmoptionseditor.chktabstospaces.hint
 msgid "Converts tab characters to a specified number of space characters (when entering)"
@@ -5256,7 +5208,7 @@ msgstr ""
 
 #: tfrmoptionseditor.chktrimtrailingspaces.caption
 msgid "Delete trailing spaces"
-msgstr ""
+msgstr "문장 뒤 공백 삭제"
 
 #: tfrmoptionseditor.chktrimtrailingspaces.hint
 msgid "Auto delete trailing spaces, this applies only to edited lines"
@@ -5271,13 +5223,9 @@ msgstr ""
 msgid "Internal editor options"
 msgstr "내부 편집기 옵션"
 
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr ""
-
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
-msgstr ""
+msgstr "탭 크기:"
 
 #: tfrmoptionseditor.lbltabwidth.hint
 msgctxt "tfrmoptionseditor.lbltabwidth.hint"
@@ -5515,7 +5463,7 @@ msgstr "모두 없애기"
 #: tfrmoptionsfavoritetabs.micurrentlevelofitemonly.caption
 msgctxt "TFRMOPTIONSFAVORITETABS.MICURRENTLEVELOFITEMONLY.CAPTION"
 msgid "...current level of item(s) selected only"
-msgstr "...선택 목록 레벨"
+msgstr "...아이템이 선택된 레벨만"
 
 #: tfrmoptionsfavoritetabs.micutselection.caption
 msgctxt "TFRMOPTIONSFAVORITETABS.MICUTSELECTION.CAPTION"
@@ -5961,7 +5909,7 @@ msgstr "휴지통으로 삭제(&E)"
 #: tfrmoptionsfileoperations.cbdropreadonlyflag.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBDROPREADONLYFLAG.CAPTION"
 msgid "D&rop readonly flag"
-msgstr "읽기 전용 지정(&R)"
+msgstr "읽기 전용 속성 지우기(&R)"
 
 #: tfrmoptionsfileoperations.cbmoveconfirmation.caption
 msgid "&Move operation"
@@ -5969,23 +5917,23 @@ msgstr "파일 이동 연산(&M)"
 
 #: tfrmoptionsfileoperations.cbprocesscomments.caption
 msgid "&Process comments with files/folders"
-msgstr "파일/폴더에 프로세스 코멘트(&P)"
+msgstr "주석을 파일/폴더와 함께 복사하기(&P)"
 
 #: tfrmoptionsfileoperations.cbrenameselonlyname.caption
 msgid "Select &file name without extension when renaming"
-msgstr "파일명 바꿀 때 확장자가 없는 파일 선택(&F)"
+msgstr "파일 이름 바꿀 때 확장자는 제외하고 파일 이름만 선택(&F)"
 
 #: tfrmoptionsfileoperations.cbshowcopytabselectpanel.caption
 msgid "Sho&w tab select panel in copy/move dialog"
-msgstr "복사/이동 대화상자에 선택된 탭 표시(&W)"
+msgstr "복사/이동 대화상자에 탭 선택 패널 표시(&W)"
 
 #: tfrmoptionsfileoperations.cbskipfileoperror.caption
 msgid "S&kip file operations errors and write them to log window"
-msgstr "파일 작업 에러 건너뛰고 로그 파일에 저장하기(&K)"
+msgstr "에러시 파일 작업 건너뛰고 로그창에 기록(&K)"
 
 #: tfrmoptionsfileoperations.cbverifychecksumconfirmation.caption
 msgid "Verify checksum operation"
-msgstr ""
+msgstr "체크섬 계산"
 
 #: tfrmoptionsfileoperations.gbexecutingoperations.caption
 msgid "Executing operations"
@@ -6005,16 +5953,16 @@ msgstr "해시 계산 버퍼 크기 (KB단위)(&H):"
 
 #: tfrmoptionsfileoperations.lblprogresskind.caption
 msgid "Show operations progress &initially in"
-msgstr "작업 프로세스 시작 지점 표시(&I)"
+msgstr "작업 진행상황 표시(&I)"
 
 #: tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.LBLTYPEOFDUPLICATEDRENAME.CAPTION"
 msgid "Duplicated name auto-rename style:"
-msgstr "파일명 복제 자동 이름 바꾸기 스타일:"
+msgstr "중복 파일명 자동 변경:"
 
 #: tfrmoptionsfileoperations.lblwipepassnumber.caption
 msgid "&Number of wipe passes:"
-msgstr "삭제한 숫자(&N):"
+msgstr "삭제 작업 수행 횟수(&N):"
 
 #: tfrmoptionsfilepanelscolors.btnbackcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.BTNBACKCOLOR.CAPTION"
@@ -6082,24 +6030,24 @@ msgstr "색변경 허용"
 
 #: tfrmoptionsfilepanelscolors.cbbuseframecursor.caption
 msgid "Use &Frame Cursor"
-msgstr "프레임 커서 사용(&F)"
+msgstr "외곽선 커서(&F)"
 
 #: tfrmoptionsfilepanelscolors.cbbusegradientind.caption
 msgid "Use &Gradient Indicator"
-msgstr "그라이언트 표시 사용(&G)"
+msgstr "그라디언트 색상(&G)"
 
 #: tfrmoptionsfilepanelscolors.cbbuseinactiveselcolor.caption
 msgid "Use Inactive Sel Color"
-msgstr "비활성 선택색 사용"
+msgstr "비활성 색상 사용"
 
 #: tfrmoptionsfilepanelscolors.cbbuseinvertedselection.caption
 msgid "U&se Inverted Selection"
-msgstr "반전 선택 사용(&S)"
+msgstr "선택시 배경색 반전(&S)"
 
 #: tfrmoptionsfilepanelscolors.cbusecursorborder.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.CBUSECURSORBORDER.CAPTION"
 msgid "Cursor border"
-msgstr "커서 경계선"
+msgstr "커서 외곽선"
 
 #: tfrmoptionsfilepanelscolors.dbfreespaceindicator.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.DBFREESPACEINDICATOR.CAPTION"
@@ -6113,7 +6061,7 @@ msgstr "배경(&K):"
 #: tfrmoptionsfilepanelscolors.lblbackgroundcolor2.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLBACKGROUNDCOLOR2.CAPTION"
 msgid "Backg&round 2:"
-msgstr "배경2(&R):"
+msgstr "배경 2(&R):"
 
 #: tfrmoptionsfilepanelscolors.lblcursorcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLCURSORCOLOR.CAPTION"
@@ -6141,11 +6089,11 @@ msgstr "비활성 창의 밝기 레벨(&B)"
 
 #: tfrmoptionsfilepanelscolors.lblindbackcolor.caption
 msgid "In&dicator Back Color:"
-msgstr "배경색 표시기(&D):"
+msgstr "배경색(&D):"
 
 #: tfrmoptionsfilepanelscolors.lblindcolor.caption
 msgid "&Indicator Fore Color:"
-msgstr "전경색 표시기(&I):"
+msgstr "전경색(&I):"
 
 #: tfrmoptionsfilepanelscolors.lblmarkcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLMARKCOLOR.CAPTION"
@@ -6154,7 +6102,7 @@ msgstr "마크 색상(&M):"
 
 #: tfrmoptionsfilepanelscolors.lblpreview.caption
 msgid "Below is a preview. You may move cursor, select file and get immediately an actual look and feel of the various settings."
-msgstr "아래는 미리보기임. 커서를 움직여서 실제 적용을 바로 확인."
+msgstr "아래는 미리보기 입니다. 커서를 움직이거나 파일을 선택해서 실제 적용을 바로 확인할 수 있습니다."
 
 #: tfrmoptionsfilepanelscolors.lbltextcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLTEXTCOLOR.CAPTION"
@@ -6163,51 +6111,45 @@ msgstr "텍스트 색상(&E):"
 
 #: tfrmoptionsfilesearch.cbinitiallyclearfilemask.caption
 msgid "When launching file search, clear file mask filter"
-msgstr ""
+msgstr "파일 검색을 할 때 마스크 필터 초기화"
 
 #: tfrmoptionsfilesearch.cbpartialnamesearch.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilesearch.cbpartialnamesearch.caption"
 msgid "&Search for part of file name"
-msgstr "파일명 일부에서 검색(&S)"
+msgstr "파일명에서 찾기(&S)"
 
 #: tfrmoptionsfilesearch.cbshowmenubarinfindfiles.caption
 msgid "Show menu bar in \"Find files\""
-msgstr ""
+msgstr "\"파일 찾기\" 창에서 메뉴바 보이기"
 
 #: tfrmoptionsfilesearch.dbtextsearch.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilesearch.dbtextsearch.caption"
 msgid "Text search in files"
-msgstr "파일에서 텍스트 검색"
+msgstr "파일 내용 검색"
 
 #: tfrmoptionsfilesearch.gbfilesearch.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilesearch.gbfilesearch.caption"
 msgid "File search"
 msgstr "파일 검색"
 
 #: tfrmoptionsfilesearch.lblnewsearchfilters.caption
 msgid "Current filters with \"New search\" button:"
-msgstr ""
+msgstr "\"새 검색\" 버튼을 눌렀을 때 현재 필터:"
 
 #: tfrmoptionsfilesearch.lblsearchdefaulttemplate.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilesearch.lblsearchdefaulttemplate.caption"
 msgid "Default search template:"
 msgstr "기본 검색 템플릿:"
 
 #: tfrmoptionsfilesearch.rbusemmapinsearch.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilesearch.rbusemmapinsearch.caption"
 msgid "Use memory mapping for search te&xt in files"
-msgstr "파일 텍스트 검색을 위해 메모리 매핑 사용(&X)"
+msgstr "파일 내용 검색을 위해 메모리 매핑 사용(&X)"
 
 #: tfrmoptionsfilesearch.rbusestreaminsearch.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilesearch.rbusestreaminsearch.caption"
 msgid "&Use stream for search text in files"
-msgstr "파일 텍스트 검색을 위해 스트림 사용(&U)"
+msgstr "파일 내용 검색을 위해 스트림 사용(&U)"
 
 #: tfrmoptionsfilesviews.btndefault.caption
 msgctxt "tfrmoptionsfilesviews.btndefault.caption"
@@ -6246,12 +6188,16 @@ msgstr "날짜 시간 형식(&D):"
 msgid "File si&ze format:"
 msgstr "파일 크기 형식(&Z):"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr ""
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
 msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
@@ -6263,8 +6209,6 @@ msgid "Megab&yte:"
 msgstr ""
 
 #: tfrmoptionsfilesviews.lblnewfilesposition.caption
-#, fuzzy
-#| msgid "&Insert new files"
 msgid "&Insert new files:"
 msgstr "새 파일 삽입(&I)"
 
@@ -6278,15 +6222,13 @@ msgstr "폴더 정렬(&R):"
 
 #: tfrmoptionsfilesviews.lblsortmethod.caption
 msgid "&Sort method:"
-msgstr "메소드 정렬(&S):"
+msgstr "정렬 방법(&S):"
 
 #: tfrmoptionsfilesviews.lblterabyte.caption
 msgid "&Terabyte:"
 msgstr ""
 
 #: tfrmoptionsfilesviews.lblupdatedfilesposition.caption
-#, fuzzy
-#| msgid "&Move updated files"
 msgid "&Move updated files:"
 msgstr "업데이트 파일 이동(&M)"
 
@@ -6303,37 +6245,37 @@ msgstr "도움말(&H)"
 #: tfrmoptionsfilesviewscomplement.cbdblclicktoparent.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbdblclicktoparent.caption"
 msgid "Enable changing to &parent folder when double-clicking on empty part of file view"
-msgstr ""
+msgstr "파일 뷰의 빈 공간을 더블클릭하면 상위 폴더로 이동(&P)"
 
 #: tfrmoptionsfilesviewscomplement.cbdelayloadingtabs.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbdelayloadingtabs.caption"
 msgid "Do&n't load file list until a tab is activated"
-msgstr "탭이 활성화될 때까지 파일 목록 로드안 함(&N)"
+msgstr "탭이 활성화될 때까지 파일 목록 로드안함(&N)"
 
 #: tfrmoptionsfilesviewscomplement.cbdirbrackets.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbdirbrackets.caption"
 msgid "S&how square brackets around directories"
-msgstr "폴더 주변에 사각형틀 표시(&H)"
+msgstr "폴더 주변에 대괄호 표시(&H)"
 
 #: tfrmoptionsfilesviewscomplement.cbhighlightupdatedfiles.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbhighlightupdatedfiles.caption"
 msgid "Hi&ghlight new and updated files"
-msgstr "변경 업데이트된 파일 하이라이트(&G)"
+msgstr "새 파일/업데이트된 파일 하이라이트(&G)"
 
 #: tfrmoptionsfilesviewscomplement.cbinplacerename.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbinplacerename.caption"
 msgid "Enable inplace &renaming when clicking twice on a name"
-msgstr "파일명 더블클릭 후 이름 바꾸기(&R)"
+msgstr "파일명 두 번 클릭하면 이름 바꾸기 실행(&R)"
 
 #: tfrmoptionsfilesviewscomplement.cblistfilesinthread.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cblistfilesinthread.caption"
 msgid "Load &file list in separate thread"
-msgstr "구분된 쓰레드에 파일 목록 리스트 불러오기(&F)"
+msgstr "별도 쓰레드에서 파일 목록 불러오기(&F)"
 
 #: tfrmoptionsfilesviewscomplement.cbloadiconsseparately.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbloadiconsseparately.caption"
 msgid "Load icons af&ter file list"
-msgstr "파일 목록 뒤에 아이콘 불어오기(&T)"
+msgstr "파일 목록 불러온 후에 아이콘 불러오기(&T)"
 
 #: tfrmoptionsfilesviewscomplement.cbshowsystemfiles.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbshowsystemfiles.caption"
@@ -6343,7 +6285,7 @@ msgstr "시스템, 숨김파일 표시(&Y)"
 #: tfrmoptionsfilesviewscomplement.cbspacemovesdown.caption
 msgctxt "tfrmoptionsfilesviewscomplement.cbspacemovesdown.caption"
 msgid "&When selecting files with <SPACEBAR>, move down to next file (as with <INSERT>)"
-msgstr "<스페이스바>로 선택시 (Insert 키 사용처럼) 다음 파일 아래로 이동(&W)"
+msgstr "<스페이스바>로 선택시 (Insert 키 사용처럼) 다음 파일로 이동(&W)"
 
 #: tfrmoptionsfilesviewscomplement.chkmarkmaskfilterwindows.caption
 msgctxt "tfrmoptionsfilesviewscomplement.chkmarkmaskfilterwindows.caption"
@@ -6392,25 +6334,25 @@ msgstr "템플릿..."
 
 #: tfrmoptionsfiletypescolors.gbfiletypescolors.caption
 msgid "File types colors (sort by drag&&drop)"
-msgstr "파일형태별 색상 (드래그 && 드롭 정렬)"
+msgstr "파일 타입별 색상 (드래그&&드롭으로 정렬)"
 
 #: tfrmoptionsfiletypescolors.lblcategoryattr.caption
 msgid "Category a&ttributes:"
-msgstr "범주 속성(&T):"
+msgstr "카테고리 속성(&T):"
 
 #: tfrmoptionsfiletypescolors.lblcategorycolor.caption
 msgid "Category co&lor:"
-msgstr "범주 색상(&L):"
+msgstr "카테고리 색상(&L):"
 
 #: tfrmoptionsfiletypescolors.lblcategorymask.caption
 msgctxt "TFRMOPTIONSFILETYPESCOLORS.LBLCATEGORYMASK.CAPTION"
 msgid "Category &mask:"
-msgstr "범주 마스크(&M):"
+msgstr "카테고리 마스크(&M):"
 
 #: tfrmoptionsfiletypescolors.lblcategoryname.caption
 msgctxt "TFRMOPTIONSFILETYPESCOLORS.LBLCATEGORYNAME.CAPTION"
 msgid "Category &name:"
-msgstr "범주명(&N):"
+msgstr "카테고리명(&N):"
 
 #: tfrmoptionsfonts.hint
 msgctxt "tfrmoptionsfonts.hint"
@@ -6467,7 +6409,7 @@ msgstr "이름 바꾸기"
 
 #: tfrmoptionshotkeys.actrestoredefault.caption
 msgid "Restore DC default"
-msgstr ""
+msgstr "DC 기본값으로 재설정"
 
 #: tfrmoptionshotkeys.actsavenow.caption
 msgid "Save now"
@@ -6475,15 +6417,15 @@ msgstr ""
 
 #: tfrmoptionshotkeys.actsortbycommand.caption
 msgid "Sort by command name"
-msgstr ""
+msgstr "명령으로 정렬"
 
 #: tfrmoptionshotkeys.actsortbyhotkeysgrouped.caption
 msgid "Sort by hotkeys (grouped)"
-msgstr ""
+msgstr "단축키로 정렬 (같은 단축키는 묶음)"
 
 #: tfrmoptionshotkeys.actsortbyhotkeysoneperline.caption
 msgid "Sort by hotkeys (one per row)"
-msgstr ""
+msgstr "단축키로 정렬 (한 줄에 단축키 하나)"
 
 #: tfrmoptionshotkeys.lbfilter.caption
 msgctxt "TFRMOPTIONSHOTKEYS.LBFILTER.CAPTION"
@@ -6493,7 +6435,7 @@ msgstr "필터(&F)"
 #: tfrmoptionshotkeys.lblcategories.caption
 msgctxt "TFRMOPTIONSHOTKEYS.LBLCATEGORIES.CAPTION"
 msgid "C&ategories:"
-msgstr "범주(&A):"
+msgstr "카테고리(&A):"
 
 #: tfrmoptionshotkeys.lblcommands.caption
 msgctxt "TFRMOPTIONSHOTKEYS.LBLCOMMANDS.CAPTION"
@@ -6507,48 +6449,42 @@ msgstr "단축키 파일(&S):"
 
 #: tfrmoptionshotkeys.lblsortorder.caption
 msgid "So&rt order:"
-msgstr ""
+msgstr "정렬(&R):"
 
 #: tfrmoptionshotkeys.micategories.caption
 msgid "Categories"
 msgstr ""
 
 #: tfrmoptionshotkeys.micommands.caption
-#, fuzzy
 msgctxt "tfrmoptionshotkeys.micommands.caption"
 msgid "Command"
-msgstr "명령어"
+msgstr "명령"
 
 #: tfrmoptionshotkeys.misortorder.caption
 msgid "Sort order"
 msgstr ""
 
 #: tfrmoptionshotkeys.stgcommands.columns[0].title.caption
-#, fuzzy
 msgctxt "tfrmoptionshotkeys.stgcommands.columns[0].title.caption"
 msgid "Command"
-msgstr "명령어"
+msgstr "명령"
 
 #: tfrmoptionshotkeys.stgcommands.columns[1].title.caption
-#, fuzzy
 msgctxt "tfrmoptionshotkeys.stgcommands.columns[1].title.caption"
 msgid "Hotkeys"
-msgstr "바로 가기"
+msgstr "단축키"
 
 #: tfrmoptionshotkeys.stgcommands.columns[2].title.caption
-#, fuzzy
 msgctxt "tfrmoptionshotkeys.stgcommands.columns[2].title.caption"
 msgid "Description"
 msgstr "설명"
 
 #: tfrmoptionshotkeys.stghotkeys.columns[0].title.caption
-#, fuzzy
 msgctxt "tfrmoptionshotkeys.stghotkeys.columns[0].title.caption"
 msgid "Hotkey"
 msgstr "단축키"
 
 #: tfrmoptionshotkeys.stghotkeys.columns[1].title.caption
-#, fuzzy
 msgctxt "tfrmoptionshotkeys.stghotkeys.columns[1].title.caption"
 msgid "Parameters"
 msgstr "매개변수"
@@ -6564,7 +6500,7 @@ msgstr "경로와 그 하위 폴더(&P):"
 
 #: tfrmoptionsicons.cbiconsinmenus.caption
 msgid "Show icons for actions in &menus"
-msgstr "메뉴 동작 아이콘 표시(&M)"
+msgstr "메뉴에 아이콘 표시(&M)"
 
 #: tfrmoptionsicons.cbiconsinmenussize.text
 msgctxt "TFRMOPTIONSICONS.CBICONSINMENUSSIZE.TEXT"
@@ -6573,16 +6509,16 @@ msgstr "16x16"
 
 #: tfrmoptionsicons.cbiconsonbuttons.caption
 msgid "Show icons on buttons"
-msgstr ""
+msgstr "버튼에 아이콘 표시"
 
 #: tfrmoptionsicons.cbiconsshowoverlay.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSSHOWOVERLAY.CAPTION"
 msgid "Show o&verlay icons, e.g. for links"
-msgstr "오버레이 아이콘 표시(예, 링크)(&V)"
+msgstr "아이콘 오버레이 표시(예: 링크)(&V)"
 
 #: tfrmoptionsicons.chkshowhiddendimmed.caption
 msgid "&Dimmed hidden files (slower)"
-msgstr ""
+msgstr "숨김 파일 흐릿하게 보기(느림)(&D)"
 
 #: tfrmoptionsicons.gbdisablespecialicons.caption
 msgid "Disable special icons"
@@ -6595,11 +6531,11 @@ msgstr "아이콘 크기"
 
 #: tfrmoptionsicons.gbicontheme.caption
 msgid "Icon theme"
-msgstr ""
+msgstr "아이콘 테마"
 
 #: tfrmoptionsicons.gbshowicons.caption
 msgid "Show icons"
-msgstr ""
+msgstr "아이콘 표시"
 
 #: tfrmoptionsicons.gbshowiconsmode.caption
 msgctxt "TFRMOPTIONSICONS.GBSHOWICONSMODE.CAPTION"
@@ -6608,21 +6544,21 @@ msgstr "파일명 왼쪽에 아이콘 표시하기"
 
 #: tfrmoptionsicons.lbldiskpanel.caption
 msgid "Disk panel:"
-msgstr ""
+msgstr "디스크 패널:"
 
 #: tfrmoptionsicons.lblfilepanel.caption
 msgid "File panel:"
-msgstr ""
+msgstr "파일 패널:"
 
 #: tfrmoptionsicons.rbiconsshowall.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWALL.CAPTION"
 msgid "A&ll"
-msgstr "모두(&L)"
+msgstr "모든 연결된 파일(&L)"
 
 #: tfrmoptionsicons.rbiconsshowallandexe.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWALLANDEXE.CAPTION"
 msgid "All associated + &EXE/LNK (slow)"
-msgstr "모든 관계된 + EXE/LNK(천천히)(&E)"
+msgstr "모든 연결된 파일 + EXE/LNK(느림)(&E)"
 
 #: tfrmoptionsicons.rbiconsshownone.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWNONE.CAPTION"
@@ -6632,7 +6568,7 @@ msgstr "아이콘 없음(&N)"
 #: tfrmoptionsicons.rbiconsshowstandard.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWSTANDARD.CAPTION"
 msgid "Only &standard icons"
-msgstr "기본 아이콘만(&S)"
+msgstr "표준 아이콘만(&S)"
 
 #: tfrmoptionsignorelist.btnaddsel.caption
 msgctxt "TFRMOPTIONSIGNORELIST.BTNADDSEL.CAPTION"
@@ -6661,42 +6597,36 @@ msgstr "지정 장소에 저장(&S):"
 
 #: tfrmoptionskeyboard.cblynxlike.caption
 msgid "Le&ft, Right arrows change directory (Lynx-like movement)"
-msgstr "왼쪽, 오른쪽 화살표로 폴더 변경(리눅스처럼)(&F)"
+msgstr "왼쪽, 오른쪽 화살표로 폴더 변경(Lynx처럼)(&F)"
 
 #: tfrmoptionskeyboard.gbtyping.caption
 msgid "Typing"
 msgstr "타이핑"
 
 #: tfrmoptionskeyboard.lblalt.caption
-#, fuzzy
-#| msgid "Alt+L&etters"
 msgctxt "TFRMOPTIONSKEYBOARD.LBLALT.CAPTION"
 msgid "Alt+L&etters:"
-msgstr "Alt+문자(&E)"
+msgstr "Alt+글자(&E)"
 
 #: tfrmoptionskeyboard.lblctrlalt.caption
-#, fuzzy
-#| msgid "Ctrl+Alt+Le&tters"
 msgctxt "TFRMOPTIONSKEYBOARD.LBLCTRLALT.CAPTION"
 msgid "Ctrl+Alt+Le&tters:"
-msgstr "Ctrl+Alt+문자(&T)"
+msgstr "Ctrl+Alt+글자(&T)"
 
 #: tfrmoptionskeyboard.lblnomodifier.caption
-#, fuzzy
-#| msgid "&Letters"
 msgctxt "TFRMOPTIONSKEYBOARD.LBLNOMODIFIER.CAPTION"
 msgid "&Letters:"
-msgstr "문자(&L)"
+msgstr "글자(&L)"
 
 #: tfrmoptionslayout.cbflatdiskpanel.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBFLATDISKPANEL.CAPTION"
 msgid "&Flat buttons"
-msgstr "단순 버튼(&F)"
+msgstr "플랫 버튼(&F)"
 
 #: tfrmoptionslayout.cbflatinterface.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBFLATINTERFACE.CAPTION"
 msgid "Flat i&nterface"
-msgstr "단순 인터페이스(&N)"
+msgstr "플랫 인터페이스(&N)"
 
 #: tfrmoptionslayout.cbfreespaceind.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBFREESPACEIND.CAPTION"
@@ -6706,7 +6636,7 @@ msgstr "드라이브명에 저장 여유 공간 표시(&E)"
 #: tfrmoptionslayout.cblogwindow.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBLOGWINDOW.CAPTION"
 msgid "Show lo&g window"
-msgstr "로그 윈도 표시(&G)"
+msgstr "로그창 표시(&G)"
 
 #: tfrmoptionslayout.cbpanelofoperations.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBPANELOFOPERATIONS.CAPTION"
@@ -6745,23 +6675,21 @@ msgstr "드라이브 목록 버튼 표시(&T)"
 #: tfrmoptionslayout.cbshowkeyspanel.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWKEYSPANEL.CAPTION"
 msgid "Show function &key buttons"
-msgstr "기능키(F키) 버튼 표시(&K)"
+msgstr "기능키 버튼 표시(&K)"
 
 #: tfrmoptionslayout.cbshowmainmenu.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWMAINMENU.CAPTION"
 msgid "Show &main menu"
-msgstr "주요 메뉴 표시(&M)"
+msgstr "메인 메뉴 표시(&M)"
 
 #: tfrmoptionslayout.cbshowmaintoolbar.caption
-#, fuzzy
-#| msgid "Show &button bar"
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWMAINTOOLBAR.CAPTION"
 msgid "Show tool&bar"
-msgstr "버튼 바 표시(&B)"
+msgstr "툴바 표시(&B)"
 
 #: tfrmoptionslayout.cbshowshortdrivefreespace.caption
 msgid "Show short free space &label"
-msgstr "저장 여유공간 드라이브명 짧게 표시(&L)"
+msgstr "저장 여유공간 짧게 표시(&L)"
 
 #: tfrmoptionslayout.cbshowstatusbar.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWSTATUSBAR.CAPTION"
@@ -6786,7 +6714,7 @@ msgstr "명령 프롬프트창 표시(&R)"
 #: tfrmoptionslayout.cbtwodiskpanels.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBTWODISKPANELS.CAPTION"
 msgid "Show two drive button bars (fi&xed width, above file windows)"
-msgstr "(파일창위에 고정폭으로)두 개의 버튼 바 표시(&X)"
+msgstr "(파일창위에 고정폭으로)두 개의 드라이브 버튼 바 표시(&X)"
 
 #: tfrmoptionslayout.chkshowmiddletoolbar.caption
 msgid "Show middle toolbar"
@@ -6978,11 +6906,11 @@ msgstr "마우스로 선택(&S)"
 
 #: tfrmoptionsmouse.chkcursornofollow.caption
 msgid "The text cursor no longer follows the mouse cursor"
-msgstr ""
+msgstr "커서-마우스 연동기능 끄기"
 
 #: tfrmoptionsmouse.chkmouseselectioniconclick.caption
 msgid "By clic&king on icon"
-msgstr ""
+msgstr "아이콘을 클릭하여 선택(&K)"
 
 #: tfrmoptionsmouse.gbopenwith.caption
 msgctxt "tfrmoptionsmouse.gbopenwith.caption"
@@ -7003,7 +6931,7 @@ msgstr "모드(&M):"
 
 #: tfrmoptionsmouse.rbdoubleclick.caption
 msgid "Double click"
-msgstr ""
+msgstr "더블 클릭"
 
 #: tfrmoptionsmouse.rbscrolllinebyline.caption
 msgid "&Line by line"
@@ -7019,11 +6947,11 @@ msgstr "한 페이지씩(&P)"
 
 #: tfrmoptionsmouse.rbsingleclickboth.caption
 msgid "Single click (opens files and folders)"
-msgstr ""
+msgstr "싱글 클릭 (파일과 폴더 모두)"
 
 #: tfrmoptionsmouse.rbsingleclickfolders.caption
 msgid "Single click (opens folders, double click for files)"
-msgstr ""
+msgstr "싱글 클릭 (폴더만, 파일은 더블클릭)"
 
 #: tfrmoptionsmultirename.btnmulrenlogfilenamerelative.hint
 #, fuzzy
@@ -7485,48 +7413,42 @@ msgstr "{명령}은 명령 프롬프트에서 실행을 반영하기 위해 이�
 
 #: tfrmoptionsterminal.gbjustrunterminal.caption
 msgid "Command for just running terminal:"
-msgstr "명령 프롬프트 실행을 위한 명령어:"
+msgstr "명령 프롬프트 실행:"
 
 #: tfrmoptionsterminal.gbruninterminalclose.caption
 msgid "Command for running a command in terminal and close after:"
-msgstr "명령 프롬프트 실행 및 닫은 후의 명령어:"
+msgstr "명령 프롬프트 실행 후 세션 종료:"
 
 #: tfrmoptionsterminal.gbruninterminalstayopen.caption
 msgid "Command for running a command in terminal and stay open:"
-msgstr "명령 프롬프트 실행과 열린 상태에서의 명령어:"
+msgstr "명령 프롬프트 실행 후 세션 유지:"
 
 #: tfrmoptionsterminal.lbrunintermclosecmd.caption
-#, fuzzy
 msgctxt "tfrmoptionsterminal.lbrunintermclosecmd.caption"
 msgid "Command:"
 msgstr "명령어:"
 
 #: tfrmoptionsterminal.lbrunintermcloseparams.caption
-#, fuzzy
 msgctxt "tfrmoptionsterminal.lbrunintermcloseparams.caption"
 msgid "Parameters:"
 msgstr "매개변수:"
 
 #: tfrmoptionsterminal.lbrunintermstayopencmd.caption
-#, fuzzy
 msgctxt "tfrmoptionsterminal.lbrunintermstayopencmd.caption"
 msgid "Command:"
 msgstr "명령어:"
 
 #: tfrmoptionsterminal.lbrunintermstayopenparams.caption
-#, fuzzy
 msgctxt "tfrmoptionsterminal.lbrunintermstayopenparams.caption"
 msgid "Parameters:"
 msgstr "매개변수:"
 
 #: tfrmoptionsterminal.lbruntermcmd.caption
-#, fuzzy
 msgctxt "tfrmoptionsterminal.lbruntermcmd.caption"
 msgid "Command:"
 msgstr "명령어:"
 
 #: tfrmoptionsterminal.lbruntermparams.caption
-#, fuzzy
 msgctxt "tfrmoptionsterminal.lbruntermparams.caption"
 msgid "Parameters:"
 msgstr "매개변수:"
@@ -7585,7 +7507,7 @@ msgstr "버튼형태, 명령어와 매개변수에 따라 풍선도움말 제공
 #: tfrmoptionstoolbarbase.cbflatbuttons.caption
 msgctxt "tfrmoptionstoolbarbase.cbflatbuttons.caption"
 msgid "&Flat buttons"
-msgstr "기본 버튼(&F)"
+msgstr "플랫 버튼(&F)"
 
 #: tfrmoptionstoolbarbase.cbreporterrorwithcommands.caption
 msgid "Report errors with commands"
@@ -8623,13 +8545,11 @@ msgid "&OR (any match)"
 msgstr "OR (하나라도 일치) (&O)"
 
 #: tfrmselectduplicates.btnapply.caption
-#, fuzzy
 msgctxt "tfrmselectduplicates.btnapply.caption"
 msgid "&Apply"
 msgstr "적용(&A)"
 
 #: tfrmselectduplicates.btncancel.caption
-#, fuzzy
 msgctxt "tfrmselectduplicates.btncancel.caption"
 msgid "&Cancel"
 msgstr "취소(&C)"
@@ -8685,12 +8605,12 @@ msgstr ""
 #: tfrmselectpathrange.buttonpanel.cancelbutton.caption
 msgctxt "tfrmselectpathrange.buttonpanel.cancelbutton.caption"
 msgid "&Cancel"
-msgstr "취소(C)"
+msgstr "취소(&C)"
 
 #: tfrmselectpathrange.buttonpanel.okbutton.caption
 msgctxt "tfrmselectpathrange.buttonpanel.okbutton.caption"
 msgid "&OK"
-msgstr "확인(O)"
+msgstr "확인(&O)"
 
 #: tfrmselectpathrange.edseparator.editlabel.caption
 msgid "Sep&arator"
@@ -8722,12 +8642,12 @@ msgstr ""
 #: tfrmselecttextrange.buttonpanel.cancelbutton.caption
 msgctxt "tfrmselecttextrange.buttonpanel.cancelbutton.caption"
 msgid "&Cancel"
-msgstr "취소(C)"
+msgstr "취소(&C)"
 
 #: tfrmselecttextrange.buttonpanel.okbutton.caption
 msgctxt "tfrmselecttextrange.buttonpanel.okbutton.caption"
 msgid "&OK"
-msgstr "확인(O)"
+msgstr "확인(&O)"
 
 #: tfrmselecttextrange.gbcountfirstfrom.caption
 msgid "Count first from"
@@ -8939,12 +8859,12 @@ msgstr "정렬"
 #: tfrmsortanything.buttonpanel.cancelbutton.caption
 msgctxt "tfrmsortanything.buttonpanel.cancelbutton.caption"
 msgid "&Cancel"
-msgstr "취소(C)"
+msgstr "취소(&C)"
 
 #: tfrmsortanything.buttonpanel.okbutton.caption
 msgctxt "tfrmsortanything.buttonpanel.okbutton.caption"
 msgid "&OK"
-msgstr "확인(O)"
+msgstr "확인(&O)"
 
 #: tfrmsortanything.caption
 msgid "frmSortAnything"
@@ -9014,6 +8934,11 @@ msgstr "더블 커맨더"
 msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr "빌드"
+
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
 
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
@@ -9275,7 +9200,7 @@ msgstr "덮어쓰기 확인"
 #: tfrmtreeviewmenu.caption
 msgctxt "tfrmtreeviewmenu.caption"
 msgid "Tree View Menu"
-msgstr ""
+msgstr "트리뷰 메뉴"
 
 #: tfrmtreeviewmenu.lblsearchingentry.caption
 msgid "Select your hot directory:"
@@ -9905,13 +9830,11 @@ msgid "&Use \"drag && drop\" to move operations between queues"
 msgstr ""
 
 #: tfrmviewoperations.mnucanceloperation.caption
-#, fuzzy
 msgctxt "tfrmviewoperations.mnucanceloperation.caption"
 msgid "Cancel"
 msgstr "취소"
 
 #: tfrmviewoperations.mnucancelqueue.caption
-#, fuzzy
 msgctxt "tfrmviewoperations.mnucancelqueue.caption"
 msgid "Cancel"
 msgstr "취소"
@@ -10008,13 +9931,11 @@ msgid "When file exists"
 msgstr "파일이 있을 때"
 
 #: ttfrmconfirmcommandline.btncancel.caption
-#, fuzzy
 msgctxt "ttfrmconfirmcommandline.btncancel.caption"
 msgid "&Cancel"
 msgstr "취소(&C)"
 
 #: ttfrmconfirmcommandline.btnok.caption
-#, fuzzy
 msgctxt "ttfrmconfirmcommandline.btnok.caption"
 msgid "&OK"
 msgstr "확인(&O)"
@@ -10063,6 +9984,10 @@ msgstr ""
 
 #: uadministrator.rselevationrequired
 msgid "You need to provide administrator permission"
+msgstr ""
+
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
 msgstr ""
 
 #: uadministrator.rselevationrequiredcreate
@@ -10263,7 +10188,7 @@ msgstr "폭"
 
 #: ulng.rsconfcustheader
 msgid "Customize column"
-msgstr "단 사용자 설정"
+msgstr "컬럼 사용자 설정"
 
 #: ulng.rsconfigurationfileassociation
 msgid "Configure file association"
@@ -10659,6 +10584,10 @@ msgstr ""
 msgid "Plugin files"
 msgstr ""
 
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
+msgstr ""
+
 #: ulng.rsfilterstatus
 msgid "FILTER"
 msgstr "필터"
@@ -10769,7 +10698,7 @@ msgstr "뷰어 글꼴(&V)"
 #: ulng.rsfontusageviewerbook
 msgctxt "ulng.rsfontusageviewerbook"
 msgid "Viewer&Book Font"
-msgstr "뷰어책 글꼴(&B)"
+msgstr ""
 
 #: ulng.rsfreemsg
 #, fuzzy
@@ -11259,6 +11188,10 @@ msgstr "서버에 연결할 수 없습니다: \"%s\""
 msgid "Cannot copy file %s to %s"
 msgstr "%s 에서 %s로 복사할 수 없음"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -11363,6 +11296,10 @@ msgstr "\"%s\" 소유자/그룹을 설정할 수 없음"
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
 msgstr "\"%s\" 퍼미션을 지정할 수 없음"
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
+msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -11511,15 +11448,15 @@ msgstr "가져오기하려는 다음 텍스트 형태 선택"
 
 #: ulng.rsmsghotdiraddselecteddirectories
 msgid "Add %d selected dirs"
-msgstr "%d 선택된 폴더(디렉토리)추가"
+msgstr "%d 선택된 폴더 추가"
 
 #: ulng.rsmsghotdiraddselecteddirectory
 msgid "Add selected dir: "
-msgstr "선택된 폴더(디렉토리)추가: "
+msgstr "선택된 폴더 추가: "
 
 #: ulng.rsmsghotdiraddthisdirectory
 msgid "Add current dir: "
-msgstr "현재 디렉토리(폴더)추가: "
+msgstr "현재 폴더 추가: "
 
 #: ulng.rsmsghotdircommandname
 msgid "Do command"
@@ -11589,11 +11526,9 @@ msgid "Import selected"
 msgstr "선택 불러오기"
 
 #: ulng.rsmsghotdirjustpath
-#, fuzzy
-#| msgid "Path"
 msgctxt "ulng.rsmsghotdirjustpath"
 msgid "&Path:"
-msgstr "경로"
+msgstr "활성창 경로(&P):"
 
 #: ulng.rsmsghotdirlocatehotlistfile
 msgid "Locate \".hotlist\" file to import"
@@ -11638,18 +11573,14 @@ msgid "(end of sub menu)"
 msgstr "(하위메뉴 끝)"
 
 #: ulng.rsmsghotdirsimplemenu
-#, fuzzy
-#| msgid "Menu name:"
 msgctxt "ulng.rsmsghotdirsimplemenu"
 msgid "Menu &name:"
-msgstr "메뉴명:"
+msgstr "메뉴명(&N):"
 
 #: ulng.rsmsghotdirsimplename
-#, fuzzy
-#| msgid "Name:"
 msgctxt "ulng.rsmsghotdirsimplename"
 msgid "&Name:"
-msgstr "파일명:"
+msgstr "이름(&N):"
 
 #: ulng.rsmsghotdirsimpleseparator
 msgctxt "ulng.rsmsghotdirsimpleseparator"
@@ -11697,7 +11628,7 @@ msgid ""
 "Answering NO will delete only menu delimiters but will keep element inside sub-menu.\n"
 msgstr ""
 "하위메뉴의 모든 요소를 삭제하시겠습니까? [%s]?\n"
-"'아니오'를 선택하면 메뉴 구분문자만 삭제하고 하위메뉴 요소는 보관됩니다.\n"
+"'아니오'를 선택하면 하위메뉴만 삭제하고 하위메뉴의 요소는 삭제하지 않습니다.\n"
 
 #: ulng.rsmsghotdirwheretosave
 msgid "Enter location and filename where to save a Directory Hotlist file"
@@ -12012,11 +11943,11 @@ msgstr "특별 디렉토리"
 
 #: ulng.rsmsgspecialdiraddacti
 msgid "Add path from active frame"
-msgstr "활성 프레임에 경로 추가"
+msgstr "활성 프레임의 경로를 가져오기"
 
 #: ulng.rsmsgspecialdiraddnonacti
 msgid "Add path from inactive frame"
-msgstr "비활성 프레임에 경로 추가"
+msgstr "비활성 프레임의 경로를 가져오기"
 
 #: ulng.rsmsgspecialdirbrowssel
 msgid "Browse and use selected path"
@@ -12044,7 +11975,7 @@ msgstr "윈도 특별 폴더(TC)로 가기..."
 
 #: ulng.rsmsgspecialdirmakereltohotdir
 msgid "Make relative to hotdir path"
-msgstr "상대경로 바로 가기 경로 만들기"
+msgstr "바로 가기 경로 기준으로 상대경로 만들기"
 
 #: ulng.rsmsgspecialdirmkabso
 msgid "Make path absolute"
@@ -12052,19 +11983,19 @@ msgstr "절대경로 만들기"
 
 #: ulng.rsmsgspecialdirmkdcrel
 msgid "Make relative to Double Commander special path..."
-msgstr "더블커맨더 특별경로 상대경로 만들기..."
+msgstr "더블커맨더 특별경로기준으로 상대경로 만들기..."
 
 #: ulng.rsmsgspecialdirmkenvrel
 msgid "Make relative to environment variable..."
-msgstr "환경변수에 대한 상대값 만들기..."
+msgstr "환경변수 기준으로 상대경로 만들기..."
 
 #: ulng.rsmsgspecialdirmktctel
 msgid "Make relative to Windows special folder (TC)..."
-msgstr "윈도 특별 폴더(TC) 상대경로 만들기..."
+msgstr "윈도 특별 폴더(TC) 기준으로 상대경로 만들기..."
 
 #: ulng.rsmsgspecialdirmkwnrel
 msgid "Make relative to other Windows special folder..."
-msgstr "다른 윈도 특별 폴더에 상대경로 만들기..."
+msgstr "다른 윈도 특별 폴더 기준으로 상대경로 만들기..."
 
 #: ulng.rsmsgspecialdirusedc
 msgid "Use Double Commander special path..."
@@ -12463,7 +12394,7 @@ msgstr ""
 
 #: ulng.rsnewsearchclearfilteroptions
 msgid "Keep;Clear;Prompt"
-msgstr ""
+msgstr "유지;삭제;물어보기"
 
 #: ulng.rsnoequivalentinternalcommand
 msgid "No internal equivalent command"
@@ -12748,10 +12679,8 @@ msgid "Working"
 msgstr "작업중"
 
 #: ulng.rsoptaddfrommainpanel
-#, fuzzy
-#| msgid "Add at beginning;Add at the end;Smart add"
 msgid "Add at &beginning;Add at the end;Smart add"
-msgstr "시작에 추가;마지막에 추가;스마트 추가"
+msgstr "시작에 추가(&B);마지막에 추가;스마트하게 추가"
 
 #: ulng.rsoptaddingtooltipfiletype
 msgid "Adding new tooltip file type"
@@ -12896,7 +12825,7 @@ msgstr "처음;마지막;"
 
 #: ulng.rsoptconfigsortorder
 msgid "Classic, legacy order;Alphabetic order (but language still first)"
-msgstr "종류별, 일반적인 순서; 알파뱃 순서 (이름순 우선)"
+msgstr "종류별, 일반적인 순서;이름 순서"
 
 #: ulng.rsoptconfigtreestate
 msgid "Full expand;Full collapse"
@@ -12904,7 +12833,7 @@ msgstr ""
 
 #: ulng.rsoptdifferframeposition
 msgid "Active frame panel on left, inactive on right (legacy);Left frame panel on left, right on right"
-msgstr "활성프레임 왼쪽, 비활성 프레임 오른쪽(상속); 왼쪽 프레임창은 왼쪽, 오른쪽 프레임창은 오른쪽"
+msgstr "활성프레임 왼쪽, 비활성 프레임 오른쪽(상속);왼쪽 프레임창은 왼쪽, 오른쪽 프레임창은 오른쪽"
 
 #: ulng.rsoptenterext
 msgid "Enter extension"
@@ -12912,11 +12841,11 @@ msgstr "확장자 입력"
 
 #: ulng.rsoptfavoritetabswheretoaddinlist
 msgid "Add at beginning;Add at the end;Alphabetical sort"
-msgstr "시작에 추가; 마지막에 추가; 알파벳순 정렬"
+msgstr "시작에 추가;마지막에 추가;알파벳순 정렬"
 
 #: ulng.rsoptfileoperationsprogresskind
 msgid "separate window;minimized separate window;operations panel"
-msgstr "윈도 분리; 분리된 윈도 최소화; 작업수행창"
+msgstr "분리된 창;최소화된 분리된 창;작업수행 창"
 
 #: ulng.rsoptfilesizefloat
 msgid "float"
@@ -13039,7 +12968,7 @@ msgstr "프로그램 실행"
 #: ulng.rsoptionseditorbriefview
 msgctxt "ulng.rsoptionseditorbriefview"
 msgid "Brief"
-msgstr "요약"
+msgstr "간략히 보기"
 
 #: ulng.rsoptionseditorcolors
 msgctxt "ulng.rsoptionseditorcolors"
@@ -13048,7 +12977,7 @@ msgstr "색상"
 
 #: ulng.rsoptionseditorcolumnsview
 msgid "Columns"
-msgstr "파일속성열"
+msgstr "컬럼"
 
 #: ulng.rsoptionseditorconfiguration
 msgctxt "ulng.rsoptionseditorconfiguration"
@@ -13057,7 +12986,7 @@ msgstr "환경설정"
 
 #: ulng.rsoptionseditorcustomcolumns
 msgid "Custom columns"
-msgstr "사용자 파일속성열"
+msgstr "컬럼 사용자 설정"
 
 #: ulng.rsoptionseditordirectoryhotlist
 msgctxt "ulng.rsoptionseditordirectoryhotlist"
@@ -13106,18 +13035,17 @@ msgid "File panels"
 msgstr "파일 패널"
 
 #: ulng.rsoptionseditorfilesearch
-#, fuzzy
 msgctxt "ulng.rsoptionseditorfilesearch"
 msgid "File search"
 msgstr "파일 검색"
 
 #: ulng.rsoptionseditorfilesviews
 msgid "Files views"
-msgstr "파일 보기"
+msgstr "파일 뷰"
 
 #: ulng.rsoptionseditorfilesviewscomplement
 msgid "Files views extra"
-msgstr ""
+msgstr "파일 뷰 기타"
 
 #: ulng.rsoptionseditorfiletypes
 msgctxt "ulng.rsoptionseditorfiletypes"
@@ -13169,7 +13097,7 @@ msgstr "언어"
 #: ulng.rsoptionseditorlayout
 msgctxt "ulng.rsoptionseditorlayout"
 msgid "Layout"
-msgstr "화면구성"
+msgstr "화면 구성"
 
 #: ulng.rsoptionseditorlog
 msgctxt "ulng.rsoptionseditorlog"
@@ -13237,11 +13165,11 @@ msgstr "풍선도움말"
 #: ulng.rsoptionseditortreeviewmenu
 msgctxt "ulng.rsoptionseditortreeviewmenu"
 msgid "Tree View Menu"
-msgstr ""
+msgstr "트리뷰 메뉴"
 
 #: ulng.rsoptionseditortreeviewmenucolors
 msgid "Tree View Menu Colors"
-msgstr ""
+msgstr "트리뷰 메뉴 색상"
 
 #: ulng.rsoptletters
 msgid "None;Command Line;Quick Search;Quick Filter"
@@ -13249,11 +13177,11 @@ msgstr "없음;명령 프롬프트;빠른 검색;빠른 필터"
 
 #: ulng.rsoptmouseselectionbutton
 msgid "Left button;Right button;"
-msgstr "왼쪽 마우스 버튼; 오른쪽 마우스 버튼;"
+msgstr "왼쪽 마우스 버튼;오른쪽 마우스 버튼;"
 
 #: ulng.rsoptnewfilesposition
 msgid "at the top of the file list;after directories (if directories are sorted before files);at sorted position;at the bottom of the file list"
-msgstr "최상위 필터 목록; 폴더 뒤에(폴더가 파일 앞에 정렬되었다면); 위치에 정렬; 파일 목록 마지막"
+msgstr "파일 목록 처음에;폴더 뒤에(폴더가 파일 앞에 정렬되었다면);정렬된 위치에;파일 목록 마지막에"
 
 #: ulng.rsoptpersonalizedfilesizeformat
 msgid "Personalized float;Personalized byte;Personalized kilobyte;Personalized megabyte;Personalized gigabyte;Personalized terabyte"
@@ -13309,6 +13237,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "등록"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr ""
@@ -13323,21 +13255,19 @@ msgstr "파일(&F);폴더(&R);파일과 폴더(&N)"
 
 #: ulng.rsoptsearchopt
 msgid "&Hide filter panel when not focused;Keep saving setting modifications for next session"
-msgstr "포커스되지 않으면 필터창 감추기(&H); 다음 세션을 위해 설정 저장 유지"
+msgstr "포커스되지 않으면 필터창 감추기(&H);다음 세션을 위해 설정 저장 유지"
 
 #: ulng.rsoptsortcasesens
 msgid "not case sensitive;according to locale settings (aAbBcC);first upper then lower case (ABCabc)"
-msgstr "대소문자 구분 안함; 로케일(locale) 설정 (aAbBcC); 대문자 우선(ABCabc)"
+msgstr "대소문자 구분 안함;로케일(locale) 설정 (aAbBcC);대문자 우선 (ABCabc)"
 
 #: ulng.rsoptsortfoldermode
 msgid "sort by name and show first;sort like files and show first;sort like files"
-msgstr "이름 정렬하고 먼저 보여주기; 파일 정렬하고 먼저 보여주기; 파일로 정렬"
+msgstr "이름으로 정렬하고 상위에 표시;파일처럼 정렬하고 상위에 표시;파일과 섞어서 정렬"
 
 #: ulng.rsoptsortmethod
-#, fuzzy
-#| msgid "Alphabetical, considering accents;Natural sorting: alphabetical and numbers"
 msgid "Alphabetical, considering accents;Alphabetical with special characters sort;Natural sorting: alphabetical and numbers;Natural with special characters sort"
-msgstr "알파벳순, 액센트 고려하기;자연 정렬; 알파벳 숫자순 정렬"
+msgstr "액센트를 고려하여 알파벳 순으로;자연스러운 정렬: 알파벳과 숫자순으로"
 
 #: ulng.rsopttabsposition
 msgid "Top;Bottom;"
@@ -13410,11 +13340,11 @@ msgstr ""
 
 #: ulng.rsopttypeofduplicatedrename
 msgid "DC legacy - Copy (x) filename.ext;Windows - filename (x).ext;Other - filename(x).ext"
-msgstr "DC 레거시(legacy) - 복사(x) 파일명.확장자; 윈도- 파일명(x).확장자; 그외 - 파일명(x).확장자"
+msgstr "DC 레거시 - 복사 (x) 파일명.확장자;MS - 파일명 (x).확장자;기타 - 파일명(x).확장자"
 
 #: ulng.rsoptupdatedfilesposition
 msgid "don't change position;use the same setting as for new files;to sorted position"
-msgstr "파일위치 변경 금지; 새 파일에 동일한 설정 사용: 위치에 정렬"
+msgstr "파일위치 변경하지 않음;새 파일과 같은 설정 사용;정렬된 위치에"
 
 #: ulng.rspluginfilenamestylelist
 msgid "With complete absolute path;Path relative to %COMMANDER_PATH%;Relative to the following"
@@ -13573,7 +13503,7 @@ msgstr "범주"
 
 #: ulng.rssimplewordcolumnsingular
 msgid "Column"
-msgstr "파일속성열"
+msgstr "컬럼"
 
 #: ulng.rssimplewordcommand
 msgctxt "ulng.rssimplewordcommand"
@@ -13768,7 +13698,7 @@ msgstr "일반 텍스트"
 
 #: ulng.rstabsactionondoubleclickchoices
 msgid "Do nothing;Close tab;Access Favorite Tabs;Tabs popup menu"
-msgstr "아무것도 하지 않음;탭 닫기;즐겨찾기탭 액세소;탭 팝업 메뉴"
+msgstr "아무것도 하지 않음;탭 닫기;즐겨찾기탭 엑세스;탭 팝업 메뉴"
 
 #: ulng.rstimeunitday
 msgctxt "ulng.rstimeunitday"
@@ -14071,4 +14001,8 @@ msgstr "바꾸기한 갯수: %d 개"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "바꾸기 없음."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

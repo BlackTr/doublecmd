@@ -129,6 +129,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr ""
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1038,6 +1043,7 @@ msgid "S&earch from caret"
 msgstr ""
 
 #: tfrmeditsearchreplace.cbsearchregexp.caption
+msgctxt "tfrmeditsearchreplace.cbsearchregexp.caption"
 msgid "&Regular expressions"
 msgstr ""
 
@@ -1063,6 +1069,10 @@ msgstr ""
 
 #: tfrmeditsearchreplace.rgsearchdirection.caption
 msgid "Direction"
+msgstr ""
+
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
 msgstr ""
 
 #: tfrmextractdlg.caption
@@ -1543,6 +1553,10 @@ msgstr ""
 msgid "N&ot older than:"
 msgstr ""
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr ""
@@ -1761,8 +1775,17 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr ""
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
+msgstr ""
+
+#: tfrmfindview.cbregexp.caption
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
 msgstr ""
 
 #: tfrmfindview.chkhex.caption
@@ -2667,6 +2690,14 @@ msgstr ""
 
 #: tfrmmain.actsymlink.caption
 msgid "Create Symbolic &Link..."
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
 msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
@@ -5004,6 +5035,10 @@ msgstr ""
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr ""
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr ""
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr ""
@@ -5059,10 +5094,6 @@ msgstr ""
 
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
-msgstr ""
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
 msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
@@ -6003,12 +6034,16 @@ msgstr ""
 msgid "File si&ze format:"
 msgstr ""
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr ""
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
 msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
@@ -8604,6 +8639,11 @@ msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr ""
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
 msgid "Free Pascal"
@@ -9572,6 +9612,10 @@ msgstr ""
 msgid "You need to provide administrator permission"
 msgstr ""
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr ""
@@ -10151,6 +10195,10 @@ msgstr ""
 
 #: ulng.rsfilterpluginfiles
 msgid "Plugin files"
+msgstr ""
+
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
 msgstr ""
 
 #: ulng.rsfilterstatus
@@ -10738,6 +10786,10 @@ msgstr ""
 msgid "Cannot copy file %s to %s"
 msgstr ""
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -10840,6 +10892,10 @@ msgstr ""
 
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
+msgstr ""
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
 msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
@@ -12727,6 +12783,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr ""
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr ""
@@ -13477,5 +13537,9 @@ msgstr ""
 
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
+msgstr ""
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
 msgstr ""
 

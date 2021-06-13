@@ -137,6 +137,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Постройка"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1097,6 +1102,10 @@ msgctxt "TFRMEDITSEARCHREPLACE.RGSEARCHDIRECTION.CAPTION"
 msgid "Direction"
 msgstr "Посока"
 
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
+
 #: tfrmextractdlg.caption
 msgctxt "TFRMEXTRACTDLG.CAPTION"
 msgid "Unpack files"
@@ -1601,6 +1610,10 @@ msgstr "Намиране на файлове НЕсъдържащи текста
 msgid "N&ot older than:"
 msgstr "Не по- &стар от:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "Отворени подпрозорци"
@@ -1826,9 +1839,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "Търсене"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "Отчитане на &глаВНостТА"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "&Обичайни изрази"
 
 #: tfrmfindview.chkhex.caption
 msgctxt "tfrmfindview.chkhex.caption"
@@ -2759,6 +2782,14 @@ msgstr "Включване/ изключване на пренебрегване
 msgctxt "TFRMMAIN.ACTSYMLINK.CAPTION"
 msgid "Create Symbolic &Link..."
 msgstr "Създаване на &мека връзка..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -5205,6 +5236,10 @@ msgstr ""
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr ""
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr ""
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr "Поставяне на показалеца след края на реда"
@@ -5261,10 +5296,6 @@ msgstr ""
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "Възможности на вътрешния обработчик"
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -6258,12 +6289,16 @@ msgstr "Изписване на &датата и времето:"
 msgid "File si&ze format:"
 msgstr "Изписване на файловите &размери:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr ""
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
 msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
@@ -9037,6 +9072,11 @@ msgctxt "tfrmstartingsplash.lblbuild.caption"
 msgid "Build"
 msgstr "Постройка"
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "tfrmstartingsplash.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -10054,6 +10094,10 @@ msgstr ""
 msgid "You need to provide administrator permission"
 msgstr ""
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr ""
@@ -10647,6 +10691,10 @@ msgstr ""
 msgid "Plugin files"
 msgstr ""
 
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
+msgstr ""
+
 #: ulng.rsfilterstatus
 msgid "FILTER"
 msgstr "ПРЕСЯВАНЕ"
@@ -11235,6 +11283,10 @@ msgstr "Неуспешно свързване към сървър: „%s‟"
 msgid "Cannot copy file %s to %s"
 msgstr "Неуспешен презапис на файл „%s‟ в „%s‟"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -11337,6 +11389,10 @@ msgstr ""
 
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
+msgstr ""
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
 msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
@@ -13256,6 +13312,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "Записано на"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr ""
@@ -14015,5 +14075,9 @@ msgstr ""
 
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
+msgstr ""
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
 msgstr ""
 

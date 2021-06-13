@@ -156,6 +156,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Izgrađen"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1136,6 +1141,10 @@ msgctxt "TFRMEDITSEARCHREPLACE.RGSEARCHDIRECTION.CAPTION"
 msgid "Direction"
 msgstr "Smjer"
 
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
+
 #: tfrmextractdlg.caption
 msgctxt "TFRMEXTRACTDLG.CAPTION"
 msgid "Unpack files"
@@ -1654,6 +1663,10 @@ msgstr "Pronađi datoteke koje ne& sadrže tekst"
 msgid "N&ot older than:"
 msgstr "Ne& starije od:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr ""
@@ -1879,9 +1892,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "Pronađi"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "O&setljivo na veličinu slova"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "&Regularni izrazi"
 
 #: tfrmfindview.chkhex.caption
 msgctxt "tfrmfindview.chkhex.caption"
@@ -2889,6 +2912,14 @@ msgstr "Omogući/onemogući prikaz zanemarenih datoteka sa spiska"
 msgctxt "TFRMMAIN.ACTSYMLINK.CAPTION"
 msgid "Create Symbolic &Link..."
 msgstr "Napravi simboličku &vezu..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgctxt "tfrmmain.actsyncdirs.caption"
@@ -5411,6 +5442,10 @@ msgstr ""
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr ""
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr ""
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr "Kraj linije znakova"
@@ -5467,10 +5502,6 @@ msgstr ""
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "Opcije za interni uređivač"
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -6443,12 +6474,16 @@ msgstr "Oblik datuma i vremena:"
 msgid "File si&ze format:"
 msgstr "Oblik veličine& datoteka:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr ""
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
 msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
@@ -9213,6 +9248,11 @@ msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr "Izgrađen"
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
 msgid "Free Pascal"
@@ -10261,6 +10301,10 @@ msgstr ""
 msgid "You need to provide administrator permission"
 msgstr ""
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr ""
@@ -10857,6 +10901,10 @@ msgstr ""
 
 #: ulng.rsfilterpluginfiles
 msgid "Plugin files"
+msgstr ""
+
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
 msgstr ""
 
 #: ulng.rsfilterstatus
@@ -11456,6 +11504,10 @@ msgstr "Nisam uspio povezati se sa poslužiteljem „%s“"
 msgid "Cannot copy file %s to %s"
 msgstr "Nisam uspio kopirati datoteku %s u %s"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -11559,6 +11611,10 @@ msgstr "Nisam uspio postaviti vlasnika/udruženje datoteci %s“"
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
 msgstr "Nije moguće postaviti dozvole za \"%s\""
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
+msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -13507,6 +13563,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "Prijavljen za"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr ""
@@ -14270,4 +14330,8 @@ msgstr "Broj zamjene"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Nije bilo zamjene"
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

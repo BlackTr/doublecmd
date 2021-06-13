@@ -1049,6 +1049,7 @@ begin
       on EFileSourceException do
         begin
           FreeAndNil(AFile);
+          Reload(APath);
           Exit;
         end;
     end;
@@ -2690,7 +2691,8 @@ begin
   //-- remember currently active filename
   //   TODO: move this call to some generic place that is called
   //         ALWAYS when currently selected file is changed
-  FHistory.SetFilenameForCurrentPath(GetActiveFileName());
+  if not (fvfDelayLoadingFiles in Flags) then
+    FHistory.SetFilenameForCurrentPath(GetActiveFileName());
 
   AConfig.ClearNode(ANode);
 

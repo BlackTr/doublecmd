@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     Shell context menu implementation.
 
-    Copyright (C) 2006-2015 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2021 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit uShellContextMenu;
@@ -43,6 +42,7 @@ const
   sCmdVerbLink = 'link';
   sCmdVerbProperties = 'properties';
   sCmdVerbNewFolder = 'NewFolder';
+  sCmdVerbCopyPath = 'copyaspath';
 
 type
 
@@ -61,6 +61,8 @@ type
     FShellMenu1: IContextMenu;
     FShellMenu: HMENU;
     FUserWishForContextMenu: TUserWishForContextMenu;
+  protected
+    procedure Execute(Data: PtrInt);
   public
     constructor Create(Parent: TWinControl; var Files: TFiles; Background: boolean; UserWishForContextMenu: TUserWishForContextMenu = uwcmComplete); reintroduce;
     destructor Destroy; override;
@@ -76,7 +78,8 @@ implementation
 uses
   graphtype, intfgraphics, Graphics, uPixMapManager, Dialogs, uLng, uMyWindows,
   uShellExecute, fMain, uDCUtils, uFormCommands, DCOSUtils, uOSUtils, uShowMsg,
-  uExts, uFileSystemFileSource, DCConvertEncoding, LazUTF8, uOSForms, uGraphics;
+  uExts, uFileSystemFileSource, DCConvertEncoding, LazUTF8, uOSForms, uGraphics,
+  Forms, DCWindows, DCStrUtils, Clipbrd;
 
 const
   USER_CMD_ID = $1000;
@@ -476,6 +479,28 @@ end;
 
 { TShellContextMenu }
 
+procedure TShellContextMenu.Execute(Data: PtrInt);
+var
+  UserSelectedCommand: TExtActionCommand absolute Data;
+begin
+  try
+    with frmMain.ActiveFrame do
+    begin
+      try
+        //For the %-Variable replacement that follows it might sounds incorrect to do it with "nil" instead of "aFile",
+        //but original code was like that. It is useful, at least, when more than one file is selected so because of that,
+        //it's pertinent and should be kept!
+        ProcessExtCommandFork(UserSelectedCommand.CommandName, UserSelectedCommand.Params, UserSelectedCommand.StartPath, nil);
+      except
+        on e: EInvalidCommandLine do
+          MessageDlg(rsMsgErrorInContextMenuCommand, rsMsgInvalidCommandLine + ': ' + e.Message, mtError, [mbOK], 0);
+      end;
+    end;
+  finally
+    FreeAndNil(UserSelectedCommand);
+  end;
+end;
+
 { TShellContextMenu.Create }
 constructor TShellContextMenu.Create(Parent: TWinControl; var Files: TFiles; Background: boolean; UserWishForContextMenu: TUserWishForContextMenu);
 var
@@ -682,6 +707,24 @@ begin
           begin
             TShellThread.Create(FParent, FShellMenu1, sVerb).Start;
             bHandled := True;
+          end
+          else if SameText(sVerb, sCmdVerbCopyPath) then
+          begin
+            with TStringList.Create do
+            begin
+              for i:= 0 to FFiles.Count - 1 do
+              begin
+                sVolumeLabel:= FFiles[i].FullPath;
+                if UTF8Length(sVolumeLabel) >= MAX_PATH then
+                  Add(QuoteStr(UTF16ToUTF8(UTF16LongName(sVolumeLabel))))
+                else begin
+                  Add(QuoteStr(sVolumeLabel));
+                end;
+              end;
+              Clipboard.AsText:= TrimRightLineEnding(Text, TextLineBreakStyle);
+              Free;
+            end;
+            bHandled := True;
           end;
         end;
 
@@ -737,33 +780,15 @@ begin
         end
         else
         begin
-          try
-            with frmMain.ActiveFrame do
-            begin
-              try
-                //For the %-Variable replacement that follows it might sounds incorrect to do it with "nil" instead of "aFile",
-                //but original code was like that. It is useful, at least, when more than one file is selected so because of that,
-                //it's pertinent and should be kept!
-                ProcessExtCommandFork(UserSelectedCommand.CommandName, UserSelectedCommand.Params, UserSelectedCommand.StartPath, nil);
-              except
-                on e: EInvalidCommandLine do
-                  MessageDlg(rsMsgErrorInContextMenuCommand, rsMsgInvalidCommandLine + ': ' + e.Message, mtError, [mbOK], 0);
-              end;
-            end;
-          finally
-            bHandled := True;
-          end;
+          Application.QueueAsyncCall(Execute, PtrInt(UserSelectedCommand));
+          UserSelectedCommand := nil;
+          bHandled := True;
         end;
       end;
     finally
-      if Assigned(InnerExtActionList) then
-        FreeAndNil(InnerExtActionList);
-
-      if Assigned(UserSelectedCommand) then
-        FreeAndNil(UserSelectedCommand);
-
-      if Assigned(ContextMenuDCIcon) then
-        FreeAndNil(ContextMenuDCIcon);
+      FreeAndNil(InnerExtActionList);
+      FreeAndNil(UserSelectedCommand);
+      FreeAndNil(ContextMenuDCIcon);
     end;
 
   except

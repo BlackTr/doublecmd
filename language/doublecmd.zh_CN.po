@@ -133,6 +133,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "构建"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1043,6 +1048,7 @@ msgid "S&earch from caret"
 msgstr "从插入处搜索(&C)"
 
 #: tfrmeditsearchreplace.cbsearchregexp.caption
+msgctxt "tfrmeditsearchreplace.cbsearchregexp.caption"
 msgid "&Regular expressions"
 msgstr "正则表达式(&R)"
 
@@ -1069,6 +1075,10 @@ msgstr "搜索(&S)："
 #: tfrmeditsearchreplace.rgsearchdirection.caption
 msgid "Direction"
 msgstr "方向"
+
+#: tfrmelevation.chkelevateall.caption
+msgid "Do this for &all current objects"
+msgstr ""
 
 #: tfrmextractdlg.caption
 msgid "Unpack files"
@@ -1548,6 +1558,10 @@ msgstr "查找不包含该文本的文件(&O)"
 msgid "N&ot older than:"
 msgstr "不早于(&O)："
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "打开的标签"
@@ -1770,9 +1784,19 @@ msgctxt "TFRMFINDVIEW.CAPTION"
 msgid "Find"
 msgstr "查找"
 
+#: tfrmfindview.cbbackwards.caption
+msgid "&Backwards"
+msgstr ""
+
 #: tfrmfindview.cbcasesens.caption
 msgid "C&ase sensitive"
 msgstr "区分大小写(&A)"
+
+#: tfrmfindview.cbregexp.caption
+#, fuzzy
+msgctxt "tfrmfindview.cbregexp.caption"
+msgid "&Regular expressions"
+msgstr "正则表达式(&R)"
 
 #: tfrmfindview.chkhex.caption
 #, fuzzy
@@ -2680,6 +2704,14 @@ msgstr "启用/禁用忽略列表文件以不显示文件名"
 #: tfrmmain.actsymlink.caption
 msgid "Create Symbolic &Link..."
 msgstr "创建符号链接(&L)..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -5022,6 +5054,10 @@ msgstr "自动缩进"
 msgid "Allows to indent the caret, when new line is created with <Enter>, with the same amount of leading white space as the preceding line"
 msgstr "当使用 <Enter> 键创建新行时，允许缩进插入符号，前导行的前导空白量相同"
 
+#: tfrmoptionseditor.chkrightedge.caption
+msgid "Right margin:"
+msgstr ""
+
 #: tfrmoptionseditor.chkscrollpastendline.caption
 msgid "Caret past end of line"
 msgstr "插入符号越过行尾"
@@ -5078,10 +5114,6 @@ msgstr "请注意：<智能制表符> 选项优先于要执行的制表"
 #: tfrmoptionseditor.gbinternaleditor.caption
 msgid "Internal editor options"
 msgstr "内部编辑器选项"
-
-#: tfrmoptionseditor.chkrightedge.caption
-msgid "Right margin:"
-msgstr ""
 
 #: tfrmoptionseditor.lbltabwidth.caption
 msgid "Tab width:"
@@ -6022,13 +6054,17 @@ msgstr "日期时间格式(&D)："
 msgid "File si&ze format:"
 msgstr "文件大小格式(&Z)："
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr "吉字节(&G)："
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "顶部/状态栏格式(&H)："
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
 msgid "&Kilobyte:"
@@ -8654,6 +8690,11 @@ msgctxt "tfrmstartingsplash.lblbuild.caption"
 msgid "Build"
 msgstr "构建"
 
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "tfrmstartingsplash.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -9634,6 +9675,10 @@ msgstr ""
 msgid "You need to provide administrator permission"
 msgstr ""
 
+#: uadministrator.rselevationrequiredcopy
+msgid "to copy this object:"
+msgstr ""
+
 #: uadministrator.rselevationrequiredcreate
 msgid "to create this object:"
 msgstr ""
@@ -10218,6 +10263,10 @@ msgstr ""
 
 #: ulng.rsfilterpluginfiles
 msgid "Plugin files"
+msgstr ""
+
+#: ulng.rsfilterprogramslibraries
+msgid "Programs and Libraries"
 msgstr ""
 
 #: ulng.rsfilterstatus
@@ -10816,6 +10865,10 @@ msgstr "无法连接到服务器：\"%s\""
 msgid "Cannot copy file %s to %s"
 msgstr "无法将文件 %s 复制到 %s"
 
+#: ulng.rsmsgerrcannotmovedirectory
+msgid "Cannot move directory %s"
+msgstr ""
+
 #: ulng.rsmsgerrcannotmovefile
 msgid "Cannot move file %s"
 msgstr ""
@@ -10919,6 +10972,10 @@ msgstr "无法设置 \"%s\" 的所有者/组"
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
 msgstr "无法设置 \"%s\" 的权限"
+
+#: ulng.rsmsgerrsetxattribute
+msgid "Can not set extended attributes for \"%s\""
+msgstr ""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -12836,6 +12893,10 @@ msgctxt "ulng.rsoptpluginsregisteredfor"
 msgid "Registered for"
 msgstr "注册为"
 
+#: ulng.rsoptpluginsselectlualibrary
+msgid "Select Lua library file"
+msgstr ""
+
 #: ulng.rsoptrenamingtooltipfiletype
 msgid "Renaming tooltip file type"
 msgstr "正在重命名工具提示文件类型"
@@ -13594,4 +13655,8 @@ msgstr "替换次数：%d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "没有发生替换。"
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

@@ -128,5 +128,5 @@ generate dmg
 
 ```
 cd install/
-./create_packages_git.mac 
+./create_packages.mac 
 ```

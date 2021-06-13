@@ -99,6 +99,7 @@ type
     cbTextRegExp: TCheckBox;
     cbFindInArchive: TCheckBox;
     cbOpenedTabs: TCheckBox;
+    cbOfficeXML: TCheckBox;
     chkDuplicateContent: TCheckBox;
     chkDuplicateSize: TCheckBox;
     chkDuplicateHash: TCheckBox;
@@ -211,6 +212,7 @@ type
     procedure cbDateFromChange(Sender: TObject);
     procedure cbDateToChange(Sender: TObject);
     procedure cbFindInArchiveChange(Sender: TObject);
+    procedure cbOfficeXMLChange(Sender: TObject);
     procedure cbOpenedTabsChange(Sender: TObject);
     procedure cbPartialNameSearchChange(Sender: TObject);
     procedure cbRegExpChange(Sender: TObject);
@@ -274,6 +276,7 @@ type
     procedure CancelCloseAndFreeMem;
     procedure LoadHistory;
     procedure SaveHistory;
+    procedure LoadPlugins;
   private
     FSelectedFiles: TStringList;
     FFindThread: TFindThread;
@@ -392,7 +395,7 @@ implementation
 
 uses
   LCLProc, LCLType, LConvEncoding, StrUtils, HelpIntfs, fViewer, fMain,
-  uLng, uGlobs, uShowForm, uDCUtils, uFileSourceUtil,
+  uLng, uGlobs, uShowForm, uDCUtils, uFileSourceUtil, uOfficeXML,
   uSearchResultFileSource, uFile, uFileProperty, uColumnsFileView,
   uFileViewNotebook, uKeyboard, uOSUtils, uArchiveFileSourceUtil,
   DCOSUtils, RegExpr, uDebug, uShowMsg, uConvEncoding, uColumns,
@@ -509,6 +512,7 @@ begin
     begin
       // Prepare window for search files
       LoadHistory;
+      LoadPlugins;
       ClearFilter;
       // SetWindowCaption(wcs_NewSearch);
       cmbFindPathStart.Text := FileView.CurrentPath;
@@ -556,6 +560,7 @@ begin
     begin
       // Prepare window for define search template
       LoadHistory;
+      LoadPlugins;
       Caption := rsFindDefineTemplate;
       DisableControlsForTemplate;
       btnSaveTemplate.Visible := True;
@@ -574,7 +579,7 @@ begin
       Result := (ShowModal = mrOk);
       if Result and (lbSearchTemplates.Count > 0) then
       begin
-        TemplateName := lbSearchTemplates.Items[lbSearchTemplates.Count - 1];
+        TemplateName := FLastTemplateName;
       end;
     end;
   finally
@@ -594,6 +599,7 @@ begin
     begin
       // Prepare window for define search template
       LoadHistory;
+      LoadPlugins;
       Caption := rsFindDefineTemplate;
       DisableControlsForTemplate;
       btnUseTemplate.Visible := True;
@@ -641,7 +647,6 @@ begin
   if not gShowMenuBarInFindFiles then FreeAndNil(mmMainMenu);
   Height := pnlFindFile.Height + 22;
   DsxPlugins := TDSXModuleList.Create;
-  DsxPlugins.Assign(gDSXPlugins);
   FoundedStringCopy := TStringListTemp.Create;
   FoundedStringCopy.OwnsObjects := True;
   FFreeOnClose := False;
@@ -662,6 +667,8 @@ begin
   cmbFileSizeUnit.Items.Add(rsSizeUnitMBytes);
   cmbFileSizeUnit.Items.Add(rsSizeUnitGBytes);
   cmbFileSizeUnit.Items.Add(rsSizeUnitTBytes);
+
+  cbOfficeXML.Hint := StripHotkey(cbOfficeXML.Caption) + ' ' + OFFICE_FILTER;
 
   // fill search depth combobox
   cmbSearchDepth.Items.Add(rsFindDepthAll);
@@ -697,6 +704,7 @@ begin
 
   cmbNotOlderThanUnit.ItemIndex := 3; // Days
   cmbFileSizeUnit.ItemIndex := 1; // Kilobytes
+  cbPartialNameSearch.Checked := gPartialNameSearch;
   FontOptionsToFont(gFonts[dcfSearchResults], lsFoundedFiles.Font);
 
   InitPropStorage(Self);
@@ -800,9 +808,10 @@ begin
   EnableControl(cmbFindText, cbFindText.Checked);
   EnableControl(cmbEncoding, cbFindText.Checked);
   EnableControl(cbCaseSens, cbFindText.Checked);
-  EnableControl(cbReplaceText, cbFindText.Checked and not cbFindInArchive.Checked);
+  EnableControl(cbReplaceText, cbFindText.Checked and not (cbFindInArchive.Checked or chkHex.Checked or cbOfficeXML.Checked));
   EnableControl(cbNotContainingText, cbFindText.Checked);
   EnableControl(cbTextRegExp, cbFindText.Checked);
+  EnableControl(cbOfficeXML, cbFindText.Checked);
   lblEncoding.Enabled := cbFindText.Checked;
   cbReplaceText.Checked := False;
   cmbEncodingSelect(nil);
@@ -878,6 +887,7 @@ begin
   cbFindText.Checked := False;
   cbReplaceText.Checked := False;
   cbCaseSens.Checked := False;
+  cbOfficeXML.Checked := False;
   cbNotContainingText.Checked := False;
   cmbEncoding.ItemIndex := 0;
   cmbEncodingSelect(nil);
@@ -886,7 +896,8 @@ begin
   chkDuplicates.Checked:= False;
 
   // plugins
-  cmbPlugin.Text := '';
+  cbUsePlugin.Checked:= False;
+  frmContentPlugins.chkUsePlugins.Checked:= False;
 
   FUpdating := False;
 end;
@@ -996,6 +1007,16 @@ begin
   cbReplaceTextChange(cbReplaceText);
 end;
 
+procedure TfrmFindDlg.cbOfficeXMLChange(Sender: TObject);
+begin
+  if cbOfficeXML.Checked then
+  begin
+    chkHex.Checked:= False;
+    cbReplaceText.Checked:= False;
+  end;
+  cbReplaceText.Enabled:= not (chkHex.Checked or cbOfficeXML.Checked);
+end;
+
 { TfrmFindDlg.cbOpenedTabsChange }
 procedure TfrmFindDlg.cbOpenedTabsChange(Sender: TObject);
 begin
@@ -1085,6 +1106,7 @@ begin
     begin
       cbCaseSens.Tag := Integer(cbCaseSens.Checked);
     end;
+    cbOfficeXML.Checked:= False;
     cbReplaceText.Checked:= False;
   end
   else if not cbCaseSens.Enabled then
@@ -1092,7 +1114,7 @@ begin
     cbCaseSens.Checked := Boolean(cbCaseSens.Tag);
   end;
   cmbEncoding.Enabled:= not chkHex.Checked;
-  cbReplaceText.Enabled:= not chkHex.Checked;
+  cbReplaceText.Enabled:= not (chkHex.Checked or cbOfficeXML.Checked);
   cmbEncodingSelect(cmbEncoding);
 end;
 
@@ -1186,6 +1208,7 @@ begin
     NotContainingText := cbNotContainingText.Checked;
     TextRegExp := cbTextRegExp.Checked;
     TextEncoding := cmbEncoding.Text;
+    OfficeXML := cbOfficeXML.Checked;
     { Duplicates }
     Duplicates:= chkDuplicates.Checked;
     DuplicateName:= chkDuplicateName.Checked;
@@ -1193,7 +1216,11 @@ begin
     DuplicateHash:= chkDuplicateHash.Checked;
     DuplicateContent:= chkDuplicateContent.Checked;
     { Plugins }
-    SearchPlugin := cmbPlugin.Text;
+    if not cbUsePlugin.Checked then
+      SearchPlugin := EmptyStr
+    else begin
+      SearchPlugin := cmbPlugin.Text;
+    end;
     frmContentPlugins.Save(FindOptions);
   end;
 end;
@@ -1343,7 +1370,7 @@ begin
   cbOpenedTabs.Visible:= not AEnabled;
   cbSelectedFiles.Visible:= not AEnabled;
   cbFindInArchive.Enabled:= not AEnabled;
-  cbReplaceText.Enabled:= not AEnabled;
+  cbReplaceText.Enabled:= (not AEnabled) and (cbFindText.Checked);
   cmbFindPathStart.Enabled:= not AEnabled;
   btnChooseFolder.Enabled:= not AEnabled;
   chkDuplicates.Enabled:= not AEnabled;
@@ -2142,23 +2169,34 @@ begin
   end;
 end;
 
+procedure TfrmFindDlg.LoadPlugins;
+var
+  I: Integer;
+  AModule: TDsxModule;
+begin
+  cmbPlugin.Clear;
+  DSXPlugins.Assign(gDSXPlugins);
+  for I := 0 to DSXPlugins.Count - 1 do
+  begin
+    AModule:= DSXPlugins.GetDSXModule(I);
+    if Length(AModule.Descr) = 0 then
+      cmbPlugin.Items.Add(AModule.Name)
+    else
+      cmbPlugin.Items.Add(AModule.Name + ' (' + AModule.Descr + ')');
+  end;
+  cbUsePlugin.Enabled := (cmbPlugin.Items.Count > 0);
+  if (cbUsePlugin.Enabled) then cmbPlugin.ItemIndex := 0;
+end;
+
 { TfrmFindDlg.FormShow }
 procedure TfrmFindDlg.frmFindDlgShow(Sender: TObject);
-var
-  I: integer;
 begin
   pgcSearch.PageIndex := 0;
 
   if cmbFindFileMask.Visible then
     cmbFindFileMask.SelectAll;
 
-  cbPartialNameSearch.Checked := gPartialNameSearch;
   lsFoundedFiles.Canvas.Font := lsFoundedFiles.Font;
-
-  cmbPlugin.Clear;
-  for I := 0 to DSXPlugins.Count - 1 do
-    cmbPlugin.AddItem(DSXPlugins.GetDSXModule(i).Name + ' (' + DSXPlugins.GetDSXModule(I).Descr + ' )', nil);
-  if (cmbPlugin.Items.Count > 0) then cmbPlugin.ItemIndex := 0;
 
   if pgcSearch.ActivePage = tsStandard then
     if cmbFindFileMask.CanFocus then
@@ -2274,6 +2312,7 @@ begin
     cbNotContainingText.Checked := NotContainingText;
     cbTextRegExp.Checked := TextRegExp;
     cmbEncoding.Text := TextEncoding;
+    cbOfficeXML.Checked := OfficeXML;
 
     if cbFindInArchive.Enabled then
     begin
@@ -2284,7 +2323,13 @@ begin
       chkDuplicateHash.Checked := DuplicateHash;
       chkDuplicateContent.Checked := DuplicateContent;
       // plugins
-      cmbPlugin.Text := SearchPlugin;
+      if cbUsePlugin.Enabled then
+      begin
+        cmbPlugin.Tag := cmbPlugin.Items.IndexOf(SearchPlugin);
+        cbUsePlugin.Checked:= (cmbPlugin.Tag >= 0);
+        if cbUsePlugin.Checked then
+          cmbPlugin.ItemIndex := cmbPlugin.Tag;
+      end;
       frmContentPlugins.Load(Template);
     end;
 
