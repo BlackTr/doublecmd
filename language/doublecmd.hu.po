@@ -133,6 +133,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Kiadás"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1579,6 +1584,10 @@ msgstr "A szöveget &NEM tartalmazó fájlok keresése"
 msgid "N&ot older than:"
 msgstr "Nem régebbi mint:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "Megnyitott fülek"
@@ -2738,6 +2747,14 @@ msgstr "Kihagyási lista engedélyezése/kikapcsolása, hogy nem mutatja fájlne
 msgctxt "TFRMMAIN.ACTSYMLINK.CAPTION"
 msgid "Create Symbolic &Link..."
 msgstr "&Szimbolikus hivatkozás készítése.."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -6154,13 +6171,17 @@ msgstr "&Dátum és idő formátum:"
 msgid "File si&ze format:"
 msgstr "Fá&jlméret formátum:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr "&Gigabájt:"
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "&Fejléc/lábléc formátum:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
 msgid "&Kilobyte:"
@@ -8869,6 +8890,11 @@ msgstr "Double Commander"
 msgctxt "tfrmstartingsplash.lblbuild.caption"
 msgid "Build"
 msgstr "Kiadás"
+
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
 
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "tfrmstartingsplash.lblfreepascalver.caption"
@@ -13876,4 +13902,8 @@ msgstr "Cserék száma: %d"
 msgctxt "ulng.rsmsgfavoritetabsendofmenuulng.rsmsgfavoritetabssimpleseparator"
 msgid "No replacement took place."
 msgstr "Nem történt csere."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

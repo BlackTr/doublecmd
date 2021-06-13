@@ -234,7 +234,7 @@ uses
   DCClassesUtf8, uFileSystemFileSource, uFileSourceOperationOptions, DCDateTimeUtils,
   uDCUtils, uFileSourceUtil, uFileSourceOperationTypes, uShowForm, uAdministrator,
   uOSUtils, uLng, uMasks, Math, uClipboard, IntegerList, fMaskInputDlg, uSearchTemplate,
-  StrUtils, uTypes;
+  StrUtils, uTypes, uFileSystemDeleteOperation;
 
 {$R *.lfm}
 
@@ -848,11 +848,11 @@ begin
       TextOut(aRect.Left + 2, aRect.Top + 2, FVisibleItems[aRow]);
     end else begin
       case r.FState of
-      srsNotEq:       Font.Color := clRed;
-      srsCopyLeft:    Font.Color := clBlue;
-      srsCopyRight:   Font.Color := clGreen;
-      srsDeleteLeft:  Font.Color := clGreen;
-      srsDeleteRight: Font.Color := clBlue;
+      srsNotEq:       Font.Color := gSyncUnknownColor;
+      srsCopyLeft:    Font.Color := gSyncRightColor;
+      srsCopyRight:   Font.Color := gSyncLeftColor;
+      srsDeleteLeft:  Font.Color := gSyncLeftColor;
+      srsDeleteRight: Font.Color := gSyncRightColor;
       else Font.Color := clWindowText;
       end;
       if Assigned(r.FFileL) then
@@ -1706,6 +1706,10 @@ begin
   begin
     MessageDlg(rsMsgErrNotSupported, mtError, [mbOK], 0);
     Exit(False);
+  end;
+  if (FOperation is TFileSystemDeleteOperation) then
+  begin
+    TFileSystemDeleteOperation(FOperation).Recycle:= gUseTrash;
   end;
   FOperation.Elevate:= ElevateAction;
   FOperation.AddUserInterface(FFileSourceOperationMessageBoxesUI);

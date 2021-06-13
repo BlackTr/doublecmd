@@ -53,24 +53,35 @@
  */
 }
 
+{$CODEALIGN CONSTMIN=32}
+
+const
+  _BYTE_FLIP_MASK: array [0..7] of UInt32 = (66051, 67438087, 134810123, 202182159,
+                                             66051, 67438087, 134810123, 202182159);
+  _SHUF_00BA: array [0..7] of UInt32 = (50462976, 185207048, $FFFFFFFF, $FFFFFFFF,
+                                        50462976, 185207048, $FFFFFFFF, $FFFFFFFF);
+  _SHUF_DC00: array [0..7] of UInt32 = ($FFFFFFFF, $FFFFFFFF, 50462976, 185207048,
+                                        $FFFFFFFF, $FFFFFFFF, 50462976, 185207048);
+
 procedure sha256_compress_avx(CurrentHash: PLongWord; HashBuffer: PByte; BufferCount: UIntPtr); assembler; nostackframe;
 // UNIX    RDI, RSI, RDX
 // WIN64:  RCX, RDX, R8
 asm
+.balign 32
 {$IF DEFINED(WIN64)}
   movq   %rsi, 16(%rsp)
   movq   %rdi, 24(%rsp)
   subq   $168, %rsp
-  vmovaps %xmm6, (%rsp)
-  vmovaps %xmm7, 16(%rsp)
-  vmovaps %xmm8, 32(%rsp)
-  vmovaps %xmm9, 48(%rsp)
-  vmovaps %xmm10, 64(%rsp)
-  vmovaps %xmm11, 80(%rsp)
-  vmovaps %xmm12, 96(%rsp)
-  vmovaps %xmm13, 112(%rsp)
-  vmovaps %xmm14, 128(%rsp)
-  vmovaps %xmm15, 144(%rsp)
+  movdqa %xmm6, (%rsp)
+  movdqa %xmm7, 16(%rsp)
+  movdqa %xmm8, 32(%rsp)
+  movdqa %xmm9, 48(%rsp)
+  movdqa %xmm10, 64(%rsp)
+  movdqa %xmm11, 80(%rsp)
+  movdqa %xmm12, 96(%rsp)
+  movdqa %xmm13, 112(%rsp)
+  movdqa %xmm14, 128(%rsp)
+  movdqa %xmm15, 144(%rsp)
   movq   %rcx, %rdi
   movq   %rdx, %rsi
   movq   %r8,  %rdx
@@ -86,9 +97,9 @@ asm
   push   %r14
   push   %r15
   vzeroupper
-  vmovdqa .LPSHUFFLE_BYTE_FLIP_MASK(%rip),%ymm13
-  vmovdqa .L_SHUF_00BA(%rip),%ymm10
-  vmovdqa .L_SHUF_DC00(%rip),%ymm12
+  vmovdqa _BYTE_FLIP_MASK(%rip),%ymm13
+  vmovdqa _SHUF_00BA(%rip),%ymm10
+  vmovdqa _SHUF_DC00(%rip),%ymm12
   mov    %rsp,%rax
   sub    $0x220,%rsp
   and    $0xffffffffffffffc0,%rsp
@@ -96,6 +107,7 @@ asm
   shl    $0x6,%rdx
   lea    -0x40(%rdx,%rdi,1),%rdx
   mov    %rdx,0x200(%rsp)
+  cmp    %rdi,%rdx
   mov    (%rsi),%eax
   mov    0x4(%rsi),%ebx
   mov    0x8(%rsi),%ecx
@@ -105,6 +117,7 @@ asm
   mov    0x18(%rsi),%r10d
   mov    0x1c(%rsi),%r11d
   mov    %rsi,0x210(%rsp)
+  je     .LB1535
 
 .LB7b:
   lea    .LK256(%rip),%rbp
@@ -133,9 +146,8 @@ asm
   vmovdqa %ymm9,0x40(%rsp)
   vpaddd 0x60(%rbp),%ymm7,%ymm9
   vmovdqa %ymm9,0x60(%rsp)
-  // nopl   0x0(%rax,%rax,1)
-  .byte 0x0f,0x1f,0x44,0x00,0x00
 
+.balign 16
 .LB100:
   vpalignr $0x4,%ymm6,%ymm7,%ymm0
   vpaddd %ymm4,%ymm0,%ymm0
@@ -1117,8 +1129,8 @@ asm
   cmp    0x200(%rsp),%rdi
   ja     .LB15a5
   xor    %rsi,%rsi
-  xchg   %ax,%ax
 
+.balign 16
 .LB1170:
   mov    %edx,%edi
   add    0x10(%rsp,%rsi,1),%r11d
@@ -1373,9 +1385,9 @@ asm
   mov    0x14(%rsi),%r9d
   mov    0x18(%rsi),%r10d
   mov    0x1c(%rsi),%r11d
-  vmovdqa .LPSHUFFLE_BYTE_FLIP_MASK(%rip),%ymm13
-  vmovdqa .L_SHUF_00BA(%rip),%ymm10
-  vmovdqa .L_SHUF_DC00(%rip),%ymm12
+  vmovdqa _BYTE_FLIP_MASK(%rip),%ymm13
+  vmovdqa _SHUF_00BA(%rip),%ymm10
+  vmovdqa _SHUF_DC00(%rip),%ymm12
   mov    %rsi,0x210(%rsp)
   jmp    .LB1535
 
@@ -1408,16 +1420,16 @@ asm
 
 .LB163f:
 {$IF DEFINED(WIN64)}
-  vmovaps (%rsp),%xmm6
-  vmovaps 0x10(%rsp),%xmm7
-  vmovaps 0x20(%rsp),%xmm8
-  vmovaps 0x30(%rsp),%xmm9
-  vmovaps 0x40(%rsp),%xmm10
-  vmovaps 0x50(%rsp),%xmm11
-  vmovaps 0x60(%rsp),%xmm12
-  vmovaps 0x70(%rsp),%xmm13
-  vmovaps 0x80(%rsp),%xmm14
-  vmovaps 0x90(%rsp),%xmm15
+  movdqa  (%rsp),%xmm6
+  movdqa  0x10(%rsp),%xmm7
+  movdqa  0x20(%rsp),%xmm8
+  movdqa  0x30(%rsp),%xmm9
+  movdqa  0x40(%rsp),%xmm10
+  movdqa  0x50(%rsp),%xmm11
+  movdqa  0x60(%rsp),%xmm12
+  movdqa  0x70(%rsp),%xmm13
+  movdqa  0x80(%rsp),%xmm14
+  movdqa  0x90(%rsp),%xmm15
   addq    $168, %rsp
   movq    16(%rsp), %rsi
   movq    24(%rsp), %rdi
@@ -1458,17 +1470,5 @@ asm
   .long	0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208
   .long	0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
   .long	0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
-
-.LPSHUFFLE_BYTE_FLIP_MASK:
-  .long  66051, 67438087, 134810123, 202182159
-  .long  66051, 67438087, 134810123, 202182159
-
-.L_SHUF_00BA:
-  .long  50462976, 185207048, -1, -1
-  .long  50462976, 185207048, -1, -1
-
-.L_SHUF_DC00:
-  .long  -1, -1, 50462976, 185207048
-  .long  -1, -1, 50462976, 185207048
 end;
 

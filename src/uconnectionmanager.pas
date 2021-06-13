@@ -107,6 +107,7 @@ begin
   begin
     FileSourceRecord:= PFileSourceRecord(WfxConnectionList.Objects[Index]);
     New(Drive);
+    Drive^.DriveSize:= 0;
     Drive^.IsMounted:= True;
     Drive^.DriveType:= dtVirtual;
     Drive^.Path:= FileSourceRecord.Path;
@@ -198,7 +199,6 @@ begin
       if gLogWindow = False then
       begin
         ShowLogWindow(PtrInt(False));
-        Application.QueueAsyncCall(ShowLogWindow, PtrInt(False));
       end;
     end;
     UpdateDiskCount;

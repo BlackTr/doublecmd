@@ -129,6 +129,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Kompilacja"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr "Zatwierdzenie"
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1544,6 +1549,10 @@ msgstr "Znajdź pliki &Nie zawierające tekstu"
 msgid "N&ot older than:"
 msgstr "Nie &starsze niż:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
 msgstr "Otwarte zakładki"
@@ -1770,6 +1779,7 @@ msgid "C&ase sensitive"
 msgstr "&Uwzględniaj wielkość liter"
 
 #: tfrmfindview.cbregexp.caption
+msgctxt "tfrmfindview.cbregexp.caption"
 msgid "&Regular expressions"
 msgstr "Wyrażenia &regularne"
 
@@ -2675,6 +2685,14 @@ msgstr "Włącz/Wyłącz plik listy ignorowanych, aby nie pokazywać nazw plikó
 #: tfrmmain.actsymlink.caption
 msgid "Create Symbolic &Link..."
 msgstr "Utwórz link &symboliczny..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 #: tfrmmain.actsyncdirs.caption
 msgid "Syn&chronize dirs..."
@@ -5992,13 +6010,17 @@ msgstr "Format &daty i godziny:"
 msgid "File si&ze format:"
 msgstr "Format &rozmiaru pliku:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 msgid "&Gigabyte:"
 msgstr "&Gigabajtów:"
 
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "Format &nagłówka/stopki:"
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblkilobyte.caption
 msgid "&Kilobyte:"
@@ -8586,6 +8608,11 @@ msgstr "Double Commander"
 msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr "Kompilacja"
+
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr "Zatwierdzenie"
 
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
@@ -13312,7 +13339,7 @@ msgstr "Lister"
 
 #: ulng.rsunhandledexceptionmessage
 msgid "Please report this error to the bug tracker with a description of what you were doing and the following file:%sPress %s to continue or %s to abort the program."
-msgstr "Proszę zgłosić ten błąd do systemu śledzenia błędów wraz z opisem wcześniejszych działań i następującym plikiem:%sWciśnij %s aby kontynuować lub %s aby zakończyć program."
+msgstr "Zgłoś ten błąd do narzędzia śledzenia błędów wraz z opisem wcześniejszych działań i następującym plikiem:%sNaciśnij %s, aby kontynuować lub %s, aby przerwać działanie programu."
 
 #: ulng.rsvarbothpanelactivetoinactive
 msgid "Both panels, from active to inactive"
@@ -13528,4 +13555,8 @@ msgstr "Liczba zamian: %d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Nie było zamian."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

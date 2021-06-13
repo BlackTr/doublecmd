@@ -102,6 +102,7 @@ type
     procedure ShowError(sMessage: String);
     procedure LogMessage(sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
 
+    function DeleteFile(SourceFile: TFile): Boolean;
     function CheckFileHash(const FileName, Hash: String; Size: Int64): Boolean;
     function CompareFiles(const FileName1, FileName2: String; Size: Int64): Boolean;
     function CopyFile(SourceFile: TFile; TargetFileName: String; Mode: TFileSystemOperationHelperCopyMode): Boolean;
@@ -495,7 +496,7 @@ var
   Hash: String;
   Options: UInt32;
   Context: THashContext;
-  DeleteFile: Boolean = False;
+  bDeleteFile: Boolean = False;
 
   procedure OpenSourceFile;
   var
@@ -675,9 +676,7 @@ begin
     begin
       Result:= CompareFiles(SourceFile.FullPath, TargetFileName, SourceFile.Size);
     end;
-    if Result and (FCopyAttributesOptions <> []) then
-    begin
-      FCopyAttributesOptions := FCopyAttributesOptions * [caoCopyXattributes, caoCopyPermissions];
+    if Result then begin
       CopyProperties(SourceFile, TargetFileName);
     end;
     Exit;
@@ -751,7 +750,7 @@ begin
                       end
                     else
                       begin
-                        DeleteFile := FSkipWriteError and not (Mode in [fsohcmAppend, fsohcmResume]);
+                        bDeleteFile := FSkipWriteError and not (Mode in [fsohcmAppend, fsohcmResume]);
                         if FSkipWriteError then Exit;
                         case AskQuestion(rsMsgErrEWrite + ' ' + TargetFileName + ':',
                                          E.Message,
@@ -765,7 +764,7 @@ begin
                             Exit;
                           fsourSkipAll:
                             begin
-                              DeleteFile := not (Mode in [fsohcmAppend, fsohcmResume]);
+                              bDeleteFile := not (Mode in [fsohcmAppend, fsohcmResume]);
                               FSkipWriteError := True;
                               Exit;
                             end;
@@ -778,7 +777,7 @@ begin
           except
             on E: EReadError do
               begin
-                DeleteFile := FSkipReadError and not (Mode in [fsohcmAppend, fsohcmResume]);
+                bDeleteFile := FSkipReadError and not (Mode in [fsohcmAppend, fsohcmResume]);
                 if FSkipReadError then Exit;
                 case AskQuestion(rsMsgErrERead + ' ' + SourceFile.FullPath + ':',
                                  E.Message,
@@ -792,7 +791,7 @@ begin
                     Exit;
                   fsourSkipAll:
                     begin
-                      DeleteFile := not (Mode in [fsohcmAppend, fsohcmResume]);
+                      bDeleteFile := not (Mode in [fsohcmAppend, fsohcmResume]);
                       FSkipReadError := True;
                       Exit;
                     end;
@@ -825,7 +824,7 @@ begin
       on EFileSourceOperationAborting do
       begin
         // Always delete file when user aborted operation.
-        DeleteFile := True;
+        bDeleteFile := True;
         raise;
       end;
     end;
@@ -840,7 +839,7 @@ begin
       begin
         // There was some error, because not all of the file has been copied.
         // Ask if delete the not completed target file.
-        if DeleteFile or
+        if bDeleteFile or
            (AskQuestion('', rsMsgDeletePartiallyCopied,
                         [fsourYes, fsourNo], fsourYes, fsourNo) = fsourYes) then
         begin
@@ -861,23 +860,37 @@ procedure TFileSystemOperationHelper.CopyProperties(SourceFile: TFile;
 var
   Msg: String = '';
   ACopyTime: Boolean;
+  CreationTime, LastAccessTime: TFileTime;
   CopyAttrResult: TCopyAttributesOptions = [];
   ACopyAttributesOptions: TCopyAttributesOptions;
 begin
   if FCopyAttributesOptions <> [] then
   begin
     ACopyAttributesOptions := FCopyAttributesOptions;
-    ACopyTime := (FMode = fsohmMove) and (caoCopyTime in ACopyAttributesOptions);
-    if ACopyTime then ACopyAttributesOptions -= [caoCopyTime];
+    if SourceFile.IsDirectory or SourceFile.IsLink then ACopyAttributesOptions += CopyAttributesOptionEx;
+    ACopyTime := (FMode = fsohmMove) and ([caoCopyTime, caoCopyTimeEx] * ACopyAttributesOptions <> []);
+    if ACopyTime then ACopyAttributesOptions -= [caoCopyTime, caoCopyTimeEx];
     if ACopyAttributesOptions <> [] then begin
       CopyAttrResult := FileCopyAttrUAC(SourceFile.FullPath, TargetFileName, ACopyAttributesOptions);
     end;
     if ACopyTime then
     try
+      if not (caoCopyTimeEx in CopyAttributesOptionEx) then
+      begin
+        if fpCreationTime in SourceFile.AssignedProperties then
+          CreationTime:= DateTimeToFileTime(SourceFile.CreationTime)
+        else begin
+          CreationTime:= 0;
+        end;
+        LastAccessTime:= DateTimeToFileTime(SourceFile.LastAccessTime);
+      end
+      else begin
+        CreationTime:= 0;
+        LastAccessTime:= 0;
+      end;
       // Copy time from properties because move operation change time of original folder
       if not FileSetTimeUAC(TargetFileName, DateTimeToFileTime(SourceFile.ModificationTime),
-                    {$IF DEFINED(MSWINDOWS)}DateTimeToFileTime(SourceFile.CreationTime){$ELSE}0{$ENDIF},
-                                            DateTimeToFileTime(SourceFile.LastAccessTime)) then
+                                            CreationTime, LastAccessTime) then
         CopyAttrResult += [caoCopyTime];
     except
       on E: EDateOutOfRange do CopyAttrResult += [caoCopyTime];
@@ -926,7 +939,6 @@ function TFileSystemOperationHelper.MoveFile(SourceFile: TFile; TargetFileName: 
 var
   Message: String;
   RetryRename: Boolean;
-  RetryDelete: Boolean;
 begin
   if not (Mode in [fsohcmAppend, fsohcmResume]) then
   begin
@@ -952,21 +964,7 @@ begin
   if FVerify then FStatistics.TotalBytes += SourceFile.Size;
   if CopyFile(SourceFile, TargetFileName, Mode) then
   begin
-    repeat
-      RetryDelete := True;
-      if FileIsReadOnly(SourceFile.Attributes) then
-        FileSetReadOnlyUAC(SourceFile.FullPath, False);
-      Result := DeleteFileUAC(SourceFile.FullPath);
-      if (not Result) and (FDeleteFileOption = fsourInvalid) then
-      begin
-        Message := Format(rsMsgNotDelete, [WrapTextSimple(SourceFile.FullPath, 100)]) + LineEnding + LineEnding + mbSysErrorMessage;
-        case AskQuestion('', Message, [fsourSkip, fsourRetry, fsourAbort, fsourSkipAll], fsourSkip, fsourAbort) of
-          fsourAbort: AbortOperation;
-          fsourRetry: RetryDelete := False;
-          fsourSkipAll: FDeleteFileOption := fsourSkipAll;
-        end;
-      end;
-    until RetryDelete;
+    Result:= DeleteFile(SourceFile);
   end
   else
     Result := False;
@@ -1028,7 +1026,7 @@ begin
     end;
 
     // Check MAX_PATH
-    if UTF8Length(TargetName) > MAX_PATH - 1 then
+    if gLongNameAlert and (UTF8Length(TargetName) > MAX_PATH - 1) then
     begin
       if FMaxPathOption <> fsourInvalid then
         AskResult := FMaxPathOption
@@ -1220,6 +1218,7 @@ begin
             if CreateSymbolicLinkUAC(LinkTarget, AbsoluteTargetFileName) then
             begin
               CopyProperties(aFile, AbsoluteTargetFileName);
+              if (FMode = fsohmMove) then Result:= DeleteFile(aFile);
             end
             else
             begin
@@ -1248,11 +1247,12 @@ end;
 
 function TFileSystemOperationHelper.ProcessFile(aNode: TFileTreeNode; AbsoluteTargetFileName: String): Boolean;
 var
-  OldDoneBytes: Int64; // for if there was an error
+  OldDoneBytes, OldTotalBytes: Int64; // for if there was an error
 begin
   // If there will be an error the DoneBytes value
   // will be inconsistent, so remember it here.
   OldDoneBytes := FStatistics.DoneBytes;
+  OldTotalBytes := FStatistics.TotalBytes;
 
   // Skip descript.ion, it will be processed below
   if gProcessComments and (FStatistics.TotalFiles > 1) and mbCompareFileNames(aNode.TheFile.Name, DESCRIPT_ION) then
@@ -1323,7 +1323,13 @@ begin
   with FStatistics do
   begin
     DoneFiles := DoneFiles + 1;
-    DoneBytes := OldDoneBytes + aNode.TheFile.Size;
+    if not Result then
+    begin
+      DoneBytes := OldDoneBytes + aNode.TheFile.Size;
+      // Increase DoneBytes twice when copy file or move file between different partitions
+      if FVerify and ((FMode = fsohmCopy) or (OldTotalBytes <> TotalBytes)) then
+        DoneBytes += aNode.TheFile.Size;
+    end;
     UpdateStatistics(FStatistics);
   end;
 end;
@@ -1743,6 +1749,28 @@ begin
   begin
     logWrite(FOperationThread, sMessage, logMsgType);
   end;
+end;
+
+function TFileSystemOperationHelper.DeleteFile(SourceFile: TFile): Boolean;
+var
+  Message: String;
+  RetryDelete: Boolean;
+begin
+  repeat
+    RetryDelete := True;
+    if FileIsReadOnly(SourceFile.Attributes) then
+      FileSetReadOnlyUAC(SourceFile.FullPath, False);
+    Result := DeleteFileUAC(SourceFile.FullPath);
+    if (not Result) and (FDeleteFileOption = fsourInvalid) then
+    begin
+      Message := Format(rsMsgNotDelete, [WrapTextSimple(SourceFile.FullPath, 100)]) + LineEnding + LineEnding + mbSysErrorMessage;
+      case AskQuestion('', Message, [fsourSkip, fsourRetry, fsourAbort, fsourSkipAll], fsourSkip, fsourAbort) of
+        fsourAbort: AbortOperation;
+        fsourRetry: RetryDelete := False;
+        fsourSkipAll: FDeleteFileOption := fsourSkipAll;
+      end;
+    end;
+  until RetryDelete;
 end;
 
 function TFileSystemOperationHelper.CheckFileHash(const FileName, Hash: String;

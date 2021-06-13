@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Path edit class with auto complete feature
 
-   Copyright (C) 2012-2014  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2012-2021 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -16,9 +16,7 @@
    General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   in a file called COPYING along with this program; if not, write to
-   the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
-   02139, USA.
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit KASPathEdit;
@@ -37,10 +35,12 @@ type
 
   TKASPathEdit = class(TEdit)
   private
-    FPanel: THintWindow;
-    FListBox: TListBox;
     FKeyDown: Word;
+    FBasePath: String;
+    FListBox: TListBox;
+    FPanel: THintWindow;
     FAutoComplete: Boolean;
+    FStringList: TStringList;
     FObjectTypes: TObjectTypes;
     FFileSortType: TFileSortType;
   private
@@ -57,10 +57,12 @@ type
     procedure CreateWnd; override;
 {$ENDIF}
     procedure DoExit; override;
+    procedure VisibleChanged; override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure KeyUpAfterInterface(var Key: Word; Shift: TShiftState); override;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   published
     property ObjectTypes: TObjectTypes read FObjectTypes write SetObjectTypes;
     property FileSortType: TFileSortType read FFileSortType write FFileSortType;
@@ -71,9 +73,12 @@ procedure Register;
 implementation
 
 uses
-  LazUTF8, Math
+  LazUTF8, Math, LazFileUtils, Masks
   {$IF DEFINED(LCLWIN32)}
   , ComObj
+  {$ENDIF}
+  {$IF DEFINED(MSWINDOWS)}
+  , Windows
   {$ENDIF}
   ;
 
@@ -107,43 +112,128 @@ begin
   RegisterComponents('KASComponents', [TKASPathEdit]);
 end;
 
+function FilesSortAlphabet(List: TStringList; Index1, Index2: Integer): Integer;
+begin
+  Result:= CompareFilenames(List[Index1], List[Index2]);
+end;
+
+function FilesSortFoldersFirst(List: TStringList; Index1, Index2: Integer): Integer;
+var
+  Attr1, Attr2: IntPtr;
+begin
+  Attr1:= IntPtr(List.Objects[Index1]);
+  Attr2:= IntPtr(List.Objects[Index2]);
+  if (Attr1 and faDirectory <> 0) and (Attr2 and faDirectory <> 0) then
+    Result:= CompareFilenames(List[Index1], List[Index2])
+  else begin
+    if (Attr1 and faDirectory <> 0) then
+      Result:= -1
+    else begin
+      Result:=  1;
+    end;
+  end;
+end;
+
+procedure GetFilesInDir(const ABaseDir: String; AMask: String; AObjectTypes: TObjectTypes;
+                        AResult: TStringList; AFileSortType: TFileSortType);
+var
+  ExcludeAttr: Integer;
+  SearchRec: TSearchRec;
+{$IF DEFINED(MSWINDOWS)}
+  ErrMode : LongWord;
+{$ENDIF}
+begin
+{$IF DEFINED(MSWINDOWS)}
+  ErrMode:= SetErrorMode(SEM_FAILCRITICALERRORS or SEM_NOALIGNMENTFAULTEXCEPT or SEM_NOGPFAULTERRORBOX or SEM_NOOPENFILEERRORBOX);
+  try
+{$ENDIF}
+  if FindFirst(ABaseDir + AMask, faAnyFile, SearchRec) = 0 then
+  begin
+    ExcludeAttr:= 0;
+
+    if not (otHidden in AObjectTypes) then
+      ExcludeAttr:= ExcludeAttr or faHidden;
+    if not (otFolders in AObjectTypes) then
+      ExcludeAttr:= ExcludeAttr or faDirectory;
+
+    repeat
+      if (SearchRec.Attr and ExcludeAttr <> 0) then
+        Continue;
+      if (SearchRec.Name = '.') or (SearchRec.Name = '..')then
+        Continue;
+      if (SearchRec.Attr and faDirectory = 0) and not (otNonFolders in AObjectTypes) then
+        Continue;
+
+      AResult.AddObject(SearchRec.Name, TObject(IntPtr(SearchRec.Attr)));
+    until FindNext(SearchRec) <> 0;
+
+    if AResult.Count > 0 then
+    begin
+      case AFileSortType of
+        fstAlphabet:     AResult.CustomSort(@FilesSortAlphabet);
+        fstFoldersFirst: AResult.CustomSort(@FilesSortFoldersFirst);
+      end;
+    end;
+  end;
+  SysUtils.FindClose(SearchRec);
+{$IF DEFINED(MSWINDOWS)}
+  finally
+    SetErrorMode(ErrMode);
+  end;
+{$ENDIF}
+end;
+
 { TKASPathEdit }
 
 procedure TKASPathEdit.AutoComplete(const Path: String);
 var
-  I: LongWord;
+  I: Integer;
+  AMask: TMask;
   BasePath: String;
 begin
   FListBox.Clear;
-  if Pos(PathDelim, Path) > 0 then
-  begin
+  if Pos(PathDelim, Path) = 0 then
+    HideListBox
+  else begin
     BasePath:= ExtractFilePath(Path);
-    TCustomShellTreeView.GetFilesInDir(
-                                       BasePath,
-                                       ExtractFileName(Path) + '*',
-                                       FObjectTypes,
-                                       FListBox.Items,
-                                       FFileSortType
-                                       );
-    if (FListBox.Items.Count > 0) then
+    if CompareFilenames(FBasePath, BasePath) <> 0 then
     begin
-      ShowListBox;
-      // Make absolute file name
-      for I:= 0 to FListBox.Items.Count - 1 do
-      FListBox.Items[I]:= BasePath + FListBox.Items[I];
-      // Calculate ListBox height
-      with FListBox.ItemRect(0) do
-      I:= Bottom - Top; // TListBox.ItemHeight sometimes don't work under GTK2
-      with FListBox do
+      FStringList.Clear;
+      FBasePath:= BasePath;
+      GetFilesInDir(BasePath, AllFilesMask, FObjectTypes, FStringList, FFileSortType);
+    end;
+    if (FStringList.Count > 0) then
+    begin
+      FListBox.Items.BeginUpdate;
+      try
+        // Check mask and make absolute file name
+        AMask:= TMask.Create(ExtractFileName(Path) + '*',
+                             FileNameCaseSensitive);
+        for I:= 0 to FStringList.Count - 1 do
+        begin
+          if AMask.Matches(FStringList[I]) then
+            FListBox.Items.Add(BasePath + FStringList[I]);
+        end;
+        AMask.Free;
+      finally
+        FListBox.Items.EndUpdate;
+      end;
+      if FListBox.Items.Count > 0 then
       begin
-        if Items.Count = 1 then
-          FPanel.ClientHeight:= Self.Height
-        else
-          FPanel.ClientHeight:= I * IfThen(Items.Count > 10, 11, Items.Count + 1);
+        ShowListBox;
+        // Calculate ListBox height
+        with FListBox.ItemRect(0) do
+        I:= Bottom - Top; // TListBox.ItemHeight sometimes don't work under GTK2
+        with FListBox do
+        begin
+          if Items.Count = 1 then
+            FPanel.ClientHeight:= Self.Height
+          else
+            FPanel.ClientHeight:= I * IfThen(Items.Count > 10, 11, Items.Count + 1);
+        end;
       end;
     end;
   end;
-  if (FListBox.Items.Count = 0) then HideListBox;
 end;
 
 procedure TKASPathEdit.SetObjectTypes(const AValue: TObjectTypes);
@@ -228,6 +318,12 @@ begin
   inherited DoExit;
 end;
 
+procedure TKASPathEdit.VisibleChanged;
+begin
+  FBasePath:= EmptyStr;
+  inherited VisibleChanged;
+end;
+
 procedure TKASPathEdit.KeyDown(var Key: Word; Shift: TShiftState);
 begin
   FKeyDown:= Key;
@@ -302,6 +398,8 @@ constructor TKASPathEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
+  FStringList:= TStringList.Create;
+
   FListBox:= TListBox.Create(Self);
   FListBox.TabStop:= False;
   FListBox.Align:= alClient;
@@ -313,6 +411,12 @@ begin
   FAutoComplete:= True;
   FFileSortType:= fstFoldersFirst;
   FObjectTypes:= [otNonFolders, otFolders];
+end;
+
+destructor TKASPathEdit.Destroy;
+begin
+  inherited Destroy;
+  FStringList.Free;
 end;
 
 end.

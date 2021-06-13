@@ -204,8 +204,9 @@ const
   // 9   - few new options regarding tabs
   // 10  - changed Icons/CustomDriveIcons to Icons/CustomIcons
   // 11  - During the last 2-3 years the default font for search result was set in file, not loaded and different visually than was was stored.
+  // 12  - Split Behaviours/HeaderFooterSizeFormat to Behaviours/HeaderSizeFormat and Behaviours/FooterSizeFormat
   //       Loading a config prior of version 11 should ignore that setting and keep default.
-  ConfigVersion = 11;
+  ConfigVersion = 12;
 
   // Configuration related filenames
   sMULTIARC_FILENAME = 'multiarc.ini';
@@ -271,6 +272,8 @@ var
   gProgInMenuBar,
   gPanelOfOp,
   gHorizontalFilePanels,
+  gUpperCaseDriveLetter,
+  gShowColonAfterDrive,
   gShortFormatDriveInfo: Boolean;
   gDrivesListButtonOptions: TDrivesListButtonOptions;
   gSeparateTree: Boolean;
@@ -341,6 +344,8 @@ var
   glsReplaceHistory : TStringListEx;
   glsReplacePathHistory : TStringListEx;
   glsCreateDirectoriesHistory : TStringListEx;
+  glsRenameNameMaskHistory : TStringListEx;
+  glsRenameExtMaskHistory : TStringListEx;
   glsSearchDirectories: TStringList;
   glsSearchExcludeFiles: TStringList;
   glsSearchExcludeDirectories: TStringList;
@@ -354,10 +359,12 @@ var
   gAlwaysShowTrayIcon: Boolean;
   gMinimizeToTray: Boolean;
   gFileSizeFormat: TFileSizeFormat;
-  gHeaderFooterSizeFormat: TFileSizeFormat;
+  gHeaderSizeFormat: TFileSizeFormat;
+  gFooterSizeFormat: TFileSizeFormat;
   gOperationSizeFormat: TFileSizeFormat;
   gFileSizeDigits: Integer;
-  gHeaderFooterDigits: Integer;
+  gHeaderDigits: Integer;
+  gFooterDigits: Integer;
   gOperationSizeDigits: Integer;
   gSizeDisplayUnits: array[LOW(TFileSizeFormat) .. HIGH(TFileSizeFormat)] of string;
   gDateTimeFormat : String;
@@ -438,6 +445,10 @@ var
   gLogErrorColor,
   gLogSuccessColor: TColor;
 
+  gSyncLeftColor,
+  gSyncRightColor,
+  gSyncUnknownColor: TColor;
+
   gShowIcons: TShowIconsMode;
   gShowIconsNew: TShowIconsMode;
   gIconOverlays : Boolean;
@@ -461,6 +472,7 @@ var
   gKeyTyping: array[TKeyTypingModifier] of TKeyTypingAction;
 
   { File operations page }
+  gLongNameAlert: Boolean;
   gCopyBlockSize : Integer;
   gHashBlockSize : Integer;
   gUseMmapInSearch : Boolean;
@@ -886,6 +898,8 @@ begin
       LoadHistory('ReplaceText', glsReplaceHistory);
       LoadHistory('ReplaceTextPath', glsReplacePathHistory);
       LoadHistory('CreateDirectories', glsCreateDirectoriesHistory);
+      LoadHistory('RenameNameMask', glsRenameNameMaskHistory);
+      LoadHistory('RenameExtMask', glsRenameExtMaskHistory);
       LoadHistory('SearchDirectories', glsSearchDirectories);
       LoadHistory('SearchExcludeFiles', glsSearchExcludeFiles);
       LoadHistory('SearchExcludeDirectories', glsSearchExcludeDirectories);
@@ -933,6 +947,8 @@ begin
       SaveHistory('ReplaceText', glsReplaceHistory);
       SaveHistory('ReplaceTextPath', glsReplacePathHistory);
       SaveHistory('CreateDirectories', glsCreateDirectoriesHistory);
+      SaveHistory('RenameNameMask', glsRenameNameMaskHistory);
+      SaveHistory('RenameExtMask', glsRenameExtMaskHistory);
       SaveHistory('SearchDirectories', glsSearchDirectories);
       SaveHistory('SearchExcludeFiles', glsSearchExcludeFiles);
       SaveHistory('SearchExcludeDirectories', glsSearchExcludeDirectories);
@@ -1452,6 +1468,8 @@ begin
   glsReplaceHistory := TStringListEx.Create;
   glsReplacePathHistory := TStringListEx.Create;
   glsCreateDirectoriesHistory := TStringListEx.Create;
+  glsRenameNameMaskHistory := TStringListEx.Create;
+  glsRenameExtMaskHistory := TStringListEx.Create;
   glsIgnoreList := TStringListEx.Create;
   glsSearchDirectories := TStringList.Create;
   glsSearchExcludeFiles:= TStringList.Create;
@@ -1482,6 +1500,8 @@ begin
   FreeThenNil(glsReplaceHistory);
   FreeThenNil(glsReplacePathHistory);
   FreeAndNil(glsCreateDirectoriesHistory);
+  FreeAndNil(glsRenameNameMaskHistory);
+  FreeAndNil(glsRenameExtMaskHistory);
   FreeThenNil(glsIgnoreList);
   FreeThenNil(glsSearchDirectories);
   FreeThenNil(glsSearchExcludeFiles);
@@ -1550,14 +1570,16 @@ begin
   gSortCaseSensitivity := cstNotSensitive;
   gSortNatural := False;
   gSortSpecial := False;
-  gSortFolderMode := sfmSortNameShowFirst;
+  gSortFolderMode := sfmSortLikeFileShowFirst;
   gNewFilesPosition := nfpSortedPosition;
   gUpdatedFilesPosition := ufpNoChange;
   gFileSizeFormat := fsfFloat;
-  gHeaderFooterSizeFormat := fsfFloat;
+  gHeaderSizeFormat := fsfFloat;
+  gFooterSizeFormat := fsfFloat;
   gOperationSizeFormat := fsfFloat;
   gFileSizeDigits := 1;
-  gHeaderFooterDigits := 1;
+  gHeaderDigits := 1;
+  gFooterDigits := 1;
   gOperationSizeDigits := 1;
   //NOTES: We're intentionnaly not setting our default memory immediately because language file has not been loaded yet.
   //       We'll set them *after* after language has been loaded since we'll know the correct default to use.
@@ -1707,6 +1729,10 @@ begin
   gLogErrorColor:= clRed;
   gLogSuccessColor:= clGreen;
 
+  gSyncLeftColor:= clGreen;
+  gSyncRightColor:= clBlue;
+  gSyncUnknownColor:= clRed;
+
   { Layout page }
   gMainMenu := True;
   gButtonBar := True;
@@ -1746,6 +1772,8 @@ begin
   gPanelOfOp := True;
   gShortFormatDriveInfo := True;
   gHorizontalFilePanels := False;
+  gUpperCaseDriveLetter := False;
+  gShowColonAfterDrive := False;
   gDrivesListButtonOptions := [dlbShowLabel, dlbShowFileSystem, dlbShowFreeSpace];
   gSeparateTree := False;
 
@@ -1755,6 +1783,7 @@ begin
   gKeyTyping[ktmCtrlAlt] := ktaQuickFilter;
 
   { File operations page }
+  gLongNameAlert := True;
   gCopyBlockSize := 524288;
   gHashBlockSize := 8388608;
   gUseMmapInSearch := False;
@@ -2523,10 +2552,21 @@ begin
       begin
         gFileSizeFormat := TFileSizeFormat(GetValue(Node, 'FileSizeFormat', Ord(gFileSizeFormat)));
       end;
-      gHeaderFooterSizeFormat := TFileSizeFormat(GetValue(Node,'HeaderFooterSizeFormat', ord(gHeaderFooterSizeFormat)));
+      if LoadedConfigVersion < 12 then
+      begin
+        gHeaderDigits := GetValue(Node, 'HeaderFooterDigits', gHeaderDigits);
+        gFooterDigits := GetValue(Node, 'HeaderFooterDigits', gFooterDigits);
+        gHeaderSizeFormat := TFileSizeFormat(GetValue(Node,'HeaderFooterSizeFormat', ord(gHeaderSizeFormat)));
+        gFooterSizeFormat := TFileSizeFormat(GetValue(Node,'HeaderFooterSizeFormat', ord(gFooterSizeFormat)));
+      end
+      else begin
+        gHeaderDigits := GetValue(Node, 'HeaderDigits', gHeaderDigits);
+        gFooterDigits := GetValue(Node, 'FooterDigits', gFooterDigits);
+        gHeaderSizeFormat := TFileSizeFormat(GetValue(Node,'HeaderSizeFormat', ord(gHeaderSizeFormat)));
+        gFooterSizeFormat := TFileSizeFormat(GetValue(Node,'FooterSizeFormat', ord(gFooterSizeFormat)));
+      end;
       gOperationSizeFormat := TFileSizeFormat(GetValue(Node, 'OperationSizeFormat', Ord(gOperationSizeFormat)));
       gFileSizeDigits := GetValue(Node, 'FileSizeDigits', gFileSizeDigits);
-      gHeaderFooterDigits := GetValue(Node, 'HeaderFooterDigits', gHeaderFooterDigits);
       gOperationSizeDigits := GetValue(Node, 'OperationSizeDigits', gOperationSizeDigits);
       gSizeDisplayUnits[fsfPersonalizedByte] := Trim(GetValue(Node, 'PersonalizedByte', gSizeDisplayUnits[fsfPersonalizedByte]));
       if gSizeDisplayUnits[fsfPersonalizedByte]<>'' then gSizeDisplayUnits[fsfPersonalizedByte] := ' ' + gSizeDisplayUnits[fsfPersonalizedByte];
@@ -2694,6 +2734,8 @@ begin
       gPanelOfOp := GetValue(Node, 'PanelOfOperationsInBackground', gPanelOfOp);
       gHorizontalFilePanels := GetValue(Node, 'HorizontalFilePanels', gHorizontalFilePanels);
       gShortFormatDriveInfo := GetValue(Node, 'ShortFormatDriveInfo', gShortFormatDriveInfo);
+      gUpperCaseDriveLetter := GetValue(Node, 'UppercaseDriveLetter', gUpperCaseDriveLetter);
+      gShowColonAfterDrive := GetValue(Node, 'ShowColonAfterDrive', gShowColonAfterDrive);
     end;
 
     { Files views }
@@ -2751,6 +2793,7 @@ begin
     if Assigned(Node) then
     begin
       gCopyBlockSize := GetValue(Node, 'BufferSize', gCopyBlockSize);
+      gLongNameAlert := GetValue(Node, 'LongNameAlert', gLongNameAlert);
       gHashBlockSize := GetValue(Node, 'HashBufferSize', gHashBlockSize);
       gUseMmapInSearch := GetValue(Node, 'UseMmapInSearch', gUseMmapInSearch);
       gPartialNameSearch := GetValue(Node, 'PartialNameSearch', gPartialNameSearch);
@@ -3052,6 +3095,13 @@ begin
       gSyncDirsShowFilterDuplicates := GetValue(Node, 'FilterDuplicates', gSyncDirsShowFilterDuplicates);
       gSyncDirsShowFilterSingles := GetValue(Node, 'FilterSingles', gSyncDirsShowFilterSingles);
       gSyncDirsFileMask := GetValue(Node, 'FileMask', gSyncDirsFileMask);
+      SubNode := FindNode(Node, 'Colors');
+      if Assigned(SubNode) then
+      begin
+        gSyncLeftColor := GetValue(SubNode, 'Left', gSyncLeftColor);
+        gSyncRightColor := GetValue(SubNode, 'Right', gSyncRightColor);
+        gSyncUnknownColor := GetValue(SubNode, 'Unknown', gSyncUnknownColor);
+      end;
     end;
 
     { Internal Associations}
@@ -3238,9 +3288,11 @@ begin
     SetValue(Node, 'LynxLike', gLynxLike);
     SetValue(Node, 'FileSizeFormat', Ord(gFileSizeFormat));
     SetValue(Node, 'OperationSizeFormat', Ord(gOperationSizeFormat));
-    SetValue(Node, 'HeaderFooterSizeFormat', Ord(gHeaderFooterSizeFormat));
+    SetValue(Node, 'HeaderSizeFormat', Ord(gHeaderSizeFormat));
+    SetValue(Node, 'FooterSizeFormat', Ord(gFooterSizeFormat));
     SetValue(Node, 'FileSizeDigits', gFileSizeDigits);
-    SetValue(Node, 'HeaderFooterDigits', gHeaderFooterDigits);
+    SetValue(Node, 'HeaderDigits', gHeaderDigits);
+    SetValue(Node, 'FooterDigits', gFooterDigits);
     SetValue(Node, 'OperationSizeDigits', gOperationSizeDigits);
     SetValue(Node, 'PersonalizedByte', Trim(gSizeDisplayUnits[fsfPersonalizedByte]));
     SetValue(Node, 'PersonalizedKilo', Trim(gSizeDisplayUnits[fsfPersonalizedKilo]));
@@ -3385,6 +3437,8 @@ begin
     SetValue(Node, 'PanelOfOperationsInBackground', gPanelOfOp);
     SetValue(Node, 'HorizontalFilePanels', gHorizontalFilePanels);
     SetValue(Node, 'ShortFormatDriveInfo', gShortFormatDriveInfo);
+    SetValue(Node, 'UppercaseDriveLetter', gUpperCaseDriveLetter);
+    SetValue(Node, 'ShowColonAfterDrive', gShowColonAfterDrive);
 
     { Files views }
     Node := FindNode(Root, 'FilesViews', True);
@@ -3418,6 +3472,7 @@ begin
     { File operations page }
     Node := FindNode(Root, 'FileOperations', True);
     SetValue(Node, 'BufferSize', gCopyBlockSize);
+    SetValue(Node, 'LongNameAlert', gLongNameAlert);
     SetValue(Node, 'HashBufferSize', gHashBlockSize);
     SetValue(Node, 'UseMmapInSearch', gUseMmapInSearch);
     SetValue(Node, 'PartialNameSearch', gPartialNameSearch);
@@ -3633,6 +3688,10 @@ begin
     SetValue(Node, 'FilterDuplicates', gSyncDirsShowFilterDuplicates);
     SetValue(Node, 'FilterSingles', gSyncDirsShowFilterSingles);
     SetValue(Node, 'FileMask', gSyncDirsFileMask);
+    SubNode := FindNode(Node, 'Colors', True);
+    SetValue(SubNode, 'Left', gSyncLeftColor);
+    SetValue(SubNode, 'Right', gSyncRightColor);
+    SetValue(SubNode, 'Unknown', gSyncUnknownColor);
 
     { Internal Associations}
     Node := FindNode(Root, 'InternalAssociations', True);

@@ -149,6 +149,11 @@ msgctxt "tfrmabout.lblbuild.caption"
 msgid "Build"
 msgstr "Dato"
 
+#: tfrmabout.lblcommit.caption
+msgctxt "tfrmabout.lblcommit.caption"
+msgid "Commit"
+msgstr ""
+
 #: tfrmabout.lblfreepascalver.caption
 msgctxt "tfrmabout.lblfreepascalver.caption"
 msgid "Free Pascal"
@@ -1608,6 +1613,10 @@ msgstr "Find filer, der IKKE indeholder &teksten"
 msgid "N&ot older than:"
 msgstr "Ikke &ældre end:"
 
+#: tfrmfinddlg.cbofficexml.caption
+msgid "Offi&ce XML"
+msgstr ""
+
 # Kommandoer - Find_filer
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
@@ -2880,6 +2889,14 @@ msgstr "Aktiver/deaktiver filliste for ikke at vist filnavne"
 #: tfrmmain.actsymlink.caption
 msgid "Create Symbolic &Link..."
 msgstr "Dan symbolsk &link..."
+
+#: tfrmmain.actsyncchangedir.caption
+msgid "Synchronous navigation"
+msgstr ""
+
+#: tfrmmain.actsyncchangedir.hint
+msgid "Synchronous directory changing in both panels"
+msgstr ""
 
 # Kommandoer
 #: tfrmmain.actsyncdirs.caption
@@ -6577,6 +6594,10 @@ msgstr "&Dato- og tidsformat:"
 msgid "File si&ze format:"
 msgstr "Vis &filstørrelse i:"
 
+#: tfrmoptionsfilesviews.lblfootersizeformat.caption
+msgid "&Footer format:"
+msgstr ""
+
 # Opsætning  - Indstillinger - Visning
 #: tfrmoptionsfilesviews.lblgigabyte.caption
 #, fuzzy
@@ -6584,10 +6605,9 @@ msgstr "Vis &filstørrelse i:"
 msgid "&Gigabyte:"
 msgstr "&Gigabyte: "
 
-# Opsætning  - Indstillinger - Visning
-#: tfrmoptionsfilesviews.lblheaderfootersizeformat.caption
-msgid "&Header/footer format:"
-msgstr "Format af sidehoved/sidefod: "
+#: tfrmoptionsfilesviews.lblheadersizeformat.caption
+msgid "&Header format:"
+msgstr ""
 
 # Opsætning  - Indstillinger - Visning
 #: tfrmoptionsfilesviews.lblkilobyte.caption
@@ -9606,6 +9626,11 @@ msgstr "Menuen Netværk"
 msgctxt "TFRMSTARTINGSPLASH.LBLBUILD.CAPTION"
 msgid "Build"
 msgstr "Dato"
+
+#: tfrmstartingsplash.lblcommit.caption
+msgctxt "tfrmstartingsplash.lblcommit.caption"
+msgid "Commit"
+msgstr ""
 
 #: tfrmstartingsplash.lblfreepascalver.caption
 msgctxt "TFRMSTARTINGSPLASH.LBLFREEPASCALVER.CAPTION"
@@ -14795,4 +14820,8 @@ msgstr "Antal erstattede: %d"
 #: ulng.rszeroreplacement
 msgid "No replacement took place."
 msgstr "Ingen erstatning fandt sted."
+
+#: umaincommands.rsfavoritetabs_setupnotexist
+msgid "No setup named \"%s\""
+msgstr ""
 

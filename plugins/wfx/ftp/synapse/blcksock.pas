@@ -1,9 +1,9 @@
 {==============================================================================|
-| Project : Ararat Synapse                                       | 009.009.001 |
+| Project : Ararat Synapse                                       | 009.010.000 |
 |==============================================================================|
 | Content: Library base                                                        |
 |==============================================================================|
-| Copyright (c)1999-2013, Lukas Gebauer                                        |
+| Copyright (c)1999-2017, Lukas Gebauer                                        |
 | All rights reserved.                                                         |
 |                                                                              |
 | Redistribution and use in source and binary forms, with or without           |
@@ -33,7 +33,7 @@
 | DAMAGE.                                                                      |
 |==============================================================================|
 | The Initial Developer of the Original Code is Lukas Gebauer (Czech Republic).|
-| Portions created by Lukas Gebauer are Copyright (c)1999-2013.                |
+| Portions created by Lukas Gebauer are Copyright (c)1999-2017.                |
 | All Rights Reserved.                                                         |
 |==============================================================================|
 | Contributor(s):                                                              |
@@ -352,6 +352,7 @@ type
     function TestStopFlag: Boolean;
     procedure InternalSendStream(const Stream: TStream; WithSize, Indy: boolean); virtual;
     function InternalCanRead(Timeout: Integer): Boolean; virtual;
+    function InternalCanWrite(Timeout: Integer): Boolean; virtual;
   public
     constructor Create;
 
@@ -1215,6 +1216,8 @@ type
   TCustomSSL = class(TObject)
   private
   protected
+    FSessionOld: Pointer;
+    FSessionNew: Pointer;
     FOnVerifyCert: THookVerifyCert;
     FSocket: TTCPBlockSocket;
     FSSLEnabled: Boolean;
@@ -1349,6 +1352,9 @@ type
 
     {:Return error description of last SSL operation.}
     property LastErrorDesc: string read FLastErrorDesc;
+
+    {:Used for session resumption }
+    property Session: Pointer read FSessionNew write FSessionOld;
   published
     {:Here you can specify requested SSL/TLS mode. Default is autodetection, but
      on some servers autodetection not working properly. In this case you must
@@ -2801,7 +2807,7 @@ begin
     DoStatus(HR_CanRead, '');
 end;
 
-function TBlockSocket.CanWrite(Timeout: Integer): Boolean;
+function TBlockSocket.InternalCanWrite(Timeout: Integer): Boolean;
 {$IFDEF CIL}
 begin
   Result := FSocket.Poll(Timeout * 1000, SelectMode.SelectWrite);
@@ -2824,6 +2830,38 @@ begin
     x := 0;
   Result := x > 0;
 {$ENDIF}
+end;
+
+function TBlockSocket.CanWrite(Timeout: Integer): Boolean;
+var
+  ti, tr: Integer;
+  n: integer;
+begin
+  if (FHeartbeatRate <> 0) and (Timeout <> -1) then
+  begin
+    ti := Timeout div FHeartbeatRate;
+    tr := Timeout mod FHeartbeatRate;
+  end
+  else
+  begin
+    ti := 0;
+    tr := Timeout;
+  end;
+  Result := InternalCanWrite(tr);
+  if not Result then
+    for n := 0 to ti do
+    begin
+      DoHeartbeat;
+      if FStopFlag then
+      begin
+        Result := False;
+        FStopFlag := False;
+        Break;
+      end;
+      Result := InternalCanWrite(FHeartbeatRate);
+      if Result then
+        break;
+    end;
   ExceptCheck;
   if Result then
     DoStatus(HR_CanWrite, '');

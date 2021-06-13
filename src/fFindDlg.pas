@@ -99,6 +99,7 @@ type
     cbTextRegExp: TCheckBox;
     cbFindInArchive: TCheckBox;
     cbOpenedTabs: TCheckBox;
+    cbOfficeXML: TCheckBox;
     chkDuplicateContent: TCheckBox;
     chkDuplicateSize: TCheckBox;
     chkDuplicateHash: TCheckBox;
@@ -211,6 +212,7 @@ type
     procedure cbDateFromChange(Sender: TObject);
     procedure cbDateToChange(Sender: TObject);
     procedure cbFindInArchiveChange(Sender: TObject);
+    procedure cbOfficeXMLChange(Sender: TObject);
     procedure cbOpenedTabsChange(Sender: TObject);
     procedure cbPartialNameSearchChange(Sender: TObject);
     procedure cbRegExpChange(Sender: TObject);
@@ -392,7 +394,7 @@ implementation
 
 uses
   LCLProc, LCLType, LConvEncoding, StrUtils, HelpIntfs, fViewer, fMain,
-  uLng, uGlobs, uShowForm, uDCUtils, uFileSourceUtil,
+  uLng, uGlobs, uShowForm, uDCUtils, uFileSourceUtil, uOfficeXML,
   uSearchResultFileSource, uFile, uFileProperty, uColumnsFileView,
   uFileViewNotebook, uKeyboard, uOSUtils, uArchiveFileSourceUtil,
   DCOSUtils, RegExpr, uDebug, uShowMsg, uConvEncoding, uColumns,
@@ -576,7 +578,7 @@ begin
       Result := (ShowModal = mrOk);
       if Result and (lbSearchTemplates.Count > 0) then
       begin
-        TemplateName := lbSearchTemplates.Items[lbSearchTemplates.Count - 1];
+        TemplateName := FLastTemplateName;
       end;
     end;
   finally
@@ -665,6 +667,8 @@ begin
   cmbFileSizeUnit.Items.Add(rsSizeUnitGBytes);
   cmbFileSizeUnit.Items.Add(rsSizeUnitTBytes);
 
+  cbOfficeXML.Hint := StripHotkey(cbOfficeXML.Caption) + ' ' + OFFICE_FILTER;
+
   // fill search depth combobox
   cmbSearchDepth.Items.Add(rsFindDepthAll);
   cmbSearchDepth.Items.Add(rsFindDepthCurDir);
@@ -699,6 +703,7 @@ begin
 
   cmbNotOlderThanUnit.ItemIndex := 3; // Days
   cmbFileSizeUnit.ItemIndex := 1; // Kilobytes
+  cbPartialNameSearch.Checked := gPartialNameSearch;
   FontOptionsToFont(gFonts[dcfSearchResults], lsFoundedFiles.Font);
 
   InitPropStorage(Self);
@@ -802,9 +807,10 @@ begin
   EnableControl(cmbFindText, cbFindText.Checked);
   EnableControl(cmbEncoding, cbFindText.Checked);
   EnableControl(cbCaseSens, cbFindText.Checked);
-  EnableControl(cbReplaceText, cbFindText.Checked and not cbFindInArchive.Checked);
+  EnableControl(cbReplaceText, cbFindText.Checked and not (cbFindInArchive.Checked or chkHex.Checked or cbOfficeXML.Checked));
   EnableControl(cbNotContainingText, cbFindText.Checked);
   EnableControl(cbTextRegExp, cbFindText.Checked);
+  EnableControl(cbOfficeXML, cbFindText.Checked);
   lblEncoding.Enabled := cbFindText.Checked;
   cbReplaceText.Checked := False;
   cmbEncodingSelect(nil);
@@ -880,6 +886,7 @@ begin
   cbFindText.Checked := False;
   cbReplaceText.Checked := False;
   cbCaseSens.Checked := False;
+  cbOfficeXML.Checked := False;
   cbNotContainingText.Checked := False;
   cmbEncoding.ItemIndex := 0;
   cmbEncodingSelect(nil);
@@ -999,6 +1006,16 @@ begin
   cbReplaceTextChange(cbReplaceText);
 end;
 
+procedure TfrmFindDlg.cbOfficeXMLChange(Sender: TObject);
+begin
+  if cbOfficeXML.Checked then
+  begin
+    chkHex.Checked:= False;
+    cbReplaceText.Checked:= False;
+  end;
+  cbReplaceText.Enabled:= not (chkHex.Checked or cbOfficeXML.Checked);
+end;
+
 { TfrmFindDlg.cbOpenedTabsChange }
 procedure TfrmFindDlg.cbOpenedTabsChange(Sender: TObject);
 begin
@@ -1088,6 +1105,7 @@ begin
     begin
       cbCaseSens.Tag := Integer(cbCaseSens.Checked);
     end;
+    cbOfficeXML.Checked:= False;
     cbReplaceText.Checked:= False;
   end
   else if not cbCaseSens.Enabled then
@@ -1095,7 +1113,7 @@ begin
     cbCaseSens.Checked := Boolean(cbCaseSens.Tag);
   end;
   cmbEncoding.Enabled:= not chkHex.Checked;
-  cbReplaceText.Enabled:= not chkHex.Checked;
+  cbReplaceText.Enabled:= not (chkHex.Checked or cbOfficeXML.Checked);
   cmbEncodingSelect(cmbEncoding);
 end;
 
@@ -1189,6 +1207,7 @@ begin
     NotContainingText := cbNotContainingText.Checked;
     TextRegExp := cbTextRegExp.Checked;
     TextEncoding := cmbEncoding.Text;
+    OfficeXML := cbOfficeXML.Checked;
     { Duplicates }
     Duplicates:= chkDuplicates.Checked;
     DuplicateName:= chkDuplicateName.Checked;
@@ -1350,7 +1369,7 @@ begin
   cbOpenedTabs.Visible:= not AEnabled;
   cbSelectedFiles.Visible:= not AEnabled;
   cbFindInArchive.Enabled:= not AEnabled;
-  cbReplaceText.Enabled:= not AEnabled;
+  cbReplaceText.Enabled:= (not AEnabled) and (cbFindText.Checked);
   cmbFindPathStart.Enabled:= not AEnabled;
   btnChooseFolder.Enabled:= not AEnabled;
   chkDuplicates.Enabled:= not AEnabled;
@@ -2174,7 +2193,6 @@ begin
   if cmbFindFileMask.Visible then
     cmbFindFileMask.SelectAll;
 
-  cbPartialNameSearch.Checked := gPartialNameSearch;
   lsFoundedFiles.Canvas.Font := lsFoundedFiles.Font;
 
   if pgcSearch.ActivePage = tsStandard then
@@ -2291,6 +2309,7 @@ begin
     cbNotContainingText.Checked := NotContainingText;
     cbTextRegExp.Checked := TextRegExp;
     cmbEncoding.Text := TextEncoding;
+    cbOfficeXML.Checked := OfficeXML;
 
     if cbFindInArchive.Enabled then
     begin
