@@ -15,9 +15,6 @@ uses
   {$ENDIF}
   {$IFDEF UNIX}
   cthreads,
-  {$IFDEF DARWIN}
-  uAppleMagnifiedModeFix,
-  {$ENDIF}
   {$IFNDEF HEAPTRC}
   cmem,
   {$ENDIF}
